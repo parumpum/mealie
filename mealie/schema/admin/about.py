@@ -22,6 +22,7 @@ class AppInfo(MealieModel):
     oidc_provider_name: str
     enable_openai: bool
     enable_openai_image_services: bool
+    enable_openai_new_food_labeling: bool
 
 
 class AppTheme(MealieModel):
