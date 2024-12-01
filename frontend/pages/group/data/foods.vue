@@ -292,7 +292,7 @@ import { defineComponent, onMounted, ref, computed, useContext } from "@nuxtjs/c
 import type { LocaleObject } from "@nuxtjs/i18n";
 import RecipeDataAliasManagerDialog from "~/components/Domain/Recipe/RecipeDataAliasManagerDialog.vue";
 import { validators } from "~/composables/use-validators";
-import { useUserApi } from "~/composables/api";
+import { useAppInfo, useUserApi } from "~/composables/api";
 import { CreateIngredientFood, IngredientFood, IngredientFoodAlias } from "~/lib/api/types/recipe";
 import MultiPurposeLabel from "~/components/Domain/ShoppingList/MultiPurposeLabel.vue";
 import { useLocales } from "~/composables/use-locales";
@@ -303,6 +303,7 @@ export default defineComponent({
   components: { MultiPurposeLabel, RecipeDataAliasManagerDialog },
   setup() {
     const userApi = useUserApi();
+    const appInfo = useAppInfo();
     const { i18n } = useContext();
     const tableConfig = {
       hideColumns: true,
@@ -375,8 +376,20 @@ export default defineComponent({
       }
 
       // @ts-expect-error the createOne function erroneously expects an id because it uses the IngredientFood type
-      await foodStore.actions.createOne(createTarget.value);
+      const new_food = await foodStore.actions.createOne(createTarget.value);
       createDialog.value = false;
+
+      // Auto match label
+      if (new_food && appInfo.value?.enableOpenai && appInfo.value?.enableOpenaiNewFoodLabeling && !new_food.labelId) {
+        const data = await api.foods.matchLabels([new_food.name]);
+        if (data.data) {
+          for (const item of data.data) {
+            item.labelId = item.label?.id
+            await foodStore.actions.updateOne(item);
+          }
+        }
+      }
+
 
       domNewFoodForm.value?.reset();
       createTarget.value = {

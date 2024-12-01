@@ -19,6 +19,7 @@ class UpdateHouseholdPreferences(MealieModel):
     recipe_landscape_view: bool = False
     recipe_disable_comments: bool = False
     recipe_disable_amount: bool = True
+    food_auto_label: bool = True
 
 
 class CreateHouseholdPreferences(UpdateHouseholdPreferences): ...

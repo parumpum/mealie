@@ -105,6 +105,11 @@ export default defineComponent({
         label: i18n.tc("group.disable-organizing-recipe-ingredients-by-units-and-food"),
         description: i18n.tc("group.disable-organizing-recipe-ingredients-by-units-and-food-description"),
       },
+      {
+        key: "foodAutoLabel",
+        label: i18n.tc("group.auto-label-foods"),
+        description: i18n.tc("group.auto-label-foods-description"),
+      }
     ];
 
     const allDays = [

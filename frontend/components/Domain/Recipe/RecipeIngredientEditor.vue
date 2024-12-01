@@ -125,6 +125,7 @@ import { computed, defineComponent, reactive, ref, toRefs, useContext } from "@n
 import { useFoodStore, useFoodData, useUnitStore, useUnitData } from "~/composables/store";
 import { validators } from "~/composables/use-validators";
 import { RecipeIngredient } from "~/lib/api/types/recipe";
+import { useAppInfo, useUserApi } from "~/composables/api";
 
 export default defineComponent({
   props: {
@@ -143,7 +144,8 @@ export default defineComponent({
   },
   setup(props, { listeners }) {
     const { i18n, $globals } = useContext();
-
+    const appInfo = useAppInfo();
+    const api = useUserApi();
     const contextMenuOptions = computed(() => {
       const options = [
         {
@@ -217,6 +219,18 @@ export default defineComponent({
     async function createAssignFood() {
       foodData.data.name = foodSearch.value;
       props.value.food = await foodStore.actions.createOne(foodData.data) || undefined;
+
+      // Auto match label
+      if (props.value.food && appInfo.value?.enableOpenai && appInfo.value?.enableOpenaiNewFoodLabeling && !props.value.food.labelId) {
+        const data = await api.foods.matchLabels([props.value.food.name]);
+        if (data.data) {
+          for (const item of data.data) {
+            item.labelId = item.label?.id
+            await foodStore.actions.updateOne(item);
+          }
+        }
+      }
+
       foodData.reset();
       foodAutocomplete.value?.blur();
     }

@@ -400,6 +400,10 @@ class AppSettings(AppLoggingSettings):
     """
     The number of seconds to wait for an OpenAI request to complete before cancelling the request
     """
+    OPENAI_LABEL_NEW_FOODS: bool = True
+    """
+    Send new foods to OpenAI for labeling automatically. This will incur additional API costs.
+    """
 
     @property
     def OPENAI_FEATURE(self) -> FeatureDetails:

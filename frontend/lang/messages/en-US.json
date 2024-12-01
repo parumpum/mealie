@@ -276,7 +276,9 @@
     "admin-group-management": "Admin Group Management",
     "admin-group-management-text": "Changes to this group will be reflected immediately.",
     "group-id-value": "Group Id: {0}",
-    "total-households": "Total Households"
+    "total-households": "Total Households",
+    "auto-label-foods": "Automatically label new food items",
+    "auto-label-foods-description": "Use OpenAI to automatically label any newly created food items using the existing labels."
   },
   "household": {
     "household": "Household",

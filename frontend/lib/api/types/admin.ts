@@ -17,6 +17,7 @@ export interface AdminAboutInfo {
   oidcProviderName: string;
   enableOpenai: boolean;
   enableOpenaiImageServices: boolean;
+  enableOpenaiNewFoodLabeling: boolean;
   versionLatest: string;
   apiPort: number;
   apiDocs: boolean;
@@ -48,6 +49,7 @@ export interface AppInfo {
   oidcProviderName: string;
   enableOpenai: boolean;
   enableOpenaiImageServices: boolean;
+  enableOpenaiNewFoodLabeling: boolean;
 }
 export interface AppStartupInfo {
   isFirstLogin: boolean;

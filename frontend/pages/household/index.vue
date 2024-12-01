@@ -87,6 +87,12 @@ export default defineComponent({
           label: i18n.t("group.disable-organizing-recipe-ingredients-by-units-and-food"),
           description: i18n.t("group.disable-organizing-recipe-ingredients-by-units-and-food-description"),
         } as Preference,
+        {
+        key: "foodAutoLabel",
+        value: household.value.preferences.foodAutoLabel || false,
+        label: i18n.tc("group.auto-label-foods"),
+        description: i18n.tc("group.auto-label-foods-description"),
+      } as Preference
       ];
     });
 

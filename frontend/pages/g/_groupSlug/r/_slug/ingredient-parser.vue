@@ -102,6 +102,7 @@
 import { computed, defineComponent, ref, useContext, useRoute, useRouter, watch } from "@nuxtjs/composition-api";
 import { invoke, until } from "@vueuse/core";
 import draggable from "vuedraggable";
+import { get_app_settings , settings } from "~/composables/use-app-settings";
 import RecipeIngredientEditor from "~/components/Domain/Recipe/RecipeIngredientEditor.vue";
 import { alert } from "~/composables/use-toast";
 import { useAppInfo, useUserApi } from "~/composables/api";
@@ -289,6 +290,17 @@ export default defineComponent({
       foodData.data.name = food.name;
       parsedIng.value[index].ingredient.food = await foodStore.actions.createOne(foodData.data) || undefined;
       errors.value[index].foodError = false;
+
+      // Auto match label
+      if (parsedIng.value[index].ingredient.food && appInfo.value?.enableOpenai && appInfo.value?.enableOpenaiNewFoodLabeling && !parsedIng.value[index].ingredient.food.labelId) {
+        const data = await api.foods.matchLabels([parsedIng.value[index].ingredient.food.name]);
+        if (data.data) {
+          for (const item of data.data) {
+            item.labelId = item.label?.id
+            await foodStore.actions.updateOne(item);
+          }
+        }
+      }
 
       foodData.reset();
     }

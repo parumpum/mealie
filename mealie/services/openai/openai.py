@@ -85,6 +85,7 @@ class OpenAIService(BaseService):
         self.workers = settings.OPENAI_WORKERS
         self.send_db_data = settings.OPENAI_SEND_DATABASE_DATA
         self.enable_image_services = settings.OPENAI_ENABLE_IMAGE_SERVICES
+        self.enable_new_food_labeling = settings.OPENAI_LABEL_NEW_FOODS
 
         self.get_client = lambda: AsyncOpenAI(
             base_url=settings.OPENAI_BASE_URL,

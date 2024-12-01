@@ -32,6 +32,7 @@ class HouseholdPreferencesModel(SqlAlchemyBase, BaseMixins):
     recipe_landscape_view: Mapped[bool | None] = mapped_column(sa.Boolean, default=False)
     recipe_disable_comments: Mapped[bool | None] = mapped_column(sa.Boolean, default=False)
     recipe_disable_amount: Mapped[bool | None] = mapped_column(sa.Boolean, default=True)
+    food_auto_label: Mapped[bool | None] = mapped_column(sa.Boolean, default=True)
 
     @auto_init()
     def __init__(self, **_) -> None:
