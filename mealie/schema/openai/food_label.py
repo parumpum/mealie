@@ -35,6 +35,8 @@ class OpenAIFoodLabel(OpenAIBase):
         description=dedent(
             """
             The food to categorize. For instance, if you receive "onions" the food is "onions" or "onion".
+            If the food is a compound food, such as "chicken noodle soup", you should return "chicken noodle soup".
+            Return the food as you received it, do not modify it.
             """
         ),
     )

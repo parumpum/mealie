@@ -57,8 +57,9 @@ class OpenAILabelMatcher(IngredientLabel):
         ingredient_chunks = self._chunk_messages(ingredients, n=20)
         tasks: list[Awaitable[str | None]] = []
         for ingredient_chunk in ingredient_chunks:
-            message = "Below is the list of ingredients to categorize:\n" + json.dumps(
-                ingredient_chunk, separators=(",", ":")
+            message = (
+                "Below is the list of ingredients to categorize, each ingredient is enclosed in quotes:\n"
+                + json.dumps(ingredient_chunk, separators=(",", ":"))
             )
 
             tasks.append(service.get_response(prompt, message, force_json_response=True))
