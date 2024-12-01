@@ -275,7 +275,7 @@
           <template #icon> {{ $globals.icons.database }} </template>
           {{ $t('data-pages.seed') }}
         </BaseButton>
-        <BaseButton @click="assignAll">
+        <BaseButton v-if="appInfo && appInfo.enableOpenai" @click="assignAll" >
               <template #icon>
                 {{ $globals.icons.tags }}
               </template>
@@ -557,6 +557,7 @@ export default defineComponent({
     }
 
     return {
+      appInfo,
       tableConfig,
       tableHeaders,
       foods: foodStore.store,
