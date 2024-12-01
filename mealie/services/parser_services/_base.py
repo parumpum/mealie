@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from mealie.db.models.recipe.ingredient import IngredientFoodModel, IngredientUnitModel
 from mealie.repos.all_repositories import get_repositories
 from mealie.repos.repository_factory import AllRepositories
+from mealie.schema.labels.multi_purpose_label import MultiPurposeLabelSummary
 from mealie.schema.recipe.recipe_ingredient import (
     CreateIngredientFood,
     CreateIngredientUnit,
@@ -26,13 +27,16 @@ class DataMatcher:
         repos: AllRepositories,
         food_fuzzy_match_threshold: int = 85,
         unit_fuzzy_match_threshold: int = 70,
+        label_fuzzy_match_threshold: int = 75,
     ) -> None:
         self.repos = repos
 
         self._food_fuzzy_match_threshold = food_fuzzy_match_threshold
         self._unit_fuzzy_match_threshold = unit_fuzzy_match_threshold
+        self._label_fuzzy_match_threshold = label_fuzzy_match_threshold
         self._foods_by_alias: dict[str, IngredientFood] | None = None
         self._units_by_alias: dict[str, IngredientUnit] | None = None
+        self._labels_by_alias: dict[str, MultiPurposeLabelSummary] | None = None
 
     @property
     def foods_by_alias(self) -> dict[str, IngredientFood]:
@@ -82,6 +86,22 @@ class DataMatcher:
 
         return self._units_by_alias
 
+    @property
+    def labels_by_alias(self) -> dict[str, MultiPurposeLabelSummary]:
+        if self._labels_by_alias is None:
+            labels_repo = self.repos.group_multi_purpose_labels
+            query = PaginationQuery(page=1, per_page=-1)
+            all_labels = labels_repo.page_all(query).items
+
+            labels_by_alias: dict[str, MultiPurposeLabelSummary] = {}
+            for label in all_labels:
+                if label.name:
+                    labels_by_alias[label.name] = label
+
+            self._labels_by_alias = labels_by_alias
+
+        return self._labels_by_alias
+
     @classmethod
     def find_match(cls, match_value: str, *, store_map: dict[str, T], fuzzy_match_threshold: int = 0) -> T | None:
         # check for literal matches
@@ -119,6 +139,18 @@ class DataMatcher:
             match_value,
             store_map=self.units_by_alias,
             fuzzy_match_threshold=self._unit_fuzzy_match_threshold,
+        )
+
+    def find_label_match(self, label: MultiPurposeLabelSummary | str) -> MultiPurposeLabelSummary | None:
+        if isinstance(label, MultiPurposeLabelSummary):
+            return label
+
+        label_name = label if isinstance(label, str) else label.name
+        match_value = label_name
+        return self.find_match(
+            match_value,
+            store_map=self.labels_by_alias,
+            fuzzy_match_threshold=self._label_fuzzy_match_threshold,
         )
 
 
@@ -172,3 +204,56 @@ class ABCIngredientParser(ABC):
                 ingredient.ingredient.unit = None
 
         return ingredient
+
+
+class IngredientLabel:
+    """
+    Class for ingredient label matching.
+    """
+
+    def __init__(self, group_id: UUID4, session: Session) -> None:
+        self.group_id = group_id
+        self.session = session
+        self.data_matcher = DataMatcher(self._repos, self.food_fuzzy_match_threshold, self.label_fuzzy_match_threshold)
+
+    @property
+    def _repos(self) -> AllRepositories:
+        return get_repositories(self.session, group_id=self.group_id)
+
+    @property
+    def food_fuzzy_match_threshold(self) -> int:
+        """Minimum threshold to fuzzy match against a database food search"""
+
+        return 85
+
+    @property
+    def label_fuzzy_match_threshold(self) -> int:
+        """Minimum threshold to fuzzy match against a database label search"""
+
+        return 75
+
+    # @abstractmethod
+    # async def parse_one(self, ingredient_string: str) -> MultiPurposeLabel: ...
+
+    # @abstractmethod
+    # async def parse(self, ingredients: list[str]) -> list[MultiPurposeLabel]: ...
+
+    def find_ingredient_label_match(self, ingredient: str | None, label: str | None) -> IngredientFood:  # noqa: E501
+        if ingredient and (food_match := self.data_matcher.find_food_match(ingredient)):
+            ingredient_food = food_match
+            if label and (label_match := self.data_matcher.find_label_match(label)):
+                ingredient_food.label = label_match
+        return ingredient_food
+
+    # async function assignSelected() {
+    #   if (!bulkAssignLabelId.value) {
+    #     return;
+    #   }
+    #   for (const item of bulkAssignTarget.value) {
+    #     item.labelId = bulkAssignLabelId.value;
+    #     await foodStore.actions.updateOne(item);
+    #   }
+    #   bulkAssignTarget.value = [];
+    #   bulkAssignLabelId.value = undefined;
+    #   foodStore.actions.refresh();
+    # }

@@ -1,5 +1,3 @@
-from .parser import OpenAIParser
+from .parser import OpenAILabelMatcher, OpenAIParser
 
-__all__ = [
-    "OpenAIParser",
-]
+__all__ = ["OpenAIParser", "OpenAILabelMatcher"]

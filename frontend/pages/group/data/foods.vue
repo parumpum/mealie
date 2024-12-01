@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <!-- Merge Dialog -->
     <BaseDialog v-model="mergeDialog" :icon="$globals.icons.foods" :title="$t('data-pages.foods.combine-food')" @confirm="mergeFoods">
       <v-card-text>
@@ -274,7 +275,14 @@
           <template #icon> {{ $globals.icons.database }} </template>
           {{ $t('data-pages.seed') }}
         </BaseButton>
+        <BaseButton @click="assignAll">
+              <template #icon>
+                {{ $globals.icons.foods }}
+              </template>
+              Auto Match All Labels
+        </BaseButton>
       </template>
+
     </CrudTable>
   </div>
 </template>
@@ -502,6 +510,7 @@ export default defineComponent({
     const bulkAssignLabelDialog = ref(false);
     const bulkAssignTarget = ref<IngredientFood[]>([]);
     const bulkAssignLabelId = ref<string | undefined>();
+    const api = useUserApi();
 
     function bulkAssignEventHandler(selection: IngredientFood[]) {
       bulkAssignTarget.value = selection;
@@ -518,6 +527,19 @@ export default defineComponent({
       }
       bulkAssignTarget.value = [];
       bulkAssignLabelId.value = undefined;
+      foodStore.actions.refresh();
+    }
+
+    async function assignAll() {
+      const raw = foodStore.store.value.map((ing) => ing.name);
+
+      const data = await api.foods.matchLabels(raw);
+      if (data.data) {
+        for (const item of data.data) {
+          item.labelId = item.label?.id
+          await foodStore.actions.updateOne(item);
+        }
+      }
       foodStore.actions.refresh();
     }
 
@@ -569,6 +591,7 @@ export default defineComponent({
       bulkAssignLabelId,
       bulkAssignEventHandler,
       assignSelected,
+      assignAll,
     };
   },
 });

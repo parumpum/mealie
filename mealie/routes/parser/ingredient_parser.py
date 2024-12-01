@@ -2,8 +2,9 @@ from fastapi import APIRouter
 
 from mealie.routes._base import BaseUserController, controller
 from mealie.schema.recipe import ParsedIngredient
-from mealie.schema.recipe.recipe_ingredient import IngredientRequest, IngredientsRequest
+from mealie.schema.recipe.recipe_ingredient import IngredientFood, IngredientRequest, IngredientsRequest
 from mealie.services.parser_services import get_parser
+from mealie.services.parser_services.openai import OpenAILabelMatcher
 
 router = APIRouter(prefix="/parser")
 
@@ -20,3 +21,8 @@ class IngredientParserController(BaseUserController):
     async def parse_ingredients(self, ingredients: IngredientsRequest):
         parser = get_parser(ingredients.parser, self.group_id, self.session)
         return await parser.parse(ingredients.ingredients)
+
+    @router.post("/match-labels", response_model=list[IngredientFood])
+    async def match_labels(self, ingredients: IngredientsRequest):
+        parser = OpenAILabelMatcher(self.group_id, self.session)
+        return await parser.match(ingredients.ingredients)
