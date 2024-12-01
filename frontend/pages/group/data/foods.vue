@@ -277,7 +277,7 @@
         </BaseButton>
         <BaseButton @click="assignAll">
               <template #icon>
-                {{ $globals.icons.foods }}
+                {{ $globals.icons.tags }}
               </template>
               Auto Match All Labels
         </BaseButton>
