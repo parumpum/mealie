@@ -12,6 +12,14 @@ dense :value="value[key]" :label="labels[key].label" :suffix="labels[key].suffix
             autocomplete="off" @input="updateValue(key, $event)"></v-text-field>
         </div>
       </v-card-text>
+      <div v-if="parserLoading">
+        <AppLoader
+          v-if="parserLoading"
+          :loading="parserLoading"
+          waiting-text=""
+        />
+      </div>
+      <div v-else>
       <v-list v-if="showViewer" dense class="mt-0 pt-0">
         <v-list-item v-for="(item, key, index) in renderedList" :key="index" style="min-height: 25px" dense>
           <v-list-item-content>
@@ -23,7 +31,8 @@ dense :value="value[key]" :label="labels[key].label" :suffix="labels[key].suffix
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <BaseButton v-if="appInfo && appInfo.enableOpenai" @click="fetchNutritionInfo" >
+    </div>
+      <BaseButton v-if="appInfo && appInfo.enableOpenai" :disabled="parserLoading" @click="fetchNutritionInfo" >
               <template #icon>
                 {{ $globals.icons.download }}
               </template>
@@ -34,12 +43,12 @@ dense :value="value[key]" :label="labels[key].label" :suffix="labels[key].suffix
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useRoute } from "@nuxtjs/composition-api";
+import { computed, defineComponent, ref, useRoute } from "@nuxtjs/composition-api";
 import { parseIngredientText, useNutritionLabels, useRecipe } from "~/composables/recipes";
 import { Nutrition, Recipe } from "~/lib/api/types/recipe";
 import { NutritionLabelType } from "~/composables/recipes/use-recipe-nutrition";
 import { useAppInfo, useUserApi } from "~/composables/api";
-import { NoUndefinedField } from "~/lib/api/types/non-generated";
+import { parser } from "~/.eslintrc";
 
 export default defineComponent({
   props: {
@@ -60,8 +69,7 @@ export default defineComponent({
     const { labels } = useNutritionLabels();
     const userApi = useUserApi();
     const appInfo = useAppInfo();
-    const route = useRoute();
-    const slug = route.value.params.slug;
+    const parserLoading = ref(false);
 
     const valueNotNull = computed(() => {
       let key: keyof Nutrition;
@@ -81,15 +89,12 @@ export default defineComponent({
 
     async function fetchNutritionInfo() {
       // const raw = foodStore.store.value.map((ing) => ing.name);
-      console.log(props.recipe.slug)
+      parserLoading.value = true;
       const data = await userApi.recipes.fetchNutrition(ingredientCopyText.value);
-      console.log(data)
       if (data.data) {
         props.recipe.nutrition = data.data;
-
-        // await useRecipe(slug).updateRecipe(props.recipe);
-
       }
+      parserLoading.value = false;
     }
 
     const ingredientCopyText = computed(() => {
@@ -125,6 +130,7 @@ export default defineComponent({
 
     return {
       appInfo,
+      parserLoading,
       labels,
       valueNotNull,
       showViewer,
