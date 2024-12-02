@@ -6,7 +6,7 @@ from mealie.schema.recipe.recipe_ingredient import IngredientFood, IngredientReq
 from mealie.schema.recipe.recipe_nutrition import Nutrition, NutritionRequest
 from mealie.services.parser_services import get_parser
 from mealie.services.parser_services.openai import OpenAILabelMatcher
-from mealie.services.parser_services.openai.parser import OpenAINutritionParser
+from mealie.services.parser_services.openai.fetch_nutrition import OpenAINutritionParser
 
 router = APIRouter(prefix="/parser")
 

@@ -5,13 +5,6 @@
         {{ $t("recipe.nutrition") }}
       </v-card-title>
       <v-divider class="mx-2 my-1"></v-divider>
-      <v-card-text v-if="edit">
-        <div v-for="(item, key, index) in value" :key="index">
-          <v-text-field
-dense :value="value[key]" :label="labels[key].label" :suffix="labels[key].suffix" type="number"
-            autocomplete="off" @input="updateValue(key, $event)"></v-text-field>
-        </div>
-      </v-card-text>
       <div v-if="parserLoading">
         <AppLoader
           v-if="parserLoading"
@@ -20,19 +13,27 @@ dense :value="value[key]" :label="labels[key].label" :suffix="labels[key].suffix
         />
       </div>
       <div v-else>
+      <v-card-text v-if="edit">
+        <div v-for="(item, key, index) in value" :key="index">
+          <v-text-field
+dense :value="value[key]" :label="labels[key].label" :suffix="labels[key].suffix" type="number"
+            autocomplete="off" @input="updateValue(key, $event)"></v-text-field>
+        </div>
+      </v-card-text>
       <v-list v-if="showViewer" dense class="mt-0 pt-0">
-        <v-list-item v-for="(item, key, index) in renderedList" :key="index" style="min-height: 25px" dense>
+        <v-list-item v-for="(item, key, index) in renderedList" :key="index" style="min-height: 25px;" dense>
           <v-list-item-content>
             <v-list-item-title class="pl-4 caption flex row">
               <div>{{ item.label }}</div>
-              <div class="ml-auto mr-1">{{ item.value }}</div>
-              <div>{{ item.suffix }}</div>
+              <div class="ml-auto mr-1">{{ typeof item.value === 'string' ? Number(item.value) / recipeServings : 0 }}</div>
+              <!-- <div  class="ml-left" style="width: 35px; text-align: left" >{{ item.value }}</div> -->
+              <div  >{{ item.suffix }}</div>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
-    </div>
-      <BaseButton v-if="appInfo && appInfo.enableOpenai" :disabled="parserLoading" @click="fetchNutritionInfo" >
+      </div>
+      <BaseButton v-if="appInfo && appInfo.enableOpenai && edit" :disabled="parserLoading" @click="fetchNutritionInfo" >
               <template #icon>
                 {{ $globals.icons.download }}
               </template>
@@ -82,6 +83,19 @@ export default defineComponent({
     });
 
     const showViewer = computed(() => !props.edit && valueNotNull.value);
+
+    const recipeServings = computed(() => {
+      if (props.recipe.recipeServings) {
+        const servings = Number(props.recipe.recipeServings);
+        if (servings > 0) {
+          return servings;
+        }
+      }
+
+      return 1;
+    });
+
+
 
     function updateValue(key: number | string, event: Event) {
       context.emit("input", { ...props.value, [key]: event });
@@ -136,7 +150,8 @@ export default defineComponent({
       showViewer,
       updateValue,
       renderedList,
-      fetchNutritionInfo
+      fetchNutritionInfo,
+      recipeServings
     };
   },
 });
