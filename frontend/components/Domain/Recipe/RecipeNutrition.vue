@@ -25,7 +25,7 @@ dense :value="value[key]" :label="labels[key].label" :suffix="labels[key].suffix
           <v-list-item-content>
             <v-list-item-title class="pl-4 caption flex row">
               <div>{{ item.label }}</div>
-              <div class="ml-auto mr-1">{{ typeof item.value === 'string' ? Number(item.value) / recipeServings : 0 }}</div>
+                <div class="ml-auto mr-1">{{ typeof item.value === 'string' ? Math.round(Number(item.value) / recipeServings) : 0 }}</div>
               <!-- <div  class="ml-left" style="width: 35px; text-align: left" >{{ item.value }}</div> -->
               <div  >{{ item.suffix }}</div>
             </v-list-item-title>
