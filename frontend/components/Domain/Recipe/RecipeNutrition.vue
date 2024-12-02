@@ -95,8 +95,6 @@ export default defineComponent({
       return 1;
     });
 
-
-
     function updateValue(key: number | string, event: Event) {
       context.emit("input", { ...props.value, [key]: event });
     }
