@@ -232,28 +232,9 @@ class IngredientLabel:
 
         return 75
 
-    # @abstractmethod
-    # async def parse_one(self, ingredient_string: str) -> MultiPurposeLabel: ...
-
-    # @abstractmethod
-    # async def parse(self, ingredients: list[str]) -> list[MultiPurposeLabel]: ...
-
     def find_ingredient_label_match(self, ingredient: str | None, label: str | None) -> IngredientFood:  # noqa: E501
         if ingredient and (food_match := self.data_matcher.find_food_match(ingredient)):
             ingredient_food = food_match
             if label and (label_match := self.data_matcher.find_label_match(label)):
                 ingredient_food.label = label_match
         return ingredient_food
-
-    # async function assignSelected() {
-    #   if (!bulkAssignLabelId.value) {
-    #     return;
-    #   }
-    #   for (const item of bulkAssignTarget.value) {
-    #     item.labelId = bulkAssignLabelId.value;
-    #     await foodStore.actions.updateOne(item);
-    #   }
-    #   bulkAssignTarget.value = [];
-    #   bulkAssignLabelId.value = undefined;
-    #   foodStore.actions.refresh();
-    # }

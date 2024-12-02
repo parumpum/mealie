@@ -2,6 +2,7 @@ from pydantic import ConfigDict
 from pydantic.alias_generators import to_camel
 
 from mealie.schema._mealie import MealieModel
+from mealie.schema.recipe.recipe_ingredient import RegisteredParser
 
 
 class Nutrition(MealieModel):
@@ -22,3 +23,8 @@ class Nutrition(MealieModel):
         coerce_numbers_to_str=True,
         alias_generator=to_camel,
     )
+
+
+class NutritionRequest(MealieModel):
+    parser: RegisteredParser = RegisteredParser.nlp
+    recipe: str

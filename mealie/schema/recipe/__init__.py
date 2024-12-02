@@ -110,6 +110,7 @@ __all__ = [
     "TimelineEventImage",
     "TimelineEventType",
     "Nutrition",
+    "NutritionRequest",
     "RecipeShareToken",
     "RecipeShareTokenCreate",
     "RecipeShareTokenSave",

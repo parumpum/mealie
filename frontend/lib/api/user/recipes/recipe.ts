@@ -14,6 +14,7 @@ import {
   RecipeTimelineEventIn,
   RecipeTimelineEventOut,
   RecipeTimelineEventUpdate,
+  Nutrition,
 } from "~/lib/api/types/recipe";
 import { ApiRequestInstance, PaginationData } from "~/lib/api/types/non-generated";
 
@@ -41,6 +42,7 @@ const routes = {
   recipesParseIngredient: `${prefix}/parser/ingredient`,
   recipesParseIngredients: `${prefix}/parser/ingredients`,
   recipesTimelineEvent: `${prefix}/recipes/timeline/events`,
+  recipeFetchNutrition: `${prefix}/parser/fetch-nutrition`,
 
   recipesRecipeSlug: (recipe_slug: string) => `${prefix}/recipes/${recipe_slug}`,
   recipesRecipeSlugExport: (recipe_slug: string) => `${prefix}/recipes/${recipe_slug}/exports`,
@@ -220,5 +222,10 @@ export class RecipeAPI extends BaseCRUDAPI<CreateRecipe, Recipe, Recipe> {
     formData.append("extension", fileName.split(".").pop() ?? "");
 
     return await this.requests.put<UpdateImageResponse, FormData>(routes.recipesTimelineEventIdImage(eventId), formData);
+  }
+
+  async fetchNutrition(recipe: string) {
+    console.log("fetchNutrition", recipe);
+    return await this.requests.post<Nutrition>(routes.recipeFetchNutrition, { recipe });
   }
 }

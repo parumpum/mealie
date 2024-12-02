@@ -45,7 +45,7 @@
       </v-card-text>
     </v-card>
 
-    <RecipeNutrition v-if="recipe.settings.showNutrition" v-model="recipe.nutrition" class="mt-4" :edit="isEditForm" />
+    <RecipeNutrition v-if="recipe.settings.showNutrition" v-model="recipe.nutrition" :recipe="recipe" class="mt-4" :edit="isEditForm" />
     <RecipeAssets
       v-if="recipe.settings.showAssets"
       v-model="recipe.assets"

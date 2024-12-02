@@ -1,3 +1,3 @@
-from .parser import OpenAILabelMatcher, OpenAIParser
+from .parser import OpenAILabelMatcher, OpenAINutritionParser, OpenAIParser
 
-__all__ = ["OpenAIParser", "OpenAILabelMatcher"]
+__all__ = ["OpenAIParser", "OpenAILabelMatcher", "OpenAINutritionParser"]

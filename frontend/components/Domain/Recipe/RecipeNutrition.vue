@@ -23,15 +23,24 @@ dense :value="value[key]" :label="labels[key].label" :suffix="labels[key].suffix
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      <BaseButton v-if="appInfo && appInfo.enableOpenai" @click="fetchNutritionInfo" >
+              <template #icon>
+                {{ $globals.icons.download }}
+              </template>
+              Pull Nutrition Data
+        </BaseButton>
     </v-card>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "@nuxtjs/composition-api";
-import { useNutritionLabels } from "~/composables/recipes";
-import { Nutrition } from "~/lib/api/types/recipe";
+import { computed, defineComponent, useRoute } from "@nuxtjs/composition-api";
+import { parseIngredientText, useNutritionLabels, useRecipe } from "~/composables/recipes";
+import { Nutrition, Recipe } from "~/lib/api/types/recipe";
 import { NutritionLabelType } from "~/composables/recipes/use-recipe-nutrition";
+import { useAppInfo, useUserApi } from "~/composables/api";
+import { NoUndefinedField } from "~/lib/api/types/non-generated";
+
 export default defineComponent({
   props: {
     value: {
@@ -42,9 +51,18 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    recipe: {
+      type: Object as () => Recipe,
+      required: true,
+    }
   },
   setup(props, context) {
     const { labels } = useNutritionLabels();
+    const userApi = useUserApi();
+    const appInfo = useAppInfo();
+    const route = useRoute();
+    const slug = route.value.params.slug;
+
     const valueNotNull = computed(() => {
       let key: keyof Nutrition;
       for (key in props.value) {
@@ -61,6 +79,37 @@ export default defineComponent({
       context.emit("input", { ...props.value, [key]: event });
     }
 
+    async function fetchNutritionInfo() {
+      // const raw = foodStore.store.value.map((ing) => ing.name);
+      console.log(props.recipe.slug)
+      const data = await userApi.recipes.fetchNutrition(ingredientCopyText.value);
+      console.log(data)
+      if (data.data) {
+        props.recipe.nutrition = data.data;
+
+        // await useRecipe(slug).updateRecipe(props.recipe);
+
+      }
+    }
+
+    const ingredientCopyText = computed(() => {
+      const components: string[] = [];
+      if (props.recipe.recipeIngredient) {
+      props.recipe.recipeIngredient.forEach((ingredient) => {
+        if (ingredient.title) {
+          if (components.length) {
+            components.push("");
+          }
+
+          components.push(`[${ingredient.title}]`);
+        }
+
+        components.push(parseIngredientText(ingredient, false, 1, false));
+      });
+    }
+      return components.join("\n");
+    });
+
     // Build a new list that only contains nutritional information that has a value
     const renderedList = computed(() => {
       return Object.entries(labels).reduce((item: NutritionLabelType, [key, label]) => {
@@ -75,11 +124,13 @@ export default defineComponent({
     });
 
     return {
+      appInfo,
       labels,
       valueNotNull,
       showViewer,
       updateValue,
       renderedList,
+      fetchNutritionInfo
     };
   },
 });
