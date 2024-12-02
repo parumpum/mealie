@@ -24,4 +24,4 @@ def upgrade():
 
 def downgrade():
     with op.batch_alter_table("household_preferences", schema=None) as household_preferences:
-        household_preferences.drop_column(sa.Column("food_auto_label", sa.Boolean(), server_default="false"))
+        household_preferences.drop_column("food_auto_label")

@@ -23,7 +23,6 @@ export interface CreateHouseholdPreferences {
   recipeLandscapeView?: boolean;
   recipeDisableComments?: boolean;
   recipeDisableAmount?: boolean;
-  foodAutoLabel?: boolean;
 }
 export interface CreateInviteToken {
   uses: number;
@@ -193,7 +192,6 @@ export interface ReadHouseholdPreferences {
   recipeLandscapeView?: boolean;
   recipeDisableComments?: boolean;
   recipeDisableAmount?: boolean;
-  foodAutoLabel?: boolean;
   id: string;
 }
 export interface HouseholdUserSummary {
@@ -251,7 +249,6 @@ export interface SaveHouseholdPreferences {
   recipeLandscapeView?: boolean;
   recipeDisableComments?: boolean;
   recipeDisableAmount?: boolean;
-  foodAutoLabel?: boolean;
   householdId: string;
 }
 export interface SaveInviteToken {
@@ -659,7 +656,6 @@ export interface UpdateHouseholdPreferences {
   recipeLandscapeView?: boolean;
   recipeDisableComments?: boolean;
   recipeDisableAmount?: boolean;
-  foodAutoLabel?: boolean;
 }
 export interface RecipeIngredientBase {
   quantity?: number | null;
