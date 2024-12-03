@@ -173,6 +173,7 @@ import { uuid4, deepCopy } from "~/composables/use-utils";
 import RecipeDialogBulkAdd from "~/components/Domain/Recipe/RecipeDialogBulkAdd.vue";
 import RecipeNotes from "~/components/Domain/Recipe/RecipeNotes.vue";
 import { useNavigationWarning } from "~/composables/use-navigation-warning";
+import { alert } from "~/composables/use-toast";
 
 const EDITOR_OPTIONS = {
   mode: "code",
@@ -271,6 +272,12 @@ export default defineComponent({
      */
 
     async function saveRecipe() {
+      const recipe = await api.recipes.getOne(props.recipe.slug);
+
+      if ((recipe.data?.id !== props.recipe.id) || recipe?.error) {
+        alert.error(i18n.tc("recipe.recipe-creation-failed"));
+        return;
+      }
       const { data } = await api.recipes.updateOne(props.recipe.slug, props.recipe);
       setMode(PageMode.VIEW);
       if (data?.slug) {
