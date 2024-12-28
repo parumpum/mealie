@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
-import { useContext } from "@nuxtjs/composition-api";
 import type { NuxtAxiosInstance } from "@nuxtjs/axios";
+import { useNuxtApp } from "#imports";
 import { ApiRequestInstance, RequestResponse } from "~/lib/api/types/non-generated";
 import { AdminAPI, PublicApi, UserApi } from "~/lib/api";
 import { PublicExploreApi } from "~/lib/api/client-public";
@@ -29,8 +29,8 @@ function getRequests(axiosInstance: NuxtAxiosInstance): ApiRequestInstance {
       const response = await axiosInstance.get<T>(url, params).catch((e) => {
         error = e;
       });
-      if (response != null) {
-        return { response, error, data: response?.data };
+      if (response) {
+        return { response, error, data: response.data };
       }
       return { response: null, error, data: null };
     },
@@ -58,11 +58,11 @@ function getRequests(axiosInstance: NuxtAxiosInstance): ApiRequestInstance {
 }
 
 export const useRequests = function (): ApiRequestInstance {
-  const { $axios, i18n } = useContext();
+  const { $axios, $i18n } = useNuxtApp()
 
-  $axios.setHeader("Accept-Language", i18n.locale);
+  $axios.setHeader("Accept-Language", $i18n.locale);
 
-  return getRequests($axios);
+  return getRequests($axios as NuxtAxiosInstance);
 };
 
 export const useAdminApi = function (): AdminAPI {

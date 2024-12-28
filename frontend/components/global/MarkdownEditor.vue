@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from "@nuxtjs/composition-api";
+import { defineComponent, computed, ref } from "#imports";
 
 export default defineComponent({
   name: "MarkdownEditor",

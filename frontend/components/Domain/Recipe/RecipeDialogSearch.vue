@@ -53,8 +53,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, toRefs, reactive, ref, watch, useContext, useRoute } from "@nuxtjs/composition-api";
 import RecipeCardMobile from "./RecipeCardMobile.vue";
+import { computed, defineComponent, toRefs, reactive, ref, watch, useNuxtApp, useRoute } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import { RecipeSummary } from "~/lib/api/types/recipe";
 import { useUserApi } from "~/composables/api";
@@ -67,7 +67,7 @@ export default defineComponent({
   },
 
   setup(_, context) {
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const state = reactive({
       loading: false,
       selectedIndex: -1,
@@ -130,7 +130,7 @@ export default defineComponent({
       }
     });
 
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
     const route = useRoute();
     const advancedSearchUrl = computed(() => `/g/${groupSlug.value}`)
     watch(route, close);

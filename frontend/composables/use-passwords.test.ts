@@ -1,4 +1,4 @@
-import { ref } from "@nuxtjs/composition-api";
+import { ref } from "#imports";
 import { describe, expect, test } from "vitest";
 import { usePasswordStrength } from "./use-passwords";
 import { stubI18n } from "~/tests/utils";

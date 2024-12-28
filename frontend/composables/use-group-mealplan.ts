@@ -1,27 +1,28 @@
-import { useAsync, ref, Ref, watch, useContext } from "@nuxtjs/composition-api";
 import { format } from "date-fns";
+import { Ref } from "vue";
 import { useAsyncKey } from "./use-utils";
+import { useLazyAsyncData, ref, watch, useNuxtApp } from "#imports";
 import { useUserApi } from "~/composables/api";
-import { CreatePlanEntry, PlanEntryType, UpdatePlanEntry } from "~/lib/api/types/meal-plan";
+import { CreatePlanEntry, PlanEntryType, ReadPlanEntry, UpdatePlanEntry } from "~/lib/api/types/meal-plan";
 
 type PlanOption = {
   text: string;
   value: PlanEntryType;
 };
 export function usePlanTypeOptions() {
-  const { i18n } = useContext();
+  const { $i18n } = useNuxtApp();
 
   return [
-    { text: i18n.tc("meal-plan.breakfast"), value: "breakfast" },
-    { text: i18n.tc("meal-plan.lunch"), value: "lunch" },
-    { text: i18n.tc("meal-plan.dinner"), value: "dinner" },
-    { text: i18n.tc("meal-plan.side"), value: "side" },
+    { text: $i18n.tc("meal-plan.breakfast"), value: "breakfast" },
+    { text: $i18n.tc("meal-plan.lunch"), value: "lunch" },
+    { text: $i18n.tc("meal-plan.dinner"), value: "dinner" },
+    { text: $i18n.tc("meal-plan.side"), value: "side" },
   ] as PlanOption[];
 }
 
 export function getEntryTypeText(value: PlanEntryType) {
-  const { i18n } = useContext();
-  return i18n.tc("meal-plan." + value);
+  const { $i18n } = useNuxtApp();
+  return $i18n.tc("meal-plan." + value) as string;
 }
 export interface DateRange {
   start: Date;
@@ -36,7 +37,7 @@ export const useMealplans = function (range: Ref<DateRange>) {
   const actions = {
     getAll() {
       loading.value = true;
-      const units = useAsync(async () => {
+      const units = useLazyAsyncData(async () => {
         const query = {
           start_date: format(range.value.start, "yyyy-MM-dd"),
           end_date: format(range.value.end, "yyyy-MM-dd"),
@@ -51,7 +52,7 @@ export const useMealplans = function (range: Ref<DateRange>) {
       }, useAsyncKey());
 
       loading.value = false;
-      return units;
+      return units as Ref<ReadPlanEntry[]>;
     },
     async refreshAll(this: void) {
       loading.value = true;

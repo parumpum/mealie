@@ -12,7 +12,7 @@ export class AdminGroupsApi extends BaseCRUDAPI<GroupBase, GroupInDB, GroupAdmin
   baseRoute: string = routes.adminUsers;
   itemRoute = routes.adminUsersId;
 
-  async updateOne(id: string, payload: GroupAdminUpdate) {
+  override async updateOne(id: string, payload: GroupAdminUpdate) {
     // TODO: This should probably be a patch request, which isn't offered by the API currently
     return await this.requests.put<GroupInDB, GroupAdminUpdate>(this.itemRoute(id), payload);
   }

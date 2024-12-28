@@ -176,7 +176,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext, ref, useAsync, useRoute } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useNuxtApp, ref, useLazyAsyncData, useRoute } from "#imports";
 import UserProfileLinkCard from "@/components/Domain/User/UserProfileLinkCard.vue";
 import { useUserApi } from "~/composables/api";
 import UserAvatar from "@/components/Domain/User/UserAvatar.vue";
@@ -196,9 +196,9 @@ export default defineComponent({
   middleware: "auth",
   scrollToTop: true,
   setup() {
-    const { $auth, i18n } = useContext();
+    const { $auth, $i18n } = useNuxtApp();
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug || $auth.user?.groupSlug || "");
 
     // @ts-ignore $auth.user is typed as unknown, but it's a user
     const user = computed<UserOut | null>(() => $auth.user);
@@ -206,7 +206,7 @@ export default defineComponent({
     const inviteDialog = ref(false);
     const api = useUserApi();
 
-    const stats = useAsync(async () => {
+    const stats = useLazyAsyncData(async () => {
       const { data } = await api.households.statistics();
 
       if (data) {
@@ -215,18 +215,18 @@ export default defineComponent({
     }, useAsyncKey());
 
     const statsText: { [key: string]: string } = {
-      totalRecipes: i18n.tc("general.recipes"),
-      totalUsers: i18n.tc("user.users"),
-      totalCategories: i18n.tc("sidebar.categories"),
-      totalTags: i18n.tc("sidebar.tags"),
-      totalTools: i18n.tc("tool.tools"),
+      totalRecipes: $i18n.tc("general.recipes"),
+      totalUsers: $i18n.tc("user.users"),
+      totalCategories: $i18n.tc("sidebar.categories"),
+      totalTags: $i18n.tc("sidebar.tags"),
+      totalTools: $i18n.tc("tool.tools"),
     };
 
     function getStatsTitle(key: string) {
       return statsText[key] ?? "unknown";
     }
 
-    const { $globals } = useContext();
+    const { $globals } = useNuxtApp();
 
     const iconText: { [key: string]: string } = {
       totalUsers: $globals.icons.user,

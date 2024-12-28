@@ -1,6 +1,6 @@
 <template>
   <div v-if="dialog">
-    <BaseDialog v-if="shoppingListDialog && ready" v-model="dialog" :title="$t('recipe.add-to-list')" :icon="$globals.icons.cartCheck">
+    <BaseDialog v-if="shoppingListDialog && ready" v-model="dialog" :title="$t('recipe.add-to-list').toString()" :icon="$globals.icons.cartCheck">
       <v-card-text>
         <v-card
           v-for="list in shoppingListChoices"
@@ -30,7 +30,7 @@
     <BaseDialog
       v-if="shoppingListIngredientDialog"
       v-model="dialog"
-      :title="selectedShoppingList ? selectedShoppingList.name : $t('recipe.add-to-list')"
+      :title="selectedShoppingList ? selectedShoppingList.name?.toString() : $t('recipe.add-to-list').toString()"
       :icon="$globals.icons.cartCheck"
       width="70%"
       :submit-text="$tc('recipe.add-to-list')"
@@ -127,13 +127,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, useContext, watchEffect } from "@nuxtjs/composition-api";
 import { toRefs } from "@vueuse/core";
 import RecipeIngredientListItem from "./RecipeIngredientListItem.vue";
+import { computed, defineComponent, reactive, ref, useNuxtApp, watchEffect } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { alert } from "~/composables/use-toast";
 import { useShoppingListPreferences } from "~/composables/use-users/preferences";
-import { ShoppingListSummary } from "~/lib/api/types/household";
+import { ShoppingListOut } from "~/lib/api/types/household";
 import { Recipe, RecipeIngredient } from "~/lib/api/types/recipe";
 
 export interface RecipeWithScale extends Recipe {
@@ -172,12 +172,12 @@ export default defineComponent({
       default: undefined,
     },
     shoppingLists: {
-      type: Array as () => ShoppingListSummary[],
+      type: Array as () => ShoppingListOut[],
       default: () => [],
     },
   },
   setup(props, context) {
-    const { $auth, i18n } = useContext();
+    const { $auth, $i18n } = useNuxtApp();
     const api = useUserApi();
     const preferences = useShoppingListPreferences();
     const ready = ref(false);
@@ -204,7 +204,7 @@ export default defineComponent({
     });
 
     const recipeIngredientSections = ref<ShoppingListRecipeIngredientSection[]>([]);
-    const selectedShoppingList = ref<ShoppingListSummary | null>(null);
+    const selectedShoppingList = ref<ShoppingListOut | null>(null);
 
     watchEffect(
       () => {
@@ -305,7 +305,7 @@ export default defineComponent({
 
     initState();
 
-    async function openShoppingListIngredientDialog(list: ShoppingListSummary) {
+    async function openShoppingListIngredientDialog(list: ShoppingListOut) {
       if (!props.recipes?.length) {
         return;
       }
@@ -366,8 +366,8 @@ export default defineComponent({
         }
       })
 
-      success ? alert.success(i18n.tc("recipe.successfully-added-to-list"))
-      : alert.error(i18n.tc("failed-to-add-recipes-to-list"))
+      success ? alert.success(String($i18n.tc("recipe.successfully-added-to-list")))
+      : alert.error(String($i18n.tc("failed-to-add-recipes-to-list")))
 
       state.shoppingListDialog = false;
       state.shoppingListIngredientDialog = false;

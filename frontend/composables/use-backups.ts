@@ -1,5 +1,5 @@
-import { useAsync, ref, reactive } from "@nuxtjs/composition-api";
 import { toastLoading, loader } from "./use-toast";
+import { useLazyAsyncData, ref, reactive } from "#imports";
 import { AllBackups, BackupOptions } from "~/lib/api/types/admin";
 import { useUserApi } from "~/composables/api";
 
@@ -54,7 +54,7 @@ export const useBackups = function (fetch = true) {
   });
 
   function getBackups() {
-    const backups = useAsync(async () => {
+    const backups = useLazyAsyncData(async () => {
       const { data } = await api.backups.getAll();
       return data;
     });

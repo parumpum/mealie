@@ -1,5 +1,5 @@
-import { useAsync, useRouter, ref } from "@nuxtjs/composition-api";
 import { useAsyncKey } from "../use-utils";
+import { useLazyAsyncData, useRouter, ref } from "#imports";
 import { usePublicExploreApi } from "~/composables/api/api-client";
 import { useUserApi } from "~/composables/api";
 import { Recipe } from "~/lib/api/types/recipe";
@@ -139,7 +139,7 @@ export const useRecipes = (
   }
 
   function getAllRecipes() {
-    useAsync(async () => {
+    useLazyAsyncData(async () => {
       await refreshRecipes();
     }, useAsyncKey());
   }

@@ -54,11 +54,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, useRoute, useRouter, watch } from "@nuxtjs/composition-api";
 import { isSameDay, addDays, parseISO } from "date-fns";
+import { computed, defineComponent, ref, useRoute, useRouter, watch } from "#imports";
 import { useHouseholdSelf } from "~/composables/use-households";
 import { useMealplans } from "~/composables/use-group-mealplan";
 import { useUserMealPlanPreferences } from "~/composables/use-users/preferences";
+import { ReadPlanEntry } from "~/lib/api/types/meal-plan";
 
 export default defineComponent({
   middleware: ["auth"],
@@ -74,7 +75,7 @@ export default defineComponent({
     });
 
     // Force to /view if current route is /planner
-    if (route.value.path === "/household/mealplan/planner") {
+    if (route.path === "/household/mealplan/planner") {
       router.push("/household/mealplan/planner/view");
     }
 
@@ -87,12 +88,17 @@ export default defineComponent({
       return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
     }
 
+
+
     const state = ref({
       range: [fmtYYYYMMDD(new Date()), fmtYYYYMMDD(addDays(new Date(), adjustForToday(numberOfDays.value)))] as [string, string],
+      dates: [new Date(), addDays(new Date(), adjustForToday(numberOfDays.value))] as [Date, Date],
       start: new Date(),
       picker: false,
       end: addDays(new Date(), adjustForToday(numberOfDays.value)),
     });
+
+    console.log(state.value.range);
 
     const firstDayOfWeek = computed(() => {
       return household.value?.preferences?.firstDayOfWeek || 0;
@@ -119,10 +125,10 @@ export default defineComponent({
 
     function filterMealByDate(date: Date) {
       if (!mealplans.value) return [];
-      return mealplans.value.filter((meal) => {
+      return mealplans.value.filter((meal: ReadPlanEntry) => {
         const mealDate = parseISO(meal.date);
         return isSameDay(mealDate, date);
-      });
+      }) as ReadPlanEntry[];
     }
 
     function adjustForToday(days: number) {
@@ -148,6 +154,7 @@ export default defineComponent({
     });
 
     const mealsByDate = computed(() => {
+      console.log("mealsByDate", days.value);
       return days.value.map((day) => {
         return { date: day, meals: filterMealByDate(day) };
       });

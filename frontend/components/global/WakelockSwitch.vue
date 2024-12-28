@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted, onUnmounted } from "@nuxtjs/composition-api";
+import { defineComponent, computed, onMounted, onUnmounted } from "#imports";
 import { useWakeLock } from "@vueuse/core";
 
 export default defineComponent({

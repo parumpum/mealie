@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { useClipboard } from "@vueuse/core"
-import { defineComponent, ref } from "@nuxtjs/composition-api";
+import { defineComponent, ref } from "#imports";
 import { VTooltip } from "~/types/vuetify";
 
 export default defineComponent({

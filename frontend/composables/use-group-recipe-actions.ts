@@ -1,5 +1,5 @@
-import { computed, reactive, ref } from "@nuxtjs/composition-api";
 import { useStoreActions } from "./partials/use-actions-factory";
+import { computed, reactive, ref } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { GroupRecipeActionOut, GroupRecipeActionType } from "~/lib/api/types/household";
 import { RequestResponse } from "~/lib/api/types/non-generated";

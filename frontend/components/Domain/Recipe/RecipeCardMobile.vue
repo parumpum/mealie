@@ -64,6 +64,8 @@
                   :use-items="{
                     delete: false,
                     edit: false,
+                    duplicate: false,
+                    recipeActions: false,
                     download: true,
                     mealplanner: true,
                     shoppingList: true,
@@ -84,13 +86,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext, useRoute } from "@nuxtjs/composition-api";
 import RecipeFavoriteBadge from "./RecipeFavoriteBadge.vue";
 import RecipeContextMenu from "./RecipeContextMenu.vue";
 import RecipeCardImage from "./RecipeCardImage.vue";
 import RecipeRating from "./RecipeRating.vue";
 import RecipeChips from "./RecipeChips.vue";
+import { computed, defineComponent, useNuxtApp, useRoute } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
+import { RecipeTag } from "~/lib/api/types/recipe";
 
 export default defineComponent({
   components: {
@@ -103,15 +106,18 @@ export default defineComponent({
   props: {
     name: {
       type: String,
-      required: true,
+      default: "",
+      required: false,
     },
     slug: {
       type: String,
-      required: true,
+      default: "",
+      required: false,
     },
     description: {
       type: String,
-      required: true,
+      default: "",
+      required: false,
     },
     rating: {
       type: Number,
@@ -123,12 +129,13 @@ export default defineComponent({
       default: "abc123",
     },
     tags: {
-      type: Array,
+      type: Array<RecipeTag> as () => RecipeTag[] | null | undefined,
       default: () => [],
     },
     recipeId: {
       type: String,
-      required: true,
+      default: "",
+      required: false,
     },
     vertical: {
       type: Boolean,
@@ -148,11 +155,11 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const { isOwnGroup } = useLoggedInState();
 
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
     const showRecipeContent = computed(() => props.recipeId && props.slug);
     const recipeRoute = computed<string>(() => {
       return showRecipeContent.value ? `/g/${groupSlug.value}/r/${props.slug}` : "";

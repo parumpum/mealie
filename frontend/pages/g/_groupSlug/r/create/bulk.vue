@@ -100,7 +100,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, ref, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, toRefs, ref, useNuxtApp } from "#imports";
 import { whenever } from "@vueuse/shared";
 import { useUserApi } from "~/composables/api";
 import { alert } from "~/composables/use-toast";
@@ -126,7 +126,7 @@ export default defineComponent({
     );
 
     const api = useUserApi();
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     const bulkUrls = ref([{ url: "", categories: [], tags: [] }]);
     const lockBulkImport = ref(false);
@@ -139,10 +139,10 @@ export default defineComponent({
       const { response } = await api.recipes.createManyByUrl({ imports: bulkUrls.value });
 
       if (response?.status === 202) {
-        alert.success(i18n.tc("recipe.bulk-import-process-has-started"));
+        alert.success($i18n.tc("recipe.bulk-import-process-has-started"));
         lockBulkImport.value = true;
       } else {
-        alert.error(i18n.tc("recipe.bulk-import-process-has-failed"));
+        alert.error($i18n.tc("recipe.bulk-import-process-has-failed"));
       }
 
       fetchReports();
@@ -165,7 +165,7 @@ export default defineComponent({
       if (response?.status === 200) {
         fetchReports();
       } else {
-        alert.error(i18n.tc("recipe.report-deletion-failed"));
+        alert.error($i18n.tc("recipe.report-deletion-failed"));
       }
     }
 

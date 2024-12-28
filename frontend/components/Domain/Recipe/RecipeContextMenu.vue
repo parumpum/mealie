@@ -5,7 +5,7 @@
     <RecipeDialogPrintPreferences v-model="printPreferencesDialog" :recipe="recipeRef" />
     <BaseDialog
       v-model="recipeDeleteDialog"
-      :title="$t('recipe.delete-recipe')"
+      :title="$t('recipe.delete-recipe').toString()"
       color="error"
       :icon="$globals.icons.alertCircle"
       @confirm="deleteRecipe()"
@@ -16,7 +16,7 @@
     </BaseDialog>
     <BaseDialog
       v-model="recipeDuplicateDialog"
-      :title="$t('recipe.duplicate')"
+      :title="$t('recipe.duplicate').toString()"
       color="primary"
       :icon="$globals.icons.duplicate"
       @confirm="duplicateRecipe()"
@@ -33,7 +33,7 @@
     </BaseDialog>
     <BaseDialog
       v-model="mealplannerDialog"
-      :title="$t('recipe.add-recipe-to-mealplan')"
+      :title="$t('recipe.add-recipe-to-mealplan').toString()"
       color="primary"
       :icon="$globals.icons.calendar"
       @confirm="addRecipeToPlan()"
@@ -129,10 +129,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRefs, useContext, useRoute, useRouter, ref } from "@nuxtjs/composition-api";
 import RecipeDialogAddToShoppingList from "./RecipeDialogAddToShoppingList.vue";
 import RecipeDialogPrintPreferences from "./RecipeDialogPrintPreferences.vue";
 import RecipeDialogShare from "./RecipeDialogShare.vue";
+import { computed, defineComponent, reactive, toRefs, useNuxtApp, useRoute, useRouter, ref } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import { useUserApi } from "~/composables/api";
 import { useGroupRecipeActions } from "~/composables/use-group-recipe-actions";
@@ -140,7 +140,7 @@ import { useHouseholdSelf } from "~/composables/use-households";
 import { alert } from "~/composables/use-toast";
 import { usePlanTypeOptions } from "~/composables/use-group-mealplan";
 import { Recipe } from "~/lib/api/types/recipe";
-import { GroupRecipeActionOut, ShoppingListSummary } from "~/lib/api/types/household";
+import { GroupRecipeActionOut, ShoppingListOut } from "~/lib/api/types/household";
 import { PlanEntryType } from "~/lib/api/types/meal-plan";
 import { useAxiosDownloader } from "~/composables/api/use-axios-download";
 
@@ -148,6 +148,7 @@ export interface ContextMenuIncludes {
   delete: boolean;
   edit: boolean;
   download: boolean;
+  duplicate: boolean;
   mealplanner: boolean;
   shoppingList: boolean;
   print: boolean;
@@ -210,6 +211,7 @@ export default defineComponent({
     },
     slug: {
       type: String,
+      default: "",
       required: true,
     },
     menuIcon: {
@@ -217,7 +219,8 @@ export default defineComponent({
       default: null,
     },
     name: {
-      required: true,
+      required: false,
+      default: "",
       type: String,
     },
     recipe: {
@@ -226,6 +229,7 @@ export default defineComponent({
     },
     recipeId: {
       required: true,
+      default: "",
       type: String,
     },
     recipeScale: {
@@ -251,12 +255,12 @@ export default defineComponent({
       pickerMenu: false,
     });
 
-    const { i18n, $auth, $globals } = useContext();
+    const { $i18n, $auth, $globals } = useNuxtApp();
     const { household } = useHouseholdSelf();
     const { isOwnGroup } = useLoggedInState();
 
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
 
     const firstDayOfWeek = computed(() => {
       return household.value?.preferences?.firstDayOfWeek || 0;
@@ -267,63 +271,63 @@ export default defineComponent({
 
     const defaultItems: { [key: string]: ContextMenuItem } = {
       edit: {
-        title: i18n.tc("general.edit"),
+        title: $i18n.tc("general.edit"),
         icon: $globals.icons.edit,
         color: undefined,
         event: "edit",
         isPublic: false,
       },
       delete: {
-        title: i18n.tc("general.delete"),
+        title: $i18n.tc("general.delete"),
         icon: $globals.icons.delete,
         color: "error",
         event: "delete",
         isPublic: false,
       },
       download: {
-        title: i18n.tc("general.download"),
+        title: $i18n.tc("general.download"),
         icon: $globals.icons.download,
         color: undefined,
         event: "download",
         isPublic: false,
       },
       duplicate: {
-        title: i18n.tc("general.duplicate"),
+        title: $i18n.tc("general.duplicate"),
         icon: $globals.icons.duplicate,
         color: undefined,
         event: "duplicate",
         isPublic: false,
       },
       mealplanner: {
-        title: i18n.tc("recipe.add-to-plan"),
+        title: $i18n.tc("recipe.add-to-plan"),
         icon: $globals.icons.calendar,
         color: undefined,
         event: "mealplanner",
         isPublic: false,
       },
       shoppingList: {
-        title: i18n.tc("recipe.add-to-list"),
+        title: $i18n.tc("recipe.add-to-list"),
         icon: $globals.icons.cartCheck,
         color: undefined,
         event: "shoppingList",
         isPublic: false,
       },
       print: {
-        title: i18n.tc("general.print"),
+        title: $i18n.tc("general.print"),
         icon: $globals.icons.printer,
         color: undefined,
         event: "print",
         isPublic: true,
       },
       printPreferences: {
-        title: i18n.tc("general.print-preferences"),
+        title: $i18n.tc("general.print-preferences"),
         icon: $globals.icons.printerSettings,
         color: undefined,
         event: "printPreferences",
         isPublic: true,
       },
       share: {
-        title: i18n.tc("general.share"),
+        title: $i18n.tc("general.share"),
         icon: $globals.icons.shareVariant,
         color: undefined,
         event: "share",
@@ -349,7 +353,7 @@ export default defineComponent({
     // ===========================================================================
     // Context Menu Event Handler
 
-    const shoppingLists = ref<ShoppingListSummary[]>();
+    const shoppingLists = ref<ShoppingListOut[]>();
     const recipeRef = ref<Recipe>(props.recipe);
     const recipeRefWithScale = computed(() => recipeRef.value ? { scale: props.recipeScale, ...recipeRef.value } : undefined);
 
@@ -374,10 +378,10 @@ export default defineComponent({
       const response = await groupRecipeActionsStore.execute(action, props.recipe);
 
       if (action.actionType === "post") {
-        if (!response?.error) {
-          alert.success(i18n.tc("events.message-sent"));
+        if (response && !response?.error) {
+          alert.success(String($i18n.tc("events.message-sent")));
         } else {
-          alert.error(i18n.tc("events.something-went-wrong"));
+          alert.error(String($i18n.tc("events.something-went-wrong")));
         }
       }
     }
@@ -407,9 +411,9 @@ export default defineComponent({
       });
 
       if (response?.status === 201) {
-        alert.success(i18n.t("recipe.recipe-added-to-mealplan") as string);
+        alert.success(String($i18n.t("recipe.recipe-added-to-mealplan")));
       } else {
-        alert.error(i18n.t("recipe.failed-to-add-recipe-to-mealplan") as string);
+        alert.error(String($i18n.t("recipe.failed-to-add-recipe-to-mealplan")));
       }
     }
 
@@ -425,7 +429,7 @@ export default defineComponent({
       delete: () => {
         state.recipeDeleteDialog = true;
       },
-      edit: () => router.push(`/g/${groupSlug.value}/r/${props.slug}` + "?edit=true"),
+      edit: (): void => { router.push(`/g/${groupSlug.value}/r/${props.slug}` + "?edit=true"); },
       download: handleDownloadEvent,
       duplicate: () => {
         state.recipeDuplicateDialog = true;

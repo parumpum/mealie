@@ -133,8 +133,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, useContext, computed, reactive, useRouter, useAsync, onBeforeMount } from "@nuxtjs/composition-api";
 import { useDark, whenever } from "@vueuse/core";
+import { defineComponent, ref, useNuxtApp, computed, reactive, useRouter, useLazyAsyncData, onBeforeMount } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import { useAppInfo } from "~/composables/api";
 import { usePasswordField } from "~/composables/use-passwords";
@@ -149,7 +149,7 @@ export default defineComponent({
     const isDark = useDark();
 
     const router = useRouter();
-    const { $auth, i18n, $axios } = useContext();
+    const { $auth, $i18n, $axios } = useNuxtApp();
     const { loggedIn } = useLoggedInState();
     const groupSlug = computed(() => $auth.user?.groupSlug);
     const isDemo = ref(false);
@@ -161,7 +161,7 @@ export default defineComponent({
       remember: false,
     });
 
-    useAsync(async () => {
+    useLazyAsyncData(async () => {
       const data = await $axios.get<AppStartupInfo>("/api/app/about/startup-info");
       isDemo.value = data.data.isDemo;
       isFirstLogin.value = data.data.isFirstLogin;
@@ -230,7 +230,7 @@ export default defineComponent({
 
     async function authenticate() {
       if (form.email.length === 0 || form.password.length === 0) {
-        alert.error(i18n.t("user.please-enter-your-email-and-password") as string);
+        alert.error($i18n.t("user.please-enter-your-email-and-password") as string);
         return;
       }
 
@@ -251,16 +251,16 @@ export default defineComponent({
     function alertOnError(error: any) {
         // TODO Check if error is an AxiosError, but isAxiosError is not working right now
         // See https://github.com/nuxt-community/axios-module/issues/550
-        // Import $axios from useContext()
+        // Import $axios from useNuxtApp()
         // if ($axios.isAxiosError(error) && error.response?.status === 401) {
         // @ts-ignore- see above
         if (error.response?.status === 401) {
-          alert.error(i18n.t("user.invalid-credentials") as string);
+          alert.error($i18n.t("user.invalid-credentials") as string);
           // @ts-ignore - see above
         } else if (error.response?.status === 423) {
-          alert.error(i18n.t("user.account-locked-please-try-again-later") as string);
+          alert.error($i18n.t("user.account-locked-please-try-again-later") as string);
         } else {
-          alert.error(i18n.t("events.something-went-wrong") as string);
+          alert.error($i18n.t("events.something-went-wrong") as string);
         }
     }
 

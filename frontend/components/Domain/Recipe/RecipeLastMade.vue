@@ -110,8 +110,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, toRefs, useContext } from "@nuxtjs/composition-api";
 import { whenever } from "@vueuse/core";
+import { computed, defineComponent, reactive, ref, toRefs, useNuxtApp } from "#imports";
 import { VForm } from "~/types/vuetify";
 import { useUserApi } from "~/composables/api";
 import { useHouseholdSelf } from "~/composables/use-households";
@@ -132,7 +132,7 @@ export default defineComponent({
     const madeThisDialog = ref(false);
     const userApi = useUserApi();
     const { household } = useHouseholdSelf();
-    const { $auth, i18n } = useContext();
+    const { $auth, $i18n } = useNuxtApp();
     const domMadeThisForm = ref<VForm>();
     const newTimelineEvent = ref<RecipeTimelineEventIn>({
       subject: "",
@@ -185,7 +185,7 @@ export default defineComponent({
 
       newTimelineEvent.value.recipeId = props.recipe.id
       // @ts-expect-error - TS doesn't like the $auth global user attribute
-      newTimelineEvent.value.subject = i18n.t("recipe.user-made-this", { user: $auth.user.fullName })
+      newTimelineEvent.value.subject = $i18n.t("recipe.user-made-this", { user: $auth.user.fullName })
 
       // the user only selects the date, so we set the time to end of day local time
       // we choose the end of day so it always comes after "new recipe" events

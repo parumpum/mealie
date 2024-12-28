@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "@nuxtjs/composition-api";
+import { defineComponent, computed } from "#imports";
 
 export default defineComponent({
   props: {

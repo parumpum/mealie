@@ -268,7 +268,7 @@
 
 <script lang="ts">
 import draggable from "vuedraggable";
-import { computed, defineComponent, reactive, ref, toRefs, watch } from "@nuxtjs/composition-api";
+import { computed, defineComponent, reactive, ref, toRefs, watch } from "#imports";
 import { useHouseholdSelf } from "~/composables/use-households";
 import RecipeOrganizerSelector from "~/components/Domain/Recipe/RecipeOrganizerSelector.vue";
 import { Organizer } from "~/lib/api/types/non-generated";
@@ -449,7 +449,7 @@ export default defineComponent({
         await actions.refresh();
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
       const organizers = field.values.map((value) => store.value.find((organizer) => organizer.id === value));
       field.organizers = organizers.filter((organizer) => organizer !== undefined) as OrganizerBase[];
       setOrganizerValues(field, index, field.organizers);
@@ -540,7 +540,7 @@ export default defineComponent({
     try {
       initializeFields();
     } catch (error) {
-      initFieldsError(`Error initializing fields: ${(error || "").toString()}`);
+      initFieldsError(`Error initializing fields: ${(error as string)}`);
     }
 
 

@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@nuxtjs/composition-api";
+import { defineComponent, ref } from "#imports";
 import { useDark } from "@vueuse/core";
 import { validators } from "~/composables/use-validators";
 import { useUserRegistrationForm } from "~/composables/use-users/user-registration-form";

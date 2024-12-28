@@ -174,7 +174,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, useContext, onMounted } from "@nuxtjs/composition-api";
+import { computed, defineComponent, reactive, ref, useNuxtApp, onMounted } from "#imports";
 import RecipeDataTable from "~/components/Domain/Recipe/RecipeDataTable.vue";
 import RecipeOrganizerSelector from "~/components/Domain/Recipe/RecipeOrganizerSelector.vue";
 import { useUserApi } from "~/composables/api";
@@ -201,7 +201,7 @@ export default defineComponent({
   components: { RecipeDataTable, RecipeOrganizerSelector, GroupExportData, RecipeSettingsSwitches, UserAvatar },
   scrollToTop: true,
   setup() {
-    const { $auth, $globals, i18n } = useContext();
+    const { $auth, $globals, $i18n } = useNuxtApp();
     const { getAllRecipes, refreshRecipes } = useRecipes(true, true, false, `householdId=${$auth.user?.householdId || ""}`);
     const selected = ref<Recipe[]>([]);
 
@@ -225,46 +225,46 @@ export default defineComponent({
     });
 
     const headerLabels = {
-      id: i18n.t("general.id"),
-      owner: i18n.t("general.owner"),
-      tags: i18n.t("tag.tags"),
-      categories: i18n.t("recipe.categories"),
-      tools: i18n.t("tool.tools"),
-      recipeServings: i18n.t("recipe.recipe-servings"),
-      recipeYieldQuantity: i18n.t("recipe.recipe-yield"),
-      recipeYield: i18n.t("recipe.recipe-yield-text"),
-      dateAdded: i18n.t("general.date-added"),
+      id: $i18n.t("general.id"),
+      owner: $i18n.t("general.owner"),
+      tags: $i18n.t("tag.tags"),
+      categories: $i18n.t("recipe.categories"),
+      tools: $i18n.t("tool.tools"),
+      recipeServings: $i18n.t("recipe.recipe-servings"),
+      recipeYieldQuantity: $i18n.t("recipe.recipe-yield"),
+      recipeYield: $i18n.t("recipe.recipe-yield-text"),
+      dateAdded: $i18n.t("general.date-added"),
     };
 
     const actions: MenuItem[] = [
       {
         icon: $globals.icons.database,
-        text: i18n.tc("export.export"),
+        text: $i18n.tc("export.export"),
         event: "export-selected",
       },
       {
         icon: $globals.icons.tags,
-        text: i18n.tc("data-pages.recipes.tag"),
+        text: $i18n.tc("data-pages.recipes.tag"),
         event: "tag-selected",
       },
       {
         icon: $globals.icons.categories,
-        text: i18n.tc("data-pages.recipes.categorize"),
+        text: $i18n.tc("data-pages.recipes.categorize"),
         event: "categorize-selected",
       },
       {
         icon: $globals.icons.cog,
-        text: i18n.tc("data-pages.recipes.update-settings"),
+        text: $i18n.tc("data-pages.recipes.update-settings"),
         event: "update-settings",
       },
       {
         icon: $globals.icons.user,
-        text: i18n.tc("general.change-owner"),
+        text: $i18n.tc("general.change-owner"),
         event: "change-owner",
       },
       {
         icon: $globals.icons.delete,
-        text: i18n.tc("general.delete"),
+        text: $i18n.tc("general.delete"),
         event: "delete-selected",
       },
     ];
@@ -392,7 +392,7 @@ export default defineComponent({
 
     const dialog = reactive({
       state: false,
-      title: i18n.t("data-pages.recipes.tag-recipes"),
+      title: $i18n.t("data-pages.recipes.tag-recipes"),
       mode: MODES.tag,
       tag: "",
       callback: () => {
@@ -404,12 +404,12 @@ export default defineComponent({
 
     function openDialog(mode: MODES) {
       const titles: Record<MODES, string> = {
-        [MODES.tag]: i18n.tc("data-pages.recipes.tag-recipes"),
-        [MODES.category]: i18n.tc("data-pages.recipes.categorize-recipes"),
-        [MODES.export]: i18n.tc("data-pages.recipes.export-recipes"),
-        [MODES.delete]: i18n.tc("data-pages.recipes.delete-recipes"),
-        [MODES.updateSettings]: i18n.tc("data-pages.recipes.update-settings"),
-        [MODES.changeOwner]: i18n.tc("general.change-owner"),
+        [MODES.tag]: $i18n.tc("data-pages.recipes.tag-recipes"),
+        [MODES.category]: $i18n.tc("data-pages.recipes.categorize-recipes"),
+        [MODES.export]: $i18n.tc("data-pages.recipes.export-recipes"),
+        [MODES.delete]: $i18n.tc("data-pages.recipes.delete-recipes"),
+        [MODES.updateSettings]: $i18n.tc("data-pages.recipes.update-settings"),
+        [MODES.changeOwner]: $i18n.tc("general.change-owner"),
       };
 
       const callbacks: Record<MODES, () => Promise<void>> = {

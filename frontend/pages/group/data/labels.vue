@@ -1,13 +1,13 @@
 <template>
   <div>
     <!-- Create New Dialog -->
-    <BaseDialog v-model="state.createDialog" :title="$t('data-pages.labels.new-label')" :icon="$globals.icons.tags" @submit="createLabel">
+    <BaseDialog v-model="state.createDialog" :title="$t('data-pages.labels.new-label').toString()" :icon="$globals.icons.tags" @submit="createLabel">
       <v-card-text>
         <MultiPurposeLabel :label="createLabelData" />
 
         <div class="mt-4">
           <v-text-field v-model="createLabelData.name" :label="$t('general.name')"> </v-text-field>
-          <InputColor v-model="createLabelData.color" />
+          <InputColor v-model="colorWithDefault" />
         </div>
       </v-card-text>
     </BaseDialog>
@@ -16,7 +16,7 @@
     <BaseDialog
       v-model="state.editDialog"
       :icon="$globals.icons.tags"
-      :title="$t('data-pages.labels.edit-label')"
+      :title="$t('data-pages.labels.edit-label').toString()"
       :submit-icon="$globals.icons.save"
       :submit-text="$tc('general.save')"
       @submit="editSaveLabel"
@@ -25,7 +25,7 @@
         <MultiPurposeLabel :label="editLabel" />
         <div class="mt-4">
           <v-text-field v-model="editLabel.name" :label="$t('general.name')"> </v-text-field>
-          <InputColor v-model="editLabel.color" />
+          <InputColor v-model="editColorWithDefault" />
         </div>
       </v-card-text>
     </BaseDialog>
@@ -139,8 +139,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, ref, useContext } from "@nuxtjs/composition-api";
 import type { LocaleObject } from "@nuxtjs/i18n";
+import { computed, defineComponent, onMounted, reactive, ref, useNuxtApp } from "#imports";
 import { validators } from "~/composables/use-validators";
 import { useUserApi } from "~/composables/api";
 import MultiPurposeLabel from "~/components/Domain/ShoppingList/MultiPurposeLabel.vue";
@@ -152,19 +152,19 @@ export default defineComponent({
   components: { MultiPurposeLabel },
   setup() {
     const userApi = useUserApi();
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const tableConfig = {
       hideColumns: true,
       canExport: true,
     };
     const tableHeaders = [
       {
-        text: i18n.t("general.id"),
+        text: $i18n.t("general.id"),
         value: "id",
         show: false,
       },
       {
-        text: i18n.t("general.name"),
+        text: $i18n.t("general.name"),
         value: "name",
         show: true,
       },
@@ -182,6 +182,15 @@ export default defineComponent({
 
     const labelData = useLabelData();
     const labelStore = useLabelStore();
+
+    const colorWithDefault = computed({
+      get() {
+        return String(labelData.data.color) ?? "#000000"; // Default color value
+      },
+      set(value: string) {
+        labelData.data.color = value;
+      }
+    });
 
     // Create
 
@@ -227,6 +236,21 @@ export default defineComponent({
 
     const editLabel = ref<MultiPurposeLabelSummary | null>(null);
 
+    const editColorWithDefault = computed({
+      get() {
+        if (editLabel.value) {
+          return String(editLabel.value.color) ?? "#000000"; // Default color value
+        } else {
+          return  "#000000";
+        }
+      },
+      set(value: string) {
+        if (editLabel.value) {
+          editLabel.value.color = value;
+        }
+      }
+    });
+
     function editEventHandler(item: MultiPurposeLabelSummary) {
       state.editDialog = true;
       editLabel.value = item;
@@ -257,7 +281,7 @@ export default defineComponent({
     });
 
     const locales = LOCALES.filter((locale) =>
-      (i18n.locales as LocaleObject[]).map((i18nLocale) => i18nLocale.code).includes(locale.value)
+      ($i18n.locales as LocaleObject[]).map((i18nLocale) => i18nLocale.code).includes(locale.value)
     );
 
     async function seedDatabase() {
@@ -278,12 +302,12 @@ export default defineComponent({
       // create
       createLabel,
       createLabelData: labelData.data,
-
+      colorWithDefault,
       // edit
       editLabel,
       editEventHandler,
       editSaveLabel,
-
+      editColorWithDefault,
       // delete
       deleteEventHandler,
       deleteLabel,

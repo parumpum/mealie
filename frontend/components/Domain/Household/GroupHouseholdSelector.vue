@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, onMounted, useNuxtApp } from "#imports";
 import { useHouseholdStore } from "~/composables/store/use-household-store";
 
 interface HouseholdLike {
@@ -66,9 +66,9 @@ export default defineComponent({
       }
     });
 
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const label = computed(
-      () => props.multiselect ? i18n.tc("household.households") : i18n.tc("household.household")
+      () => props.multiselect ? String($i18n.tc("household.households")) : String($i18n.tc("household.household"))
     );
 
     const { store: households } = useHouseholdStore();

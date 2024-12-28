@@ -1,5 +1,16 @@
-export default {
+import { defineNuxtConfig } from '@nuxt/bridge'
+
+
+export default defineNuxtConfig({
   // Global page headers: https://go.nuxtjs.dev/config-head
+  bridge: {
+    typescript: true,
+    capi: true,
+    nitro: false
+  },
+  imports: {
+    autoImport: true
+  },
   target: "static",
   head: {
     title: "Mealie",
@@ -75,7 +86,7 @@ export default {
     // https://go.nuxtjs.dev/vuetify
     "@nuxtjs/vuetify",
     // https://composition-api.nuxtjs.org/getting-started/setup
-    "@nuxtjs/composition-api/module",
+    // "#imports/module",
     // https://vite.nuxtjs.org/getting-started/installation
     "nuxt-vite",
     // https://google-fonts.nuxtjs.org/setup
@@ -529,7 +540,7 @@ export default {
     babel: {
       plugins: [
         ["@babel/plugin-proposal-private-property-in-object", { loose: true }],
-        // ["@nuxtjs/composition-api/dist/babel-plugin"],
+        // ["#imports/dist/babel-plugin"],
       ],
     },
     // audio file support
@@ -543,6 +554,6 @@ export default {
         }
       })
     },
-    transpile: process.env.NODE_ENV !== "production" ? [/@vue[\\/]composition-api/] : null,
+    transpile: ['cookie-es'],
   },
-};
+});

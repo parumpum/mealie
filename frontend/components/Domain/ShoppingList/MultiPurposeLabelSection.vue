@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@nuxtjs/composition-api";
+import { defineComponent, ref } from "#imports";
 import { ShoppingListMultiPurposeLabelOut } from "~/lib/api/types/household";
 
 export default defineComponent({

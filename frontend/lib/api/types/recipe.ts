@@ -190,17 +190,17 @@ export interface MergeUnit {
   toUnit: string;
 }
 export interface Nutrition {
-  calories?: string | null;
-  carbohydrateContent?: string | null;
-  cholesterolContent?: string | null;
-  fatContent?: string | null;
-  fiberContent?: string | null;
-  proteinContent?: string | null;
-  saturatedFatContent?: string | null;
-  sodiumContent?: string | null;
-  sugarContent?: string | null;
-  transFatContent?: string | null;
-  unsaturatedFatContent?: string | null;
+  calories?: string;
+  carbohydrateContent?: string;
+  cholesterolContent?: string;
+  fatContent?: string;
+  fiberContent?: string;
+  proteinContent?: string;
+  saturatedFatContent?: string;
+  sodiumContent?: string;
+  sugarContent?: string;
+  transFatContent?: string;
+  unsaturatedFatContent?: string;
 }
 export interface ParsedIngredient {
   input?: string | null;
@@ -220,13 +220,13 @@ export interface RecipeIngredient {
   referenceId?: string;
 }
 export interface Recipe {
-  id?: string | null;
+  id: string;
   userId?: string;
   householdId?: string;
   groupId?: string;
-  name?: string | null;
+  name?: string;
   slug?: string;
-  image?: unknown;
+  image?: string;
   recipeServings?: number;
   recipeYieldQuantity?: number;
   recipeYield?: string | null;
@@ -238,7 +238,7 @@ export interface Recipe {
   recipeCategory?: RecipeCategory[] | null;
   tags?: RecipeTag[] | null;
   tools?: RecipeTool[];
-  rating?: number | null;
+  rating?: number;
   orgURL?: string | null;
   dateAdded?: string | null;
   dateUpdated?: string | null;
@@ -492,7 +492,7 @@ export interface ScrapeRecipeTest {
   url: string;
   useOpenAI?: boolean;
 }
-export interface SlugResponse {}
+export interface SlugResponse { }
 export interface TagIn {
   name: string;
 }

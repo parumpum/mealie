@@ -1,4 +1,5 @@
-import { computed, Ref } from "@nuxtjs/composition-api";
+import { Ref } from "vue";
+import { computed } from "#imports";
 import { Recipe } from "~/lib/api/types/recipe";
 import { HouseholdSummary } from "~/lib/api/types/household";
 import { UserOut } from "~/lib/api/types/user";

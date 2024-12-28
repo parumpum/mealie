@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, useContext, watch } from "@nuxtjs/composition-api";
+import { computed, defineComponent, ref, useNuxtApp, watch } from "#imports";
 import { useScaledAmount } from "~/composables/recipes/use-scaled-amount";
 
 export default defineComponent({
@@ -77,7 +77,7 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const menu = ref<boolean>(false);
     const canEditScale = computed(() => props.editScale && props.recipeServings > 0);
 
@@ -106,7 +106,7 @@ export default defineComponent({
     });
     const yieldQuantity = computed(() => recipeYieldAmount.value.scaledAmount);
     const yieldDisplay = computed(() => {
-      return yieldQuantity.value ? i18n.t(
+      return yieldQuantity.value ? $i18n.t(
         "recipe.serves-amount", { amount: recipeYieldAmount.value.scaledAmountDisplay }
       ) as string : "";
     });

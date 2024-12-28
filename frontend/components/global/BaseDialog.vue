@@ -79,13 +79,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "@nuxtjs/composition-api";
+import { defineComponent, computed } from "#imports";
 export default defineComponent({
   name: "BaseDialog",
   props: {
     value: {
       type: Boolean,
       default: false,
+
     },
     color: {
       type: String,
@@ -94,6 +95,7 @@ export default defineComponent({
     title: {
       type: String,
       default: "Modal Title",
+      required: false,
     },
     icon: {
       type: String,

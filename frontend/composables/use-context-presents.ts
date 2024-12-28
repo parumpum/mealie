@@ -1,4 +1,4 @@
-import { useContext } from "@nuxtjs/composition-api";
+import { useNuxtApp } from "#imports";
 
 export interface ContextMenuItem {
   title: string;
@@ -13,22 +13,22 @@ export interface ContextMenuPresets {
   save: ContextMenuItem;
 }
 
-export function useContextPresets(): ContextMenuPresets {
-  const { $globals, i18n } = useContext();
+export function useNuxtAppPresets(): ContextMenuPresets {
+  const { $globals, $i18n } = useNuxtApp();
 
   return {
     delete: {
-      title: i18n.tc("general.delete"),
+      title: $i18n.tc("general.delete"),
       icon: $globals.icons.delete,
       event: "delete",
     },
     edit: {
-      title: i18n.tc("general.edit"),
+      title: $i18n.tc("general.edit"),
       icon: $globals.icons.edit,
       event: "edit",
     },
     save: {
-      title: i18n.tc("general.save"),
+      title: $i18n.tc("general.save"),
       icon: $globals.icons.save,
       event: "save",
     },

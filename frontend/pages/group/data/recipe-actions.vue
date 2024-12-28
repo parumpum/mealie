@@ -119,36 +119,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, ref, useNuxtApp } from "#imports";
 import { validators } from "~/composables/use-validators";
 import { useGroupRecipeActions, useGroupRecipeActionData } from "~/composables/use-group-recipe-actions";
 import { GroupRecipeActionOut } from "~/lib/api/types/household";
 
 export default defineComponent({
   setup() {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const tableConfig = {
       hideColumns: true,
       canExport: true,
     };
     const tableHeaders = [
       {
-        text: i18n.t("general.id"),
+        text: $i18n.t("general.id"),
         value: "id",
         show: false,
       },
       {
-        text: i18n.t("general.title"),
+        text: $i18n.t("general.title"),
         value: "title",
         show: true,
       },
       {
-        text: i18n.t("general.url"),
+        text: $i18n.t("general.url"),
         value: "url",
         show: true,
       },
       {
-        text: i18n.t("data-pages.recipe-actions.action-type"),
+        text: $i18n.t("data-pages.recipe-actions.action-type"),
         value: "actionType",
         show: true,
       },

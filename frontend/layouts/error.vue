@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, useContext, useMeta, useRoute, useRouter } from "@nuxtjs/composition-api";
+import { defineComponent, ref, useNuxtApp, useNuxt2Meta, useRoute, useRouter } from "#imports";
 
 export default defineComponent({
   layout: "basic",
@@ -39,7 +39,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { $auth, $globals, i18n } = useContext();
+    const { $auth, $globals, $i18n } = useNuxtApp();
     const ready = ref(false);
 
     const route = useRoute();
@@ -52,7 +52,7 @@ export default defineComponent({
       }
 
       let replaceRoute = false;
-      let routeVal = route.value.fullPath || "/";
+      let routeVal = route.fullPath || "/";
       if (routeVal[0] !== "/") {
         routeVal = `/${routeVal}`;
       }
@@ -76,7 +76,7 @@ export default defineComponent({
     }
 
     async function handle404() {
-      const normalizedRoute = route.value.fullPath.replace(/\/$/, "");
+      const normalizedRoute = route.fullPath.replace(/\/$/, "");
       const newRoute = normalizedRoute.replace(/^\/group\/(mealplan|members|notifiers|webhooks)(\/.*)?$/, "/household/$1$2");
 
       if (newRoute !== normalizedRoute) {
@@ -94,15 +94,15 @@ export default defineComponent({
       ready.value = true;
     }
 
-    useMeta({
+    useNuxt2Meta({
       title:
         props.error.statusCode === 404
-          ? (i18n.t("page.404-not-found") as string)
-          : (i18n.t("page.an-error-occurred") as string),
+          ? ($i18n.t("page.404-not-found") as string)
+          : ($i18n.t("page.an-error-occurred") as string),
     });
 
     const buttons = [
-      { icon: $globals.icons.home, to: "/", text: i18n.t("general.home") },
+      { icon: $globals.icons.home, to: "/", text: $i18n.t("general.home") },
     ];
 
     return {

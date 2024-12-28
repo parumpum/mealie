@@ -125,8 +125,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext } from "@nuxtjs/composition-api";
 import DOMPurify from "dompurify";
+import { computed, defineComponent, useNuxtApp } from "#imports";
 import RecipeTimeCard from "~/components/Domain/Recipe/RecipeTimeCard.vue";
 import { useStaticRoutes } from "~/composables/api";
 import { Recipe, RecipeIngredient, RecipeStep} from "~/lib/api/types/recipe";
@@ -167,7 +167,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const preferences = useUserPrintPreferences();
     const { recipeImage } = useStaticRoutes();
     const { imageKey } = usePageState(props.recipe.slug);
@@ -182,7 +182,7 @@ export default defineComponent({
 
     const servingsDisplay = computed(() => {
       const { scaledAmountDisplay } = useScaledAmount(props.recipe.recipeYieldQuantity, props.scale);
-      return scaledAmountDisplay ? i18n.t("recipe.yields-amount-with-text", {
+      return scaledAmountDisplay ? $i18n.t("recipe.yields-amount-with-text", {
         amount: scaledAmountDisplay,
         text: props.recipe.recipeYield,
       }) as string : "";
@@ -190,7 +190,7 @@ export default defineComponent({
 
     const yieldDisplay = computed(() => {
       const { scaledAmountDisplay } = useScaledAmount(props.recipe.recipeServings, props.scale);
-      return scaledAmountDisplay ? i18n.t("recipe.serves-amount", { amount: scaledAmountDisplay }) as string : "";
+      return scaledAmountDisplay ? String($i18n.t("recipe.serves-amount", { amount: scaledAmountDisplay })) : "";
     });
 
     const recipeYield = computed(() => {

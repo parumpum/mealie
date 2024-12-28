@@ -1,10 +1,10 @@
 import { IncomingMessage } from "connect";
 import { useDark } from "@vueuse/core";
-import { useContext } from "@nuxtjs/composition-api";
+import { useNuxtApp } from "#imports";
 
 export const useToggleDarkMode = () => {
   const isDark = useDark();
-  const { $vuetify } = useContext();
+  const { $vuetify } = useNuxtApp();
 
   function toggleDark() {
     isDark.value = !$vuetify.theme.dark;

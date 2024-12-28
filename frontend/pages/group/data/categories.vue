@@ -94,26 +94,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, ref, useNuxtApp } from "#imports";
 import { validators } from "~/composables/use-validators";
 import { useCategoryStore, useCategoryData } from "~/composables/store";
 import { RecipeCategory } from "~/lib/api/types/recipe";
 
 export default defineComponent({
   setup() {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const tableConfig = {
       hideColumns: true,
       canExport: true,
     };
     const tableHeaders = [
       {
-        text: i18n.t("general.id"),
+        text: $i18n.t("general.id"),
         value: "id",
         show: false,
       },
       {
-        text: i18n.t("general.name"),
+        text: $i18n.t("general.name"),
         value: "name",
         show: true,
       },

@@ -76,10 +76,10 @@ import {
   ref,
   useRouter,
   computed,
-  useContext,
+  useNuxtApp,
   useRoute,
   onMounted,
-} from "@nuxtjs/composition-api";
+} from "#imports";
 import { AxiosResponse } from "axios";
 import { useUserApi } from "~/composables/api";
 import { useTagStore } from "~/composables/store/use-tag-store";
@@ -93,10 +93,10 @@ export default defineComponent({
       loading: false,
     });
 
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const api = useUserApi();
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug || $auth.user?.groupSlug || "");
 
     const router = useRouter();
     const tags = useTagStore();
@@ -124,29 +124,29 @@ export default defineComponent({
       set(recipe_import_url: string | null) {
         if (recipe_import_url !== null) {
           recipe_import_url = recipe_import_url.trim();
-          router.replace({ query: { ...route.value.query, recipe_import_url } });
+          router.replace({ query: { ...route.query, recipe_import_url } });
         }
       },
       get() {
-        return route.value.query.recipe_import_url as string | null;
+        return route.query.recipe_import_url as string | null;
       },
     });
 
     const importKeywordsAsTags = computed({
       get() {
-        return route.value.query.use_keywords === "1";
+        return route.query.use_keywords === "1";
       },
       set(v: boolean) {
-        router.replace({ query: { ...route.value.query, use_keywords: v ? "1" : "0" } });
+        router.replace({ query: { ...route.query, use_keywords: v ? "1" : "0" } });
       },
     });
 
     const stayInEditMode = computed({
       get() {
-        return route.value.query.edit === "1";
+        return route.query.edit === "1";
       },
       set(v: boolean) {
-        router.replace({ query: { ...route.value.query, edit: v ? "1" : "0" } });
+        router.replace({ query: { ...route.query, edit: v ? "1" : "0" } });
       },
     });
 

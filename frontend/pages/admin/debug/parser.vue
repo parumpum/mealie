@@ -1,7 +1,7 @@
 <template>
   <v-container class="pa-0">
     <v-container>
-      <BaseCardSectionTitle :title="$t('admin.ingredients-natural-language-processor')">
+      <BaseCardSectionTitle :title="String($t('admin.ingredients-natural-language-processor'))">
         {{ $t('admin.ingredients-natural-language-processor-explanation') }}
 
         <p class="pt-3">
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, ref, toRefs, useNuxtApp } from "#imports";
 import { alert } from "~/composables/use-toast";
 import { useUserApi } from "~/composables/api";
 import { IngredientConfidence } from "~/lib/api/types/recipe";
@@ -83,7 +83,7 @@ export default defineComponent({
       parser: "nlp" as Parser,
     });
 
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     const confidence = ref<IngredientConfidence>({});
 
@@ -109,7 +109,7 @@ export default defineComponent({
       }
 
       const property = confidence.value[attribute];
-      if (property !== undefined) {
+      if (property !== undefined && property !== null) {
         return `${(property * 100).toFixed(0)}%`;
       }
       return undefined;
@@ -163,7 +163,7 @@ export default defineComponent({
           }
         });
       } else {
-        alert.error(i18n.t("events.something-went-wrong") as string);
+        alert.error($i18n.t("events.something-went-wrong") as string);
         state.results = false;
       }
       state.loading = false;
@@ -171,25 +171,25 @@ export default defineComponent({
 
     const properties = reactive({
       quantity: {
-        subtitle: i18n.t("recipe.quantity"),
+        subtitle: $i18n.t("recipe.quantity"),
         value: "" as string | number,
         color: null,
         confidence: null,
       },
       unit: {
-        subtitle: i18n.t("recipe.unit"),
+        subtitle: $i18n.t("recipe.unit"),
         value: "",
         color: null,
         confidence: null,
       },
       food: {
-        subtitle: i18n.t("shopping-list.food"),
+        subtitle: $i18n.t("shopping-list.food"),
         value: "",
         color: null,
         confidence: null,
       },
       comment: {
-        subtitle: i18n.t("recipe.comment"),
+        subtitle: $i18n.t("recipe.comment"),
         value: "",
         color: null,
         confidence: null,

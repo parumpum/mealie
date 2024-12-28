@@ -1,4 +1,5 @@
-import { ref, Ref } from "@nuxtjs/composition-api";
+import { Ref } from "vue";
+import { ref } from "#imports";
 import { RequestResponse } from "~/lib/api/types/non-generated";
 import { ValidationResponse } from "~/lib/api/types/response";
 import { required, email, whitespace, url, minLength, maxLength } from "~/lib/validators";

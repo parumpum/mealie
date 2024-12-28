@@ -17,7 +17,7 @@
         <v-container>
           <v-row>
             <v-col cols="3" class="text-left">
-              <ButtonLink :to="`/shopping-lists?disableRedirect=true`" :text="$tc('general.back')" :icon="$globals.icons.backArrow" />
+              <ButtonLink :to="`/shopping-lists?disableRedirect=true`" :text="String($tc('general.back'))" :icon="$globals.icons.backArrow" />
             </v-col>
             <v-col cols="6" class="d-flex justify-center">
               <v-img max-height="100" max-width="100" :src="require('~/static/svgs/shopping-cart.svg')"></v-img>
@@ -63,7 +63,7 @@
                 'color': getTextColor(getLabelColor(value[0])),
                 'letter-spacing': 'normal',
               }"
-            @click="toggleShowLabel(key)"
+            @click="toggleShowLabel(String(key))"
           >
             <v-icon>
               {{ labelOpenState[key] ? $globals.icons.chevronDown : $globals.icons.chevronRight }}
@@ -73,7 +73,7 @@
         <v-divider/>
         <v-expand-transition group>
           <div v-show="labelOpenState[key]">
-            <draggable :value="value" handle=".handle" delay="250" :delay-on-touch-only="true" @start="loadingCounter += 1" @end="loadingCounter -= 1" @input="updateIndexUncheckedByLabel(key, $event)">
+            <draggable :value="value" handle=".handle" delay="250" :delay-on-touch-only="true" @start="loadingCounter += 1" @end="loadingCounter -= 1" @input="updateIndexUncheckedByLabel(key.toString(), $event)">
               <v-lazy v-for="(item, index) in value" :key="item.id" class="ml-2 my-2">
                 <ShoppingListItem
                   v-model="value[index]"
@@ -97,7 +97,7 @@
       <BaseDialog
         v-model="reorderLabelsDialog"
         :icon="$globals.icons.tagArrowUp"
-        :title="$t('shopping-list.reorder-labels')"
+        :title="String($t('shopping-list.reorder-labels'))"
         :submit-icon="$globals.icons.save"
         :submit-text="$tc('general.save')"
         @submit="saveLabelOrder"
@@ -123,7 +123,7 @@
       <BaseDialog
         v-model="settingsDialog"
         :icon="$globals.icons.cog"
-        :title="$t('general.settings')"
+        :title="String($t('general.settings'))"
         @confirm="updateSettings"
       >
         <v-container>
@@ -261,7 +261,7 @@
         <RecipeList :recipes="Array.from(recipeMap.values())" show-description :disabled="$nuxt.isOffline">
           <template v-for="(recipe, index) in recipeMap.values()" #[`actions-${recipe.id}`]>
             <v-list-item-action :key="'item-actions-decrease' + recipe.id">
-              <v-btn icon :disabled="$nuxt.isOffline" @click.prevent="removeRecipeReferenceToList(recipe.id)">
+              <v-btn icon :disabled="$nuxt.isOffline" @click.prevent="removeRecipeReferenceToList(recipe.id || '')">
                 <v-icon color="grey lighten-1">{{ $globals.icons.minus }}</v-icon>
               </v-btn>
             </v-list-item-action>
@@ -269,7 +269,7 @@
               {{ shoppingList.recipeReferences[index].recipeQuantity }}
             </div>
             <v-list-item-action :key="'item-actions-increase' + recipe.id">
-              <v-btn icon :disabled="$nuxt.isOffline" @click.prevent="addRecipeReferenceToList(recipe.id)">
+              <v-btn icon :disabled="$nuxt.isOffline" @click.prevent="addRecipeReferenceToList(recipe.id || '')">
                 <v-icon color="grey lighten-1">{{ $globals.icons.createAlt }}</v-icon>
               </v-btn>
             </v-list-item-action>
@@ -307,8 +307,8 @@
 <script lang="ts">
 import draggable from "vuedraggable";
 
-import { defineComponent, useRoute, computed, ref, toRefs, onUnmounted, useContext, reactive, watch } from "@nuxtjs/composition-api";
 import { useIdle, useToggle } from "@vueuse/core";
+import { defineComponent, useRoute, computed, ref, toRefs, onUnmounted, useNuxtApp, reactive, watch } from "#imports";
 import { useCopyList } from "~/composables/use-copy";
 import { useUserApi } from "~/composables/api";
 import MultiPurposeLabelSection from "~/components/Domain/ShoppingList/MultiPurposeLabelSection.vue"
@@ -340,7 +340,7 @@ export default defineComponent({
   },
   middleware: "auth",
   setup() {
-    const { $auth, i18n } = useContext();
+    const { $auth, $i18n } = useNuxtApp();
     const preferences = useShoppingListPreferences();
 
     const { idle } = useIdle(5 * 60 * 1000) // 5 minutes
@@ -354,9 +354,9 @@ export default defineComponent({
     const preserveItemOrder = ref(false);
 
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
-    const id = route.value.params.id;
-    const shoppingListItemActions = useShoppingListItemActions(id);
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
+    const id = route.params.id;
+    const shoppingListItemActions = useShoppingListItemActions(id as string);
 
     const state = reactive({
       checkAllDialog: false,
@@ -464,7 +464,7 @@ export default defineComponent({
         unchecked: shoppingList.value?.listItems?.filter((item) => !item.checked) ?? [],
         checked: shoppingList.value?.listItems
           ?.filter((item) => item.checked)
-          .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
+          .sort((a, b) => ((a.updatedAt ?? "") < (b.updatedAt ?? "") ? 1 : -1))
           ?? [],
       };
     });
@@ -480,8 +480,8 @@ export default defineComponent({
       let hasChanges = false;
 
       for (const item of shoppingList.value.listItems) {
-        const labelName = item.label?.name || i18n.tc("shopping-list.no-label");
-        if (!existingLabels.has(labelName) && !(labelName in labelOpenState.value)) {
+        const labelName = item.label?.name || $i18n.tc("shopping-list.no-label");
+        if (!existingLabels.has(labelName as string) && !(labelName in labelOpenState.value)) {
           labelOpenState.value[labelName] = true;
           hasChanges = true;
         }
@@ -495,7 +495,7 @@ export default defineComponent({
     const labelNames = computed(() => {
       return new Set(
         shoppingList.value?.listItems
-          ?.map(item => item.label?.name || i18n.tc("shopping-list.no-label"))
+          ?.map(item => item.label?.name || String($i18n.tc("shopping-list.no-label")))
           .filter(Boolean) ?? []
       );
     });
@@ -632,8 +632,8 @@ export default defineComponent({
     };
 
     const contextMenu = [
-      { title: i18n.tc("general.delete"), action: contextActions.delete },
-      { title: i18n.tc("recipe.ingredient"), action: contextActions.setIngredient },
+      { title: $i18n.tc("general.delete"), action: contextActions.delete },
+      { title: $i18n.tc("recipe.ingredient"), action: contextActions.setIngredient },
     ];
 
     function contextMenuAction(action: string, item: ShoppingListItemOut, idx: number) {
@@ -805,7 +805,7 @@ export default defineComponent({
 
     function updateItemsByLabel() {
       const items: { [prop: string]: ShoppingListItemOut[] } = {};
-      const noLabelText = i18n.tc("shopping-list.no-label");
+      const noLabelText = $i18n.tc("shopping-list.no-label");
       const noLabel = [] as ShoppingListItemOut[];
 
       shoppingList.value?.listItems?.forEach((item) => {
@@ -952,6 +952,8 @@ export default defineComponent({
       return {
         id: uuid4(),
         shoppingListId: id,
+        groupId: groupSlug.value,
+        householdId: $auth.user?.householdId,
         checked: false,
         position: shoppingList.value?.listItems?.length || 1,
         isFood,

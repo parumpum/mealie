@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useRoute, ref, onMounted } from "@nuxtjs/composition-api";
+import { defineComponent, useRoute, ref, onMounted } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { ReportOut } from "~/lib/api/types/reports";
 
@@ -37,7 +37,7 @@ export default defineComponent({
   middleware: "auth",
   setup() {
     const route = useRoute();
-    const id = route.value.params.id;
+    const id = route.params.id;
 
     const api = useUserApi();
 

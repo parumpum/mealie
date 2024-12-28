@@ -155,7 +155,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "@nuxtjs/composition-api";
+import { computed, defineComponent } from "#imports";
 import { validators } from "@/composables/use-validators";
 import { fieldTypes } from "@/composables/forms";
 import { AutoFormItems } from "~/types/auto-forms";

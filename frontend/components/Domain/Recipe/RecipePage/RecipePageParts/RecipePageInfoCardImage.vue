@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, useContext, watch } from "@nuxtjs/composition-api";
+import { computed, defineComponent, ref, useNuxtApp, watch } from "#imports";
 import { useStaticRoutes, useUserApi  } from "~/composables/api";
 import { HouseholdSummary } from "~/lib/api/types/household";
 import { usePageState, usePageUser } from "~/composables/recipe-page/shared-state";
@@ -29,7 +29,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { $vuetify } = useContext();
+    const { $vuetify } = useNuxtApp();
     const { recipeImage } = useStaticRoutes();
     const { imageKey } = usePageState(props.recipe.slug);
     const { user } = usePageUser();

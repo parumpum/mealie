@@ -77,7 +77,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useRoute, onMounted, ref, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useRoute, onMounted, ref, useNuxtApp } from "#imports";
 import { useAdminApi, useUserApi } from "~/composables/api";
 import { useGroups } from "~/composables/use-groups";
 import { useAdminHouseholds } from "~/composables/use-households";
@@ -93,10 +93,10 @@ export default defineComponent({
     const { userForm } = useUserForm();
     const { groups } = useGroups();
     const { useHouseholdsInGroup } = useAdminHouseholds();
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const route = useRoute();
 
-    const userId = route.value.params.id;
+    const userId = route.params.id;
 
     // ==============================================
     // New User Form
@@ -121,7 +121,7 @@ export default defineComponent({
       const { data, error } = await adminApi.users.getOne(userId);
 
       if (error?.response?.status === 404) {
-        alert.error(i18n.tc("user.user-not-found"));
+        alert.error($i18n.tc("user.user-not-found"));
         userError.value = true;
       }
 
@@ -159,9 +159,9 @@ export default defineComponent({
       if (!user.value?.email) return;
       const { response } = await userApi.email.sendForgotPassword({ email: user.value.email });
       if (response && response.status === 200) {
-        alert.success(i18n.tc("profile.email-sent"));
+        alert.success($i18n.tc("profile.email-sent"));
       } else {
-        alert.error(i18n.tc("profile.error-sending-email"));
+        alert.error($i18n.tc("profile.error-sending-email"));
       }
     }
 

@@ -1,4 +1,4 @@
-import { useAsync, ref } from "@nuxtjs/composition-api";
+import { useLazyAsyncData, ref } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { UserIn, UserOut } from "~/lib/api/types/user";
 
@@ -15,7 +15,7 @@ export const useAllUsers = function () {
   function getAllUsers() {
     loading.value = true;
     const asyncKey = String(Date.now());
-    const allUsers = useAsync(async () => {
+    const allUsers = useLazyAsyncData(async () => {
       const { data } = await api.users.getAll();
       if (data) {
         return data.items;
@@ -52,7 +52,7 @@ export const useUser = function (refreshFunc: CallableFunction | null = null) {
 
   function getUser(id: string) {
     loading.value = true;
-    const user = useAsync(async () => {
+    const user = useLazyAsyncData(async () => {
       const { data } = await api.users.getOne(id);
       return data;
     }, id);

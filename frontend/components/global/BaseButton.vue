@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useNuxtApp } from "#imports";
 import { useUserApi } from "~/composables/api";
 
 export default defineComponent({
@@ -117,40 +117,40 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { $globals, i18n } = useContext();
+    const { $globals, $i18n } = useNuxtApp();
     const buttonOptions = {
       create: {
-        text: i18n.t("general.create"),
+        text: $i18n.t("general.create"),
         icon: $globals.icons.createAlt,
         color: "success",
       },
       update: {
-        text: i18n.t("general.update"),
+        text: $i18n.t("general.update"),
         icon: $globals.icons.edit,
         color: "success",
       },
       save: {
-        text: i18n.t("general.save"),
+        text: $i18n.t("general.save"),
         icon: $globals.icons.save,
         color: "success",
       },
       edit: {
-        text: i18n.t("general.edit"),
+        text: $i18n.t("general.edit"),
         icon: $globals.icons.edit,
         color: "info",
       },
       delete: {
-        text: i18n.t("general.delete"),
+        text: $i18n.t("general.delete"),
         icon: $globals.icons.delete,
         color: "error",
       },
       cancel: {
-        text: i18n.t("general.cancel"),
+        text: $i18n.t("general.cancel"),
         icon: $globals.icons.close,
         color: "grey",
       },
       download: {
-        text: i18n.t("general.download"),
+        text: $i18n.t("general.download"),
         icon: $globals.icons.download,
         color: "info",
       },

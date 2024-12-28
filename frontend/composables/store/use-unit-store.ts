@@ -1,5 +1,6 @@
-import { ref, Ref } from "@nuxtjs/composition-api";
+import { Ref } from "vue";
 import { useData, useStore } from "../partials/use-store-factory";
+import { ref } from "#imports";
 import { IngredientUnit } from "~/lib/api/types/recipe";
 import { useUserApi } from "~/composables/api";
 

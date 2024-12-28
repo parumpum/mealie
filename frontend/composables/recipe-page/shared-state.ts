@@ -1,4 +1,5 @@
-import { computed, ComputedRef, ref, Ref, useContext } from "@nuxtjs/composition-api";
+import { ComputedRef, Ref } from "vue";
+import { computed, ref, useNuxtApp } from "#imports";
 import { UserOut } from "~/lib/api/types/user";
 import { useNavigationWarning } from "~/composables/use-navigation-warning";
 
@@ -151,7 +152,7 @@ export function clearPageState(slug: string) {
  * object with all properties set to their zero value is returned.
  */
 export function usePageUser(): { user: UserOut } {
-  const { $auth } = useContext();
+  const { $auth } = useNuxtApp();
 
   if (!$auth.user) {
     return {

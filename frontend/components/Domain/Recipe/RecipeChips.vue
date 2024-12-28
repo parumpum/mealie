@@ -1,5 +1,5 @@
 <template>
-  <div v-if="items.length > 0">
+  <div v-if="items">
     <h2 v-if="title" class="mt-4">{{ title }}</h2>
     <v-chip
       v-for="category in items.slice(0, limit)"
@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext, useRoute } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useNuxtApp, useRoute } from "#imports";
 import { RecipeCategory, RecipeTag, RecipeTool } from "~/lib/api/types/recipe";
 
 export type UrlPrefixParam = "tags" | "categories" | "tools";
@@ -29,7 +29,8 @@ export default defineComponent({
       default: false,
     },
     items: {
-      type: Array as () => RecipeCategory[] | RecipeTag[] | RecipeTool[],
+      // 'RecipeCategory[] | RecipeTag[] | RecipeTool[] | undefined'.
+      type: Array as () => RecipeCategory[] | RecipeTag[] | RecipeTool[] | null | undefined,
       default: () => [],
     },
     title: {
@@ -54,10 +55,10 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
 
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "")
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "")
     const baseRecipeRoute = computed<string>(() => {
       return `/g/${groupSlug.value}`
     });

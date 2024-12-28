@@ -1,10 +1,11 @@
-import { useRoute, WritableComputedRef, computed, nextTick, useRouter } from "@nuxtjs/composition-api";
+import { Ref } from "vue";
+import { useRoute, computed, nextTick, useRouter } from "#imports";
 
 export function useRouterQuery(query: string) {
   const router = useRoute();
   // TODO FUTURE: Remove when migrating to Vue 3
 
-  const param: WritableComputedRef<string> = computed({
+  const param: Ref<string> = computed({
     get(): string {
       console.log("Get Query Change");
       // @ts-ignore For some reason, this could also return an array
@@ -24,13 +25,13 @@ export function useRouteQuery<T extends string | string[]>(name: string, default
 
   return computed<any>({
     get() {
-      const data = route.value.query[name];
+      const data = route.query[name];
       if (data == null) return defaultValue ?? null;
       return data;
     },
     set(v) {
       nextTick(() => {
-        router.replace({ query: { ...route.value.query, [name]: v } });
+        router.replace({ query: { ...route.query, [name]: v } });
       });
     },
   });

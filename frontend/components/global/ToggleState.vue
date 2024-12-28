@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from "@nuxtjs/composition-api";
+import { defineComponent, ref, watch } from "#imports";
 
 export default defineComponent({
   props: {

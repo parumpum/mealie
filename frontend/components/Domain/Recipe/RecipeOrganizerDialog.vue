@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRefs, useContext, watch } from "@nuxtjs/composition-api";
+import { computed, defineComponent, reactive, toRefs, useNuxtApp, watch } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { useCategoryStore, useTagStore, useToolStore } from "~/composables/store";
 import { RecipeOrganizer, Organizer } from "~/lib/api/types/non-generated";
@@ -66,7 +66,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     const state = reactive({
       name: "",
@@ -106,27 +106,27 @@ export default defineComponent({
       switch (props.itemType) {
         case Organizer.Tag:
           return {
-            title: i18n.t("tag.create-a-tag"),
-            label: i18n.t("tag.tag-name"),
+            title: $i18n.t("tag.create-a-tag"),
+            label: $i18n.t("tag.tag-name"),
             api: userApi.tags,
           };
         case Organizer.Tool:
           return {
-            title: i18n.t("tool.create-a-tool"),
-            label: i18n.t("tool.tool-name"),
+            title: $i18n.t("tool.create-a-tool"),
+            label: $i18n.t("tool.tool-name"),
             api: userApi.tools,
           };
         default:
           return {
-            title: i18n.t("category.create-a-category"),
-            label: i18n.t("category.category-name"),
+            title: $i18n.t("category.create-a-category"),
+            label: $i18n.t("category.category-name"),
             api: userApi.categories,
           };
       }
     });
 
     const rules = {
-      required: (val: string) => !!val || (i18n.t("general.a-name-is-required") as string),
+      required: (val: string) => !!val || String($i18n.t("general.a-name-is-required")),
     };
 
     async function select() {

@@ -2,7 +2,7 @@
   <div>
 
     <!-- Merge Dialog -->
-    <BaseDialog v-model="mergeDialog" :icon="$globals.icons.foods" :title="$t('data-pages.foods.combine-food')" @confirm="mergeFoods">
+    <BaseDialog v-model="mergeDialog" :icon="$globals.icons.foods" :title="$t('data-pages.foods.combine-food').toString()" @confirm="mergeFoods">
       <v-card-text>
         <div>
           {{ $t("data-pages.foods.merge-dialog-text") }}
@@ -59,7 +59,7 @@
     <BaseDialog
       v-model="createDialog"
       :icon="$globals.icons.foods"
-      :title="$t('data-pages.foods.create-food')"
+      :title="$t('data-pages.foods.create-food').toString()"
       :submit-icon="$globals.icons.save"
       :submit-text="$tc('general.save')"
       @submit="createFood"
@@ -112,7 +112,7 @@
     <BaseDialog
       v-model="editDialog"
       :icon="$globals.icons.foods"
-      :title="$t('data-pages.foods.edit-food')"
+      :title="$t('data-pages.foods.edit-food').toString()"
       :submit-icon="$globals.icons.save"
       :submit-text="$tc('general.save')"
       @submit="editSaveFood"
@@ -288,8 +288,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, computed, useContext } from "@nuxtjs/composition-api";
 import type { LocaleObject } from "@nuxtjs/i18n";
+import { defineComponent, onMounted, ref, computed, useNuxtApp } from "#imports";
 import RecipeDataAliasManagerDialog from "~/components/Domain/Recipe/RecipeDataAliasManagerDialog.vue";
 import { validators } from "~/composables/use-validators";
 import { useAppInfo, useUserApi } from "~/composables/api";
@@ -304,52 +304,52 @@ export default defineComponent({
   setup() {
     const userApi = useUserApi();
     const appInfo = useAppInfo();
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const tableConfig = {
       hideColumns: true,
       canExport: true,
     };
     const tableHeaders = [
       {
-        text: i18n.tc("general.id"),
+        text: $i18n.tc("general.id"),
         value: "id",
         show: false,
       },
       {
-        text: i18n.tc("general.name"),
+        text: $i18n.tc("general.name"),
         value: "name",
         show: true,
       },
       {
-        text: i18n.tc("general.plural-name"),
+        text: $i18n.tc("general.plural-name"),
         value: "pluralName",
         show: true,
       },
       {
-        text: i18n.tc("recipe.description"),
+        text: $i18n.tc("recipe.description"),
         value: "description",
         show: true,
       },
       {
-        text: i18n.tc("shopping-list.label"),
+        text: $i18n.tc("shopping-list.label"),
         value: "label",
         show: true,
       },
       {
-        text: i18n.tc("tool.on-hand"),
+        text: $i18n.tc("tool.on-hand"),
         value: "onHand",
         show: true,
       },
       {
-        text: i18n.tc("general.date-added"),
+        text: $i18n.tc("general.date-added"),
         value: "createdAt",
         show: false,
       }
     ];
 
-    function formatDate(date: string) {
+    function formatDate(date: string): string {
       try {
-        return i18n.d(Date.parse(date), "medium");
+        return $i18n.d(Date.parse(date), "medium") as string;
       } catch {
         return "";
       }
@@ -507,7 +507,7 @@ export default defineComponent({
     });
 
     const locales = LOCALES.filter((locale) =>
-      (i18n.locales as LocaleObject[]).map((i18nLocale) => i18nLocale.code).includes(locale.value)
+      ($i18n.locales as LocaleObject[]).map((i18nLocale) => i18nLocale.code).includes(locale.value)
     );
 
     async function seedDatabase() {

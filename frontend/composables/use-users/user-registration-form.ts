@@ -1,4 +1,5 @@
-import { ref, Ref, useContext } from "@nuxtjs/composition-api";
+import { Ref } from "vue";
+import { ref, useNuxtApp } from "#imports";
 import { useAsyncValidator } from "~/composables/use-validators";
 import { VForm } from "~/types/vuetify";
 import { usePublicApi } from "~/composables/api/api-client";
@@ -12,7 +13,7 @@ const password2 = ref("");
 const advancedOptions = ref(false);
 
 export const useUserRegistrationForm = () => {
-  const { i18n } = useContext();
+  const { $i18n } = useNuxtApp();
   function safeValidate(form: Ref<VForm | null>) {
     if (form.value && form.value.validate) {
       return form.value.validate();
@@ -29,14 +30,14 @@ export const useUserRegistrationForm = () => {
   const { validate: validateUsername, valid: validUsername } = useAsyncValidator(
     username,
     (v: string) => publicApi.validators.username(v),
-    i18n.tc("validation.username-is-taken"),
+    String($i18n.tc("validation.username-is-taken")),
     usernameErrorMessages
   );
   const emailErrorMessages = ref<string[]>([]);
   const { validate: validateEmail, valid: validEmail } = useAsyncValidator(
     email,
     (v: string) => publicApi.validators.email(v),
-    i18n.tc("validation.email-is-taken"),
+    String($i18n.tc("validation.email-is-taken")),
     emailErrorMessages
   );
   const accountDetails = {
@@ -60,7 +61,7 @@ export const useUserRegistrationForm = () => {
   };
   // ================================================================
   // Provide Credentials
-  const passwordMatch = () => password1.value === password2.value || i18n.tc("user.password-must-match");
+  const passwordMatch = () => password1.value === password2.value || String($i18n.tc("user.password-must-match"));
   const credentials = {
     password1,
     password2,

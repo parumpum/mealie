@@ -147,6 +147,7 @@
 </template>
 
 <script lang="ts">
+import { TranslateResult } from "vue-i18n";
 import {
   computed,
   onMounted,
@@ -154,10 +155,10 @@ import {
   toRefs,
   ref,
   defineComponent,
-  useAsync,
-  useContext,
-} from "@nuxtjs/composition-api";
-import { TranslateResult } from "vue-i18n";
+  useLazyAsyncData,
+  useNuxtApp,
+  $i18n,
+} from "#imports";
 import { useAdminApi, useUserApi } from "~/composables/api";
 import { validators } from "~/composables/use-validators";
 import { useAsyncKey } from "~/composables/use-utils";
@@ -202,6 +203,7 @@ export default defineComponent({
             isUpToDate: false,
             ldapReady: false,
             oidcReady: false,
+            enableOpenai: false,
         });
         function isLocalHostOrHttps() {
             return window.location.hostname === "localhost" || window.location.protocol === "https:";
@@ -225,55 +227,55 @@ export default defineComponent({
             const data: SimpleCheck[] = [
                 {
                     id: "application-version",
-                    text: i18n.t("settings.application-version"),
+                    text: $i18n.t("settings.application-version"),
                     status: appConfig.value.isUpToDate,
-                    errorText: i18n.t("settings.application-version-error-text", [rawAppInfo.value.version, rawAppInfo.value.versionLatest]),
-                    successText: i18n.t("settings.mealie-is-up-to-date"),
+                    errorText: $i18n.t("settings.application-version-error-text", [rawAppInfo.value.version, rawAppInfo.value.versionLatest]),
+                    successText: $i18n.t("settings.mealie-is-up-to-date"),
                     color: appConfig.value.isUpToDate ? goodColor : warningColor,
                     icon: appConfig.value.isUpToDate ? goodIcon : warningIcon,
                 },
                 {
                     id: "secure-site",
-                    text: i18n.t("settings.secure-site"),
+                    text: $i18n.t("settings.secure-site"),
                     status: appConfig.value.isSiteSecure,
-                    errorText: i18n.t("settings.secure-site-error-text"),
-                    successText: i18n.t("settings.secure-site-success-text"),
+                    errorText: $i18n.t("settings.secure-site-error-text"),
+                    successText: $i18n.t("settings.secure-site-success-text"),
                     color: appConfig.value.isSiteSecure ? goodColor : badColor,
                     icon: appConfig.value.isSiteSecure ? goodIcon : badIcon,
                 },
                 {
                     id: "server-side-base-url",
-                    text: i18n.t("settings.server-side-base-url"),
+                    text: $i18n.t("settings.server-side-base-url"),
                     status: appConfig.value.baseUrlSet,
-                    errorText: i18n.t("settings.server-side-base-url-error-text"),
-                    successText: i18n.t("settings.server-side-base-url-success-text"),
+                    errorText: $i18n.t("settings.server-side-base-url-error-text"),
+                    successText: $i18n.t("settings.server-side-base-url-success-text"),
                     color: appConfig.value.baseUrlSet ? goodColor : badColor,
                     icon: appConfig.value.baseUrlSet ? goodIcon : badIcon,
                 },
                 {
                     id: "ldap-ready",
-                    text: i18n.t("settings.ldap-ready"),
+                    text: $i18n.t("settings.ldap-ready"),
                     status: appConfig.value.ldapReady,
-                    errorText: i18n.t("settings.ldap-ready-error-text"),
-                    successText: i18n.t("settings.ldap-ready-success-text"),
+                    errorText: $i18n.t("settings.ldap-ready-error-text"),
+                    successText: $i18n.t("settings.ldap-ready-success-text"),
                     color: appConfig.value.ldapReady ? goodColor : warningColor,
                     icon: appConfig.value.ldapReady ? goodIcon : warningIcon,
                 },
                 {
                     id: "oidc-ready",
-                    text: i18n.t("settings.oidc-ready"),
+                    text: $i18n.t("settings.oidc-ready"),
                     status: appConfig.value.oidcReady,
-                    errorText: i18n.t("settings.oidc-ready-error-text"),
-                    successText: i18n.t("settings.oidc-ready-success-text"),
+                    errorText: $i18n.t("settings.oidc-ready-error-text"),
+                    successText: $i18n.t("settings.oidc-ready-success-text"),
                     color: appConfig.value.oidcReady ? goodColor : warningColor,
                     icon: appConfig.value.oidcReady ? goodIcon : warningIcon,
                 },
                 {
                     id: "openai-ready",
-                    text: i18n.t("settings.openai-ready"),
+                    text: $i18n.t("settings.openai-ready"),
                     status: appConfig.value.enableOpenai,
-                    errorText: i18n.t("settings.openai-ready-error-text"),
-                    successText: i18n.t("settings.openai-ready-success-text"),
+                    errorText: $i18n.t("settings.openai-ready-error-text"),
+                    successText: $i18n.t("settings.openai-ready-success-text"),
                     color: appConfig.value.enableOpenai ? goodColor : warningColor,
                     icon: appConfig.value.enableOpenai ? goodIcon : warningIcon,
                 },
@@ -309,72 +311,72 @@ export default defineComponent({
         });
         // ============================================================
         // General About Info
-        const { $globals, i18n } = useContext();
+        const { $globals, $i18n } = useNuxtApp();
         const rawAppInfo = ref({
             version: "null",
             versionLatest: "null",
         });
         function getAppInfo() {
-            const statistics = useAsync(async () => {
+            const statistics = useLazyAsyncData(async () => {
                 const { data } = await adminApi.about.about();
                 if (data) {
                     rawAppInfo.value.version = data.version;
                     rawAppInfo.value.versionLatest = data.versionLatest;
                     const prettyInfo = [
                         {
-                            name: i18n.t("about.version"),
+                            name: $i18n.t("about.version"),
                             icon: $globals.icons.information,
                             value: data.version,
                         },
                         {
                             slot: "build",
-                            name: i18n.t("settings.build"),
+                            name: $i18n.t("settings.build"),
                             icon: $globals.icons.information,
                             value: data.buildId,
                         },
                         {
-                            name: i18n.t("about.application-mode"),
+                            name: $i18n.t("about.application-mode"),
                             icon: $globals.icons.devTo,
-                            value: data.production ? i18n.t("about.production") : i18n.t("about.development"),
+                            value: data.production ? $i18n.t("about.production") : $i18n.t("about.development"),
                         },
                         {
-                            name: i18n.t("about.demo-status"),
+                            name: $i18n.t("about.demo-status"),
                             icon: $globals.icons.testTube,
-                            value: data.demoStatus ? i18n.t("about.demo") : i18n.t("about.not-demo"),
+                            value: data.demoStatus ? $i18n.t("about.demo") : $i18n.t("about.not-demo"),
                         },
                         {
-                            name: i18n.t("about.api-port"),
+                            name: $i18n.t("about.api-port"),
                             icon: $globals.icons.api,
                             value: data.apiPort,
                         },
                         {
-                            name: i18n.t("about.api-docs"),
+                            name: $i18n.t("about.api-docs"),
                             icon: $globals.icons.file,
-                            value: data.apiDocs ? i18n.t("general.enabled") : i18n.t("general.disabled"),
+                            value: data.apiDocs ? $i18n.t("general.enabled") : $i18n.t("general.disabled"),
                         },
                         {
-                            name: i18n.t("about.database-type"),
+                            name: $i18n.t("about.database-type"),
                             icon: $globals.icons.database,
                             value: data.dbType,
                         },
                         {
-                            name: i18n.t("about.database-url"),
+                            name: $i18n.t("about.database-url"),
                             icon: $globals.icons.database,
                             value: data.dbUrl,
                         },
                         {
-                            name: i18n.t("about.default-group"),
+                            name: $i18n.t("about.default-group"),
                             icon: $globals.icons.group,
                             value: data.defaultGroup,
                         },
                         {
-                            name: i18n.t("about.default-household"),
+                            name: $i18n.t("about.default-household"),
                             icon: $globals.icons.household,
                             value: data.defaultHousehold,
                         },
                         {
                             slot: "recipe-scraper",
-                            name: i18n.t("settings.recipe-scraper-version"),
+                            name: $i18n.t("settings.recipe-scraper-version"),
                             icon: $globals.icons.primary,
                             value: data.recipeScraperVersion,
                         },
@@ -389,15 +391,15 @@ export default defineComponent({
         const bugReportDialog = ref(false);
         const bugReportText = computed(() => {
             const ignore = {
-                [i18n.tc("about.database-url")]: true,
-                [i18n.tc("about.default-group")]: true,
+                [$i18n.tc("about.database-url")]: true,
+                [$i18n.tc("about.default-group")]: true,
             };
             let text = "**Details**\n";
             appInfo.value?.forEach((item) => {
-                if (ignore[item.name as string]) {
+                if (ignore[item.name]) {
                     return;
                 }
-                text += `${item.name as string}: ${item.value as string}\n`;
+                text += `${item.name}: ${item.value}\n`;
             });
             const ignoreChecks: {
                 [key: string]: boolean;
@@ -409,10 +411,10 @@ export default defineComponent({
                 if (ignoreChecks[item.id]) {
                     return;
                 }
-                const status = item.status ? i18n.tc("general.yes") : i18n.tc("general.no");
+                const status = item.status ? $i18n.tc("general.yes") : $i18n.tc("general.no");
                 text += `${item.text.toString()}: ${status}\n`;
             });
-            text += `${i18n.tc("settings.email-configured")}: ${appConfig.value.emailReady ? i18n.tc("general.yes") : i18n.tc("general.no")}\n`;
+            text += `${$i18n.tc("settings.email-configured")}: ${appConfig.value.emailReady ? $i18n.tc("general.yes") : $i18n.tc("general.no")}\n`;
             return text;
         });
         return {
@@ -430,7 +432,7 @@ export default defineComponent({
     },
     head() {
         return {
-            title: this.$t("settings.site-settings") as string,
+            title: this.$t("settings.site-settings"),
         };
     }
 });

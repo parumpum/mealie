@@ -1,23 +1,23 @@
-import { useContext } from "@nuxtjs/composition-api";
 import { useClipboard } from "@vueuse/core";
 import { alert } from "./use-toast";
+import { useNuxtApp } from "#imports";
 
 export function useCopy() {
   const { copy, copied, isSupported } = useClipboard();
-  const { i18n } = useContext();
+  const { $i18n } = useNuxtApp();
 
   function copyText(text: string) {
     if (!isSupported.value) {
-      alert.error(i18n.tc("general.clipboard-not-supported"));
+      alert.error(String($i18n.tc("general.clipboard-not-supported")));
       return;
     }
     copy(text).then(() => {
       // Verify copy success as no error is thrown on failure.
       if (copied.value) {
-        alert.success(i18n.tc("general.copied-to-clipboard"));
+        alert.success(String($i18n.tc("general.copied-to-clipboard")));
       }
       else {
-        alert.error(i18n.tc("general.clipboard-copy-failure"));
+        alert.error(String($i18n.tc("general.clipboard-copy-failure")));
       }
     });
   }
@@ -27,11 +27,11 @@ export function useCopy() {
 
 export function useCopyList() {
   const { copy, isSupported, copied } = useClipboard();
-  const { i18n } = useContext();
+  const { $i18n } = useNuxtApp();
 
   function checkClipboard() {
     if (!isSupported.value) {
-      alert.error(i18n.tc("general.your-browser-does-not-support-clipboard"));
+      alert.error(String($i18n.tc("general.your-browser-does-not-support-clipboard")));
       return false;
     }
 
@@ -63,10 +63,10 @@ export function useCopyList() {
     copy(text).then(() => {
       // Verify copy success as no error is thrown on failure.
       if (copied.value) {
-        alert.success(i18n.tc("general.copied-items-to-clipboard", len));
+        alert.success(String($i18n.tc("general.copied-items-to-clipboard", len)));
       }
       else {
-        alert.error(i18n.tc("general.clipboard-copy-failure"));
+        alert.error(String($i18n.tc("general.clipboard-copy-failure")));
       }
     });
   }

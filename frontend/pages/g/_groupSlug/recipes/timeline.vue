@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@nuxtjs/composition-api";
+import { defineComponent, ref } from "#imports";
 import { useUserApi } from "~/composables/api";
 import RecipeTimeline from "~/components/Domain/Recipe/RecipeTimeline.vue";
 

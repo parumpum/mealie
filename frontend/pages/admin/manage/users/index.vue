@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs, useContext, useRouter, computed } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, ref, toRefs, useNuxtApp, useRouter, computed } from "#imports";
 import { useAdminApi } from "~/composables/api";
 import { alert } from "~/composables/use-toast";
 import { useUser, useAllUsers } from "~/composables/use-user";
@@ -84,11 +84,11 @@ export default defineComponent({
     const api = useAdminApi();
     const refUserDialog = ref();
     const inviteDialog = ref();
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
 
-    const user = computed(() => $auth.user);
-
-    const { $globals, i18n } = useContext();
+    const user = computed<UserOut | null>(() => $auth.user as UserOut | null);
+    console.log("user", user.value);
+    const { $globals, $i18n } = useNuxtApp();
 
     const router = useRouter();
 
@@ -98,7 +98,7 @@ export default defineComponent({
 
     const ACTIONS_OPTIONS = [
       {
-        text: i18n.t("user.reset-locked-users"),
+        text: String($i18n.t("user.reset-locked-users")),
         icon: $globals.icons.lock,
         event: "unlock-all-users",
       },
@@ -133,18 +133,18 @@ export default defineComponent({
 
     const headers = [
       {
-        text: i18n.t("user.user-id"),
+        text: $i18n.t("user.user-id"),
         align: "start",
         value: "id",
       },
-      { text: i18n.t("user.username"), value: "username" },
-      { text: i18n.t("user.full-name"), value: "fullName" },
-      { text: i18n.t("user.email"), value: "email" },
-      { text: i18n.t("group.group"), value: "group" },
-      { text: i18n.t("household.household"), value: "household" },
-      { text: i18n.t("user.auth-method"), value: "authMethod" },
-      { text: i18n.t("user.admin"), value: "admin" },
-      { text: i18n.t("general.delete"), value: "actions", sortable: false, align: "center" },
+      { text: $i18n.t("user.username"), value: "username" },
+      { text: $i18n.t("user.full-name"), value: "fullName" },
+      { text: $i18n.t("user.email"), value: "email" },
+      { text: $i18n.t("group.group"), value: "group" },
+      { text: $i18n.t("household.household"), value: "household" },
+      { text: $i18n.t("user.auth-method"), value: "authMethod" },
+      { text: $i18n.t("user.admin"), value: "admin" },
+      { text: $i18n.t("general.delete"), value: "actions", sortable: false, align: "center" },
     ];
 
     async function unlockAllUsers(): Promise<void> {
@@ -174,8 +174,9 @@ export default defineComponent({
     };
   },
   head() {
+    const { $i18n } = useNuxtApp();
     return {
-      title: this.$t("sidebar.manage-users") as string,
+      title: String($i18n.t("sidebar.manage-users")),
     };
   },
 });

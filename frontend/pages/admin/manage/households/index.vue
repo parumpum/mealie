@@ -92,7 +92,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, useContext, useRouter } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, toRefs, useNuxtApp, useRouter } from "#imports";
 import { fieldTypes } from "~/composables/forms";
 import { useGroups } from "~/composables/use-groups";
 import { useAdminHouseholds } from "~/composables/use-households";
@@ -102,7 +102,7 @@ import { HouseholdInDB } from "~/lib/api/types/household";
 export default defineComponent({
   layout: "admin",
   setup() {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const { groups } = useGroups();
     const { households, refreshAllHouseholds, deleteHousehold, createHousehold } = useAdminHouseholds();
 
@@ -113,22 +113,22 @@ export default defineComponent({
       search: "",
       headers: [
         {
-          text: i18n.t("household.household"),
+          text: $i18n.t("household.household"),
           align: "start",
           sortable: false,
           value: "id",
         },
-        { text: i18n.t("general.name"), value: "name" },
-        { text: i18n.t("group.group"), value: "group" },
-        { text: i18n.t("user.total-users"), value: "users" },
-        { text: i18n.t("user.webhooks-enabled"), value: "webhookEnable" },
-        { text: i18n.t("general.delete"), value: "actions" },
+        { text: $i18n.t("general.name"), value: "name" },
+        { text: $i18n.t("group.group"), value: "group" },
+        { text: $i18n.t("user.total-users"), value: "users" },
+        { text: $i18n.t("user.webhooks-enabled"), value: "webhookEnable" },
+        { text: $i18n.t("general.delete"), value: "actions" },
       ],
       updateMode: false,
       createHouseholdForm: {
         items: [
           {
-            label: i18n.t("household.household-name"),
+            label: $i18n.t("household.household-name"),
             varName: "name",
             type: fieldTypes.TEXT,
             rules: ["required"],

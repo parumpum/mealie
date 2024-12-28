@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useRouter, reactive, ref, toRefs, watch } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useRouter, reactive, ref, toRefs, watch } from "#imports";
 import { useAdminApi } from "~/composables/api";
 import { useGroups } from "~/composables/use-groups";
 import { useAdminHouseholds } from "~/composables/use-households";

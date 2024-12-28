@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@nuxtjs/composition-api";
+import { defineComponent, ref } from "#imports";
 import RecipeOrganizerPage from "~/components/Domain/Recipe/RecipeOrganizerPage.vue";
 import { useToolStore } from "~/composables/store";
 

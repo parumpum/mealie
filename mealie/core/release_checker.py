@@ -3,7 +3,7 @@ from functools import lru_cache
 
 import requests
 
-_LAST_RESET = None
+_LAST_RESET: datetime.datetime | None = None
 
 
 @lru_cache(maxsize=1)

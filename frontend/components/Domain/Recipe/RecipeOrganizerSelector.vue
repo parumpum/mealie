@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, useContext, computed, onMounted } from "@nuxtjs/composition-api";
+import { defineComponent, ref, useNuxtApp, computed, onMounted } from "#imports";
 import RecipeOrganizerDialog from "./RecipeOrganizerDialog.vue";
 import { IngredientFood, RecipeCategory, RecipeTag } from "~/lib/api/types/recipe";
 import { RecipeTool } from "~/lib/api/types/admin";
@@ -110,7 +110,7 @@ export default defineComponent({
       }
     });
 
-    const { $globals, i18n } = useContext();
+    const { $globals, $i18n } = useNuxtApp();
 
     const label = computed(() => {
       if (!props.showLabel) {
@@ -119,17 +119,17 @@ export default defineComponent({
 
       switch (props.selectorType) {
         case Organizer.Tag:
-          return i18n.t("tag.tags");
+          return $i18n.t("tag.tags");
         case Organizer.Category:
-          return i18n.t("category.categories");
+          return $i18n.t("category.categories");
         case Organizer.Tool:
-          return i18n.t("tool.tools");
+          return $i18n.t("tool.tools");
         case Organizer.Food:
-          return i18n.t("general.foods");
+          return $i18n.t("general.foods");
         case Organizer.Household:
-          return i18n.t("household.households");
+          return $i18n.t("household.households");
         default:
-          return i18n.t("general.organizer");
+          return $i18n.t("general.organizer");
       }
     });
 

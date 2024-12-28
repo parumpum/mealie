@@ -1,5 +1,5 @@
-import { useAsync, ref } from "@nuxtjs/composition-api";
 import { useAsyncKey } from "./use-utils";
+import { useLazyAsyncData, ref } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { ReadWebhook } from "~/lib/api/types/household";
 
@@ -11,7 +11,7 @@ export const useGroupWebhooks = function () {
   const actions = {
     getAll() {
       loading.value = true;
-      const units = useAsync(async () => {
+      const units = useLazyAsyncData(async () => {
         const { data } = await api.groupWebhooks.getAll();
 
         if (data) {

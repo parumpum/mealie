@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, useNuxtApp } from "#imports";
 import { RecipeSettings } from "~/lib/api/types/recipe";
 
 export default defineComponent({
@@ -30,15 +30,15 @@ export default defineComponent({
     },
   },
   setup() {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const labels: Record<keyof RecipeSettings, string> = {
-      public: i18n.tc("recipe.public-recipe"),
-      showNutrition: i18n.tc("recipe.show-nutrition-values"),
-      showAssets: i18n.tc("asset.show-assets"),
-      landscapeView: i18n.tc("recipe.landscape-view-coming-soon"),
-      disableComments: i18n.tc("recipe.disable-comments"),
-      disableAmount: i18n.tc("recipe.disable-amount"),
-      locked: i18n.tc("recipe.locked"),
+      public: $i18n.tc("recipe.public-recipe"),
+      showNutrition: $i18n.tc("recipe.show-nutrition-values"),
+      showAssets: $i18n.tc("asset.show-assets"),
+      landscapeView: $i18n.tc("recipe.landscape-view-coming-soon"),
+      disableComments: $i18n.tc("recipe.disable-comments"),
+      disableAmount: $i18n.tc("recipe.disable-amount"),
+      locked: $i18n.tc("recipe.locked"),
     };
 
     return {

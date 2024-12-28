@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@nuxtjs/composition-api";
+import { defineComponent } from "#imports";
 import RecipePrintView from "~/components/Domain/Recipe/RecipePrintView.vue";
 import { Recipe } from "~/lib/api/types/recipe";
 

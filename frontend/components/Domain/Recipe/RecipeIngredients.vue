@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRefs } from "@nuxtjs/composition-api";
+import { computed, defineComponent, reactive, toRefs } from "#imports";
 import RecipeIngredientListItem from "./RecipeIngredientListItem.vue";
 import { parseIngredientText } from "~/composables/recipes";
 import { RecipeIngredient } from "~/lib/api/types/recipe";

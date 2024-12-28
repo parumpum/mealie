@@ -93,7 +93,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, useContext, useRouter } from "@nuxtjs/composition-api";
+import { computed, defineComponent, ref, useNuxtApp, useRouter } from "#imports";
 import { useAdminApi, useUserApi } from "~/composables/api";
 import { useLocales } from "~/composables/use-locales";
 import { alert } from "~/composables/use-toast";
@@ -107,7 +107,7 @@ export default defineComponent({
   setup() {
     // ================================================================
     // Setup
-    const { $auth, $globals, i18n } = useContext();
+    const { $auth, $globals, $i18n } = useNuxtApp();
     const userApi = useUserApi();
     const adminApi = useAdminApi();
 
@@ -153,70 +153,70 @@ export default defineComponent({
       return [
         {
           display: true,
-          text: i18n.tc("user.email"),
+          text: $i18n.tc("user.email"),
           value: accountDetails.email.value,
         },
         {
           display: true,
-          text: i18n.tc("user.username"),
+          text: $i18n.tc("user.username"),
           value: accountDetails.username.value,
         },
         {
           display: true,
-          text: i18n.tc("user.full-name"),
+          text: $i18n.tc("user.full-name"),
           value: accountDetails.fullName.value,
         },
         {
           display: true,
-          text: i18n.tc("user.enable-advanced-content"),
-          value: accountDetails.advancedOptions.value ? i18n.tc("general.yes") : i18n.tc("general.no"),
+          text: $i18n.tc("user.enable-advanced-content"),
+          value: accountDetails.advancedOptions.value ? $i18n.tc("general.yes") : $i18n.tc("general.no"),
         },
         {
           display: true,
-          text: i18n.tc("group.enable-public-access"),
-          value: commonSettings.value.makeGroupRecipesPublic ? i18n.tc("general.yes") : i18n.tc("general.no"),
+          text: $i18n.tc("group.enable-public-access"),
+          value: commonSettings.value.makeGroupRecipesPublic ? $i18n.tc("general.yes") : $i18n.tc("general.no"),
         },
         {
           display: true,
-          text: i18n.tc("user-registration.use-seed-data"),
-          value: commonSettings.value.useSeedData ? i18n.tc("general.yes") : i18n.tc("general.no"),
+          text: $i18n.tc("user-registration.use-seed-data"),
+          value: commonSettings.value.useSeedData ? $i18n.tc("general.yes") : $i18n.tc("general.no"),
         },
       ];
     });
 
     const setupCompleteLinks = ref([
       {
-        section: i18n.tc("profile.data-migrations"),
+        section: $i18n.tc("profile.data-migrations"),
         to: "/admin/backups",
-        text: i18n.tc("settings.backup.backup-restore"),
-        description: i18n.tc("admin.setup.restore-from-v1-backup"),
+        text: $i18n.tc("settings.backup.backup-restore"),
+        description: $i18n.tc("admin.setup.restore-from-v1-backup"),
       },
       {
         to: "/group/migrations",
-        text: i18n.tc("migration.recipe-migration"),
-        description: i18n.tc("migration.coming-from-another-application-or-an-even-older-version-of-mealie"),
+        text: $i18n.tc("migration.recipe-migration"),
+        description: $i18n.tc("migration.coming-from-another-application-or-an-even-older-version-of-mealie"),
       },
       {
-        section: i18n.tc("recipe.create-recipes"),
+        section: $i18n.tc("recipe.create-recipes"),
         to: computed(() => `/g/${groupSlug.value || ""}/r/create/new`),
-        text: i18n.tc("recipe.create-recipe"),
-        description: i18n.tc("recipe.create-recipe-description"),
+        text: $i18n.tc("recipe.create-recipe"),
+        description: $i18n.tc("recipe.create-recipe-description"),
       },
       {
         to: computed(() => `/g/${groupSlug.value || ""}/r/create/url`),
-        text: i18n.tc("recipe.import-with-url"),
-        description: i18n.tc("recipe.scrape-recipe-description"),
+        text: $i18n.tc("recipe.import-with-url"),
+        description: $i18n.tc("recipe.scrape-recipe-description"),
       },
       {
-        section: i18n.tc("user.manage-users"),
+        section: $i18n.tc("user.manage-users"),
         to: "/admin/manage/users",
-        text: i18n.tc("user.manage-users"),
-        description: i18n.tc("user.manage-users-description"),
+        text: $i18n.tc("user.manage-users"),
+        description: $i18n.tc("user.manage-users-description"),
       },
       {
         to: "/user/profile",
-        text: i18n.tc("profile.manage-user-profile"),
-        description: i18n.tc("admin.setup.manage-profile-or-get-invite-link"),
+        text: $i18n.tc("profile.manage-user-profile"),
+        description: $i18n.tc("admin.setup.manage-profile-or-get-invite-link"),
       },
     ]);
 
@@ -236,12 +236,12 @@ export default defineComponent({
       switch (currentPage.value) {
         case Pages.LANDING:
           config.showPrevButton = false;
-          config.nextButtonText = i18n.tc("general.start");
+          config.nextButtonText = $i18n.tc("general.start");
           config.nextButtonIcon = $globals.icons.forward;
           break;
         case Pages.USER_INFO:
           config.showPrevButton = false;
-          config.nextButtonText = i18n.tc("general.next");
+          config.nextButtonText = $i18n.tc("general.next");
           config.nextButtonIcon = $globals.icons.forward;
           config.isSubmit = true;
           break;
@@ -249,7 +249,7 @@ export default defineComponent({
           config.isSubmit = true;
           break;
         case Pages.END:
-          config.nextButtonText = i18n.tc("general.home");
+          config.nextButtonText = $i18n.tc("general.home");
           config.nextButtonIcon = $globals.icons.home;
           config.nextButtonColor = "primary";
           config.showPrevButton = false;
@@ -274,7 +274,7 @@ export default defineComponent({
       })
 
       if (!response || response.status !== 200) {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error($i18n.tc("events.something-went-wrong"));
       } else {
         $auth.setUser({
           ...$auth.user,
@@ -292,7 +292,7 @@ export default defineComponent({
       });
 
       if (!response || response.status !== 200) {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error($i18n.tc("events.something-went-wrong"));
       }
     }
 
@@ -306,7 +306,7 @@ export default defineComponent({
       // @ts-ignore-next-line user will never be null here
       const { data } = await userApi.groups.getOne($auth.user?.groupId);
       if (!data || !data.preferences) {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error($i18n.tc("events.something-went-wrong"));
         return;
       }
 
@@ -323,7 +323,7 @@ export default defineComponent({
       // @ts-ignore-next-line user will never be null here
       const { response } = await userApi.groups.updateOne($auth.user?.groupId, payload);
       if (!response || response.status !== 200) {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error($i18n.tc("events.something-went-wrong"));
       }
     }
 
@@ -331,7 +331,7 @@ export default defineComponent({
       // @ts-ignore-next-line user will never be null here
       const { data } = await adminApi.households.getOne($auth.user?.householdId);
       if (!data || !data.preferences) {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error($i18n.tc("events.something-went-wrong"));
         return;
       }
 
@@ -349,28 +349,28 @@ export default defineComponent({
       // @ts-ignore-next-line user will never be null here
       const { response } = await adminApi.households.updateOne($auth.user?.householdId, payload);
       if (!response || response.status !== 200) {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error($i18n.tc("events.something-went-wrong"));
       }
     }
 
     async function seedFoods() {
       const { response } = await userApi.seeders.foods({ locale: locale.value })
       if (!response || response.status !== 200) {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error($i18n.tc("events.something-went-wrong"));
       }
     }
 
     async function seedUnits() {
       const { response } = await userApi.seeders.units({ locale: locale.value })
       if (!response || response.status !== 200) {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error($i18n.tc("events.something-went-wrong"));
       }
     }
 
     async function seedLabels() {
       const { response } = await userApi.seeders.labels({ locale: locale.value })
       if (!response || response.status !== 200) {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error($i18n.tc("events.something-went-wrong"));
       }
     }
 

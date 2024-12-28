@@ -1,8 +1,8 @@
-import { computed, useContext } from "@nuxtjs/composition-api";
 import { LOCALES } from "./available-locales";
+import { computed, useNuxtApp } from "#imports";
 
 export const useLocales = () => {
-  const { i18n, $vuetify } = useContext();
+  const { $i18n, $vuetify } = useNuxtApp();
 
   function getLocale(value: string) {
     const currentLocale = LOCALES.filter((locale) => locale.value === value);
@@ -12,16 +12,16 @@ export const useLocales = () => {
   const locale = computed<string>({
     get() {
       // dirty hack
-      $vuetify.lang.current = i18n.locale;
-      const currentLocale = getLocale(i18n.locale);
+      $vuetify.lang.current = $i18n.locale;
+      const currentLocale = getLocale($i18n.locale as string);
       if (currentLocale) {
         $vuetify.rtl = currentLocale.dir === "rtl";
       }
 
-      return i18n.locale;
+      return $i18n.locale as string;
     },
     set(value) {
-      i18n.setLocale(value);
+      $i18n.setLocale(value);
 
       // this does not persist after window reload :-(
       $vuetify.lang.current = value;
@@ -38,6 +38,6 @@ export const useLocales = () => {
   return {
     locale,
     locales: LOCALES,
-    i18n,
+    $i18n,
   };
 };

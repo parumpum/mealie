@@ -289,10 +289,10 @@ import {
   defineComponent,
   watch,
   onMounted,
-  useContext,
+  useNuxtApp,
   computed,
   nextTick,
-} from "@nuxtjs/composition-api";
+} from "#imports";
 import RecipeIngredientHtml from "../../RecipeIngredientHtml.vue";
 import { RecipeStep, IngredientReferences, RecipeIngredient, RecipeAsset, Recipe } from "~/lib/api/types/recipe";
 import { parseIngredientText } from "~/composables/recipes";
@@ -338,7 +338,7 @@ export default defineComponent({
   },
 
   setup(props, context) {
-    const { i18n, req } = useContext();
+    const { $i18n, req } = useNuxtApp();
     const BASE_URL = detectServerBaseUrl(req);
 
     const { isCookMode, toggleCookMode, isEditForm } = usePageState(props.recipe.slug);
@@ -354,15 +354,15 @@ export default defineComponent({
 
     const actionEvents = [
       {
-        text: i18n.t("recipe.toggle-section") as string,
+        text: $i18n.t("recipe.toggle-section") as string,
         event: "toggle-section",
       },
       {
-        text: i18n.t("recipe.link-ingredients") as string,
+        text: $i18n.t("recipe.link-ingredients") as string,
         event: "link-ingredients",
       },
       {
-        text: i18n.t("recipe.merge-above") as string,
+        text: $i18n.t("recipe.merge-above") as string,
         event: "merge-above",
       },
     ];

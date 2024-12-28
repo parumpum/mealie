@@ -196,9 +196,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, useRouter, Ref, useContext, computed } from "@nuxtjs/composition-api";
 import { useDark } from "@vueuse/core";
+import { Ref } from "vue";
 import { States, RegistrationType, useRegistration } from "./states";
+import { defineComponent, onMounted, ref, useRouter, useNuxtApp, computed } from "#imports";
 import { useUserRegistrationForm } from "~/composables/use-users/user-registration-form";
 import { useRouteQuery } from "~/composables/use-router";
 import { validators, useAsyncValidator } from "~/composables/use-validators";
@@ -222,7 +223,7 @@ export default defineComponent({
   components: { UserRegistrationForm },
   layout: "blank",
   setup() {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const isDark = useDark();
     function safeValidate(form: Ref<VForm | null>) {
       if (form.value && form.value.validate) {
@@ -298,7 +299,7 @@ export default defineComponent({
     const { validate: validGroupName, valid: groupNameValid } = useAsyncValidator(
       groupName,
       (v: string) => publicApi.validators.group(v),
-      i18n.tc("validation.group-name-is-taken"),
+      String($i18n.tc("validation.group-name-is-taken")),
       groupErrorMessages
     );
     const groupDetails = {
@@ -338,38 +339,38 @@ export default defineComponent({
       return [
         {
           display: state.ctx.type === RegistrationType.CreateGroup,
-          text: i18n.tc("group.group"),
+          text: $i18n.tc("group.group"),
           value: groupName.value,
         },
         {
           display: state.ctx.type === RegistrationType.CreateGroup,
-          text: i18n.tc("data-pages.seed-data"),
-          value: groupSeed.value ? i18n.tc("general.yes") : i18n.tc("general.no"),
+          text: $i18n.tc("data-pages.seed-data"),
+          value: groupSeed.value ? $i18n.tc("general.yes") : $i18n.tc("general.no"),
         },
         {
           display: state.ctx.type === RegistrationType.CreateGroup,
-          text: i18n.tc("group.settings.keep-my-recipes-private"),
-          value: groupPrivate.value ? i18n.tc("general.yes") : i18n.tc("general.no"),
+          text: $i18n.tc("group.settings.keep-my-recipes-private"),
+          value: groupPrivate.value ? $i18n.tc("general.yes") : $i18n.tc("general.no"),
         },
         {
           display: true,
-          text: i18n.tc("user.email"),
+          text: $i18n.tc("user.email"),
           value: accountDetails.email.value,
         },
         {
           display: true,
-          text: i18n.tc("user.full-name"),
+          text: $i18n.tc("user.full-name"),
           value: accountDetails.fullName.value,
         },
         {
           display: true,
-          text: i18n.tc("user.username"),
+          text: $i18n.tc("user.username"),
           value: accountDetails.username.value,
         },
         {
           display: true,
-          text: i18n.tc("user.enable-advanced-content"),
-          value: accountDetails.advancedOptions.value ? i18n.tc("general.yes") : i18n.tc("general.no"),
+          text: $i18n.tc("user.enable-advanced-content"),
+          value: accountDetails.advancedOptions.value ? $i18n.tc("general.yes") : $i18n.tc("general.no"),
         },
       ];
     });
@@ -396,10 +397,10 @@ export default defineComponent({
       if (response?.status === 201) {
         accountDetails.reset();
         credentials.reset();
-        alert.success(i18n.tc("user-registration.registration-success"));
+        alert.success(String($i18n.tc("user-registration.registration-success")));
         router.push("/login");
       } else {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error(String($i18n.tc("events.something-went-wrong")));
       }
     }
     return {

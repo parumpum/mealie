@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, toRefs, useNuxtApp } from "#imports";
 import { useUserApi } from "~/composables/api";
 
 const REFRESH_EVENT = "refresh";
@@ -75,8 +75,8 @@ export default defineComponent({
       state.menu = false;
     }
 
-    const { i18n } = useContext();
-    const messages = props.slug ? [""] : [i18n.t("recipe.save-recipe-before-use")];
+    const { $i18n } = useNuxtApp();
+    const messages = props.slug ? [""] : [$i18n.t("recipe.save-recipe-before-use")];
 
     return {
       ...toRefs(state),

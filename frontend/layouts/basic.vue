@@ -13,7 +13,7 @@
 
 
 <script lang="ts">
-import { defineComponent } from "@nuxtjs/composition-api";
+import { defineComponent } from "#imports";
 import TheSnackbar from "~/components/Layout/LayoutParts/TheSnackbar.vue";
 import AppHeader from "@/components/Layout/LayoutParts/AppHeader.vue";
 export default defineComponent({

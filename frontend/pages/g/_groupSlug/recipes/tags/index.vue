@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@nuxtjs/composition-api";
+import { defineComponent } from "#imports";
 import RecipeOrganizerPage from "~/components/Domain/Recipe/RecipeOrganizerPage.vue";
 import { useTagStore } from "~/composables/store";
 

@@ -1,4 +1,4 @@
-import { ref, onMounted } from "@nuxtjs/composition-api";
+import { ref, onMounted } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { Recipe } from "~/lib/api/types/recipe";
 

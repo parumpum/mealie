@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, ref, toRefs, useNuxtApp } from "#imports";
 import { VForm } from "~/types/vuetify";
 import { RecipeTimelineEventOut } from "~/lib/api/types/recipe";
 
@@ -135,20 +135,20 @@ export default defineComponent({
       menuItems: [] as ContextMenuItem[],
     });
 
-    const { i18n, $globals } = useContext();
+    const { $i18n, $globals } = useNuxtApp();
 
     // ===========================================================================
     // Context Menu Setup
 
     const defaultItems: { [key: string]: ContextMenuItem } = {
       edit: {
-        title: i18n.tc("general.edit"),
+        title: $i18n.tc("general.edit"),
         icon: $globals.icons.edit,
         color: undefined,
         event: "edit",
       },
       delete: {
-        title: i18n.tc("general.delete"),
+        title: $i18n.tc("general.delete"),
         icon: $globals.icons.delete,
         color: "error",
         event: "delete",

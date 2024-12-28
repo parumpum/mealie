@@ -134,16 +134,6 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  useContext,
-  useRouter,
-  computed,
-  ref,
-  onMounted,
-  onUnmounted,
-useRoute,
-} from "@nuxtjs/composition-api";
 import { invoke, until } from "@vueuse/core";
 import RecipeIngredients from "../RecipeIngredients.vue";
 import RecipePageEditorToolbar from "./RecipePageParts/RecipePageEditorToolbar.vue";
@@ -156,6 +146,16 @@ import RecipePageOrganizers from "./RecipePageParts/RecipePageOrganizers.vue";
 import RecipePageScale from "./RecipePageParts/RecipePageScale.vue";
 import RecipePageInfoEditor from "./RecipePageParts/RecipePageInfoEditor.vue";
 import RecipePageComments from "./RecipePageParts/RecipePageComments.vue";
+import {
+  defineComponent,
+  useNuxtApp,
+  useRouter,
+  computed,
+  ref,
+  onMounted,
+  onUnmounted,
+useRoute,
+} from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import RecipePrintContainer from "~/components/Domain/Recipe/RecipePrintContainer.vue";
 import {
@@ -205,9 +205,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
     const { isOwnGroup } = useLoggedInState();
 
     const router = useRouter();
@@ -237,7 +237,7 @@ export default defineComponent({
       const isSame = JSON.stringify(props.recipe) === JSON.stringify(originalRecipe.value);
       if (isEditMode.value && !isSame && props.recipe?.slug !== undefined) {
         const save = window.confirm(
-          i18n.tc("general.unsaved-changes"),
+          $i18n.tc("general.unsaved-changes") as string,
           );
 
         if (save) {
@@ -275,7 +275,7 @@ export default defineComponent({
       const recipe = await api.recipes.getOne(props.recipe.slug);
 
       if ((recipe.data?.id !== props.recipe.id) || recipe?.error) {
-        alert.error(i18n.tc("recipe.recipe-creation-failed"));
+        alert.error($i18n.tc("recipe.recipe-creation-failed") as string);
         return;
       }
       const { data } = await api.recipes.updateOne(props.recipe.slug, props.recipe);
@@ -295,7 +295,7 @@ export default defineComponent({
     /** =============================================================
      * View Preferences
      */
-    const { $vuetify, i18n } = useContext();
+    const { $vuetify, $i18n } = useNuxtApp();
 
     const landscape = computed(() => {
       const preferLandscape = props.recipe.settings.landscapeView;

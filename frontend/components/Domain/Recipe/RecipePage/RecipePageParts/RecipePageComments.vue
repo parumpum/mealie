@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, reactive } from "@nuxtjs/composition-api";
+import { defineComponent, toRefs, reactive } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { Recipe } from "~/lib/api/types/recipe";
 import UserAvatar from "~/components/Domain/User/UserAvatar.vue";

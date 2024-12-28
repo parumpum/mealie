@@ -153,7 +153,7 @@
                     <v-icon left>
                       {{ $globals.icons.tags }}
                     </v-icon>
-                    {{ getEntryTypeText(mealplan.entryType) }}
+                    {{ mealplan.entryType ? getEntryTypeText(mealplan.entryType) : '' }}
                   </v-chip>
                 </template>
                 <v-list>
@@ -222,11 +222,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, reactive, ref, watch, onMounted, useContext } from "@nuxtjs/composition-api";
 import { format } from "date-fns";
 import { SortableEvent } from "sortablejs";
 import draggable from "vuedraggable";
 import { MealsByDate } from "./types";
+import { defineComponent, computed, reactive, ref, watch, onMounted, useNuxtApp } from "#imports";
 import { useMealplans, usePlanTypeOptions, getEntryTypeText } from "~/composables/use-group-mealplan";
 import RecipeCardImage from "~/components/Domain/Recipe/RecipeCardImage.vue";
 import { PlanEntryType, UpdatePlanEntry } from "~/lib/api/types/meal-plan";
@@ -251,7 +251,7 @@ export default defineComponent({
   },
   setup(props) {
     const api = useUserApi();
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const { household } = useHouseholdSelf();
 
     const state = ref({

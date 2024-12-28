@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, computed, useNuxtApp } from "#imports";
 import QueryFilterBuilder from "~/components/Domain/QueryFilterBuilder.vue";
 import { FieldDefinition } from "~/composables/use-query-filter-builder";
 import { Organizer } from "~/lib/api/types/non-generated";
@@ -55,25 +55,25 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     const MEAL_TYPE_OPTIONS = [
-      { text: i18n.t("meal-plan.breakfast"), value: "breakfast" },
-      { text: i18n.t("meal-plan.lunch"), value: "lunch" },
-      { text: i18n.t("meal-plan.dinner"), value: "dinner" },
-      { text: i18n.t("meal-plan.side"), value: "side" },
-      { text: i18n.t("meal-plan.type-any"), value: "unset" },
+      { text: $i18n.t("meal-plan.breakfast"), value: "breakfast" },
+      { text: $i18n.t("meal-plan.lunch"), value: "lunch" },
+      { text: $i18n.t("meal-plan.dinner"), value: "dinner" },
+      { text: $i18n.t("meal-plan.side"), value: "side" },
+      { text: $i18n.t("meal-plan.type-any"), value: "unset" },
     ];
 
     const MEAL_DAY_OPTIONS = [
-      { text: i18n.t("general.monday"), value: "monday" },
-      { text: i18n.t("general.tuesday"), value: "tuesday" },
-      { text: i18n.t("general.wednesday"), value: "wednesday" },
-      { text: i18n.t("general.thursday"), value: "thursday" },
-      { text: i18n.t("general.friday"), value: "friday" },
-      { text: i18n.t("general.saturday"), value: "saturday" },
-      { text: i18n.t("general.sunday"), value: "sunday" },
-      { text: i18n.t("meal-plan.day-any"), value: "unset" },
+      { text: $i18n.t("general.monday"), value: "monday" },
+      { text: $i18n.t("general.tuesday"), value: "tuesday" },
+      { text: $i18n.t("general.wednesday"), value: "wednesday" },
+      { text: $i18n.t("general.thursday"), value: "thursday" },
+      { text: $i18n.t("general.friday"), value: "friday" },
+      { text: $i18n.t("general.saturday"), value: "saturday" },
+      { text: $i18n.t("general.sunday"), value: "sunday" },
+      { text: $i18n.t("meal-plan.day-any"), value: "unset" },
     ];
 
     const inputDay = computed({
@@ -110,42 +110,42 @@ export default defineComponent({
     const fieldDefs: FieldDefinition[] = [
       {
         name: "recipe_category.id",
-        label: i18n.tc("category.categories"),
+        label: $i18n.tc("category.categories"),
         type: Organizer.Category,
       },
       {
         name: "tags.id",
-        label: i18n.tc("tag.tags"),
+        label: $i18n.tc("tag.tags"),
         type: Organizer.Tag,
       },
       {
         name: "recipe_ingredient.food.id",
-        label: i18n.tc("recipe.ingredients"),
+        label: $i18n.tc("recipe.ingredients"),
         type: Organizer.Food,
       },
       {
         name: "tools.id",
-        label: i18n.tc("tool.tools"),
+        label: $i18n.tc("tool.tools"),
         type: Organizer.Tool,
       },
       {
         name: "household_id",
-        label: i18n.tc("household.households"),
+        label: $i18n.tc("household.households"),
         type: Organizer.Household,
       },
       {
         name: "last_made",
-        label: i18n.tc("general.last-made"),
+        label: $i18n.tc("general.last-made"),
         type: "date",
       },
       {
         name: "created_at",
-        label: i18n.tc("general.date-created"),
+        label: $i18n.tc("general.date-created"),
         type: "date",
       },
       {
         name: "updated_at",
-        label: i18n.tc("general.date-updated"),
+        label: $i18n.tc("general.date-updated"),
         type: "date",
       },
     ];

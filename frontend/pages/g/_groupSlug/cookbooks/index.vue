@@ -123,7 +123,7 @@
 
 <script lang="ts">
 
-import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref, useNuxtApp } from "#imports";
 import draggable from "vuedraggable";
 import { useCookbooks } from "@/composables/use-group-cookbooks";
 import { useHouseholdSelf } from "@/composables/use-households";
@@ -140,7 +140,7 @@ export default defineComponent({
       delete: false,
     });
 
-    const { $auth, i18n } = useContext();
+    const { $auth, $i18n } = useNuxtApp();
     const { cookbooks: allCookbooks, actions } = useCookbooks();
     const myCookbooks = computed<ReadCookBook[]>({
       get: () => {
@@ -159,7 +159,7 @@ export default defineComponent({
     const createTargetKey = ref(0);
     const createTarget = ref<ReadCookBook | null>(null);
     async function createCookbook() {
-      const name = i18n.t("cookbook.household-cookbook-name", [household.value?.name || "", String((myCookbooks.value?.length ?? 0) + 1)]) as string
+      const name = $i18n.t("cookbook.household-cookbook-name", [household.value?.name || "", String((myCookbooks.value?.length ?? 0) + 1)]) as string
       await actions.createOne(name).then((cookbook) => {
         createTarget.value = cookbook as ReadCookBook;
         createTargetKey.value++;

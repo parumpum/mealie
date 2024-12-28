@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useNuxtApp } from "#imports";
 import { useUserSelfRatings } from "~/composables/use-users";
 import { useUserApi } from "~/composables/api";
 import { UserOut } from "~/lib/api/types/user";
@@ -42,7 +42,7 @@ export default defineComponent({
   },
   setup(props) {
     const api = useUserApi();
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const { userRatings, refreshUserRatings } = useUserSelfRatings();
 
     // TODO Setup the correct type for $auth.user

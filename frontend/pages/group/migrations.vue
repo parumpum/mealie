@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, useContext, computed, onMounted } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, toRefs, useNuxtApp, computed, onMounted } from "#imports";
 import { ReportSummary } from "~/lib/api/types/reports";
 import { MenuItem } from "~/components/global/BaseOverflowButton.vue";
 import { useUserApi } from "~/composables/api";
@@ -89,7 +89,7 @@ const MIGRATIONS = {
 export default defineComponent({
   middleware: ["auth", "advanced-only"],
   setup() {
-    const { $globals, i18n } = useContext();
+    const { $globals, $i18n } = useNuxtApp();
 
     const api = useUserApi();
 
@@ -104,46 +104,46 @@ export default defineComponent({
 
     const items: MenuItem[] = [
       {
-        text: i18n.tc("migration.mealie-pre-v1.title"),
+        text: $i18n.tc("migration.mealie-pre-v1.title"),
         value: MIGRATIONS.mealie,
         divider: true,
       },
       {
-        text: i18n.tc("migration.chowdown.title"),
+        text: $i18n.tc("migration.chowdown.title"),
         value: MIGRATIONS.chowdown,
       },
       {
-        text: i18n.tc("migration.copymethat.title"),
+        text: $i18n.tc("migration.copymethat.title"),
         value: MIGRATIONS.copymethat,
       },
       {
-        text: i18n.tc("migration.myrecipebox.title"),
+        text: $i18n.tc("migration.myrecipebox.title"),
         value: MIGRATIONS.myrecipebox,
       },
       {
-        text: i18n.tc("migration.nextcloud.title"),
+        text: $i18n.tc("migration.nextcloud.title"),
         value: MIGRATIONS.nextcloud,
       },
       {
-        text: i18n.tc("migration.paprika.title"),
+        text: $i18n.tc("migration.paprika.title"),
         value: MIGRATIONS.paprika,
       },
       {
-        text: i18n.tc("migration.plantoeat.title"),
+        text: $i18n.tc("migration.plantoeat.title"),
         value: MIGRATIONS.plantoeat,
       },
       {
-        text: i18n.tc("migration.recipekeeper.title"),
+        text: $i18n.tc("migration.recipekeeper.title"),
         value: MIGRATIONS.recipekeeper,
       },
       {
-        text: i18n.tc("migration.tandoor.title"),
+        text: $i18n.tc("migration.tandoor.title"),
         value: MIGRATIONS.tandoor,
       },
     ];
     const _content = {
       [MIGRATIONS.mealie]: {
-        text: i18n.tc("migration.mealie-pre-v1.description-long"),
+        text: $i18n.tc("migration.mealie-pre-v1.description-long"),
         acceptedFileType: ".zip",
         tree: [
           {
@@ -199,7 +199,7 @@ export default defineComponent({
         ],
       },
       [MIGRATIONS.chowdown]: {
-        text: i18n.tc("migration.chowdown.description-long"),
+        text: $i18n.tc("migration.chowdown.description-long"),
         acceptedFileType: ".zip",
         tree: [
           {
@@ -209,7 +209,7 @@ export default defineComponent({
             children: [
               {
                 id: 2,
-                name: i18n.t("migration.recipe-1"),
+                name: $i18n.t("migration.recipe-1"),
                 icon: $globals.icons.folderOutline,
                 children: [
                   { id: 3, name: "recipe.json", icon: $globals.icons.codeJson },
@@ -219,7 +219,7 @@ export default defineComponent({
               },
               {
                 id: 6,
-                name: i18n.t("migration.recipe-2"),
+                name: $i18n.t("migration.recipe-2"),
                 icon: $globals.icons.folderOutline,
                 children: [
                   { id: 7, name: "recipe.json", icon: $globals.icons.codeJson },
@@ -232,7 +232,7 @@ export default defineComponent({
         ],
       },
       [MIGRATIONS.copymethat]: {
-        text: i18n.tc("migration.copymethat.description-long"),
+        text: $i18n.tc("migration.copymethat.description-long"),
         acceptedFileType: ".zip",
         tree: [
           {
@@ -256,12 +256,12 @@ export default defineComponent({
         ],
       },
       [MIGRATIONS.myrecipebox]: {
-        text: i18n.tc("migration.myrecipebox.description-long"),
+        text: $i18n.tc("migration.myrecipebox.description-long"),
         acceptedFileType: ".csv",
         tree: false,
       },
       [MIGRATIONS.nextcloud]: {
-        text: i18n.tc("migration.nextcloud.description-long"),
+        text: $i18n.tc("migration.nextcloud.description-long"),
         acceptedFileType: ".zip",
         tree: [
           {
@@ -271,7 +271,7 @@ export default defineComponent({
             children: [
               {
                 id: 2,
-                name: i18n.t("migration.recipe-1"),
+                name: $i18n.t("migration.recipe-1"),
                 icon: $globals.icons.folderOutline,
                 children: [
                   { id: 3, name: "recipe.json", icon: $globals.icons.codeJson },
@@ -281,7 +281,7 @@ export default defineComponent({
               },
               {
                 id: 6,
-                name: i18n.t("migration.recipe-2"),
+                name: $i18n.t("migration.recipe-2"),
                 icon: $globals.icons.folderOutline,
                 children: [
                   { id: 7, name: "recipe.json", icon: $globals.icons.codeJson },
@@ -294,12 +294,12 @@ export default defineComponent({
         ],
       },
       [MIGRATIONS.paprika]: {
-        text: i18n.tc("migration.paprika.description-long"),
+        text: $i18n.tc("migration.paprika.description-long"),
         acceptedFileType: ".zip",
         tree: false,
       },
       [MIGRATIONS.plantoeat]: {
-        text: i18n.tc("migration.plantoeat.description-long"),
+        text: $i18n.tc("migration.plantoeat.description-long"),
         acceptedFileType: ".zip",
         tree: [
           {
@@ -313,7 +313,7 @@ export default defineComponent({
         ],
       },
       [MIGRATIONS.recipekeeper]: {
-        text: i18n.tc("migration.recipekeeper.description-long"),
+        text: $i18n.tc("migration.recipekeeper.description-long"),
         acceptedFileType: ".zip",
         tree: [
           {
@@ -333,7 +333,7 @@ export default defineComponent({
         ],
       },
       [MIGRATIONS.tandoor]: {
-        text: i18n.tc("migration.tandoor.description-long"),
+        text: $i18n.tc("migration.tandoor.description-long"),
         acceptedFileType: ".zip",
         tree: [
           {

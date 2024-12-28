@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "@nuxtjs/composition-api";
+import { computed, defineComponent } from "#imports";
 import { getTextColor } from "~/composables/use-text-color";
 import { MultiPurposeLabelSummary } from "~/lib/api/types/recipe";
 

@@ -48,9 +48,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, useContext } from "@nuxtjs/composition-api";
 import UserAvatar from "../User/UserAvatar.vue";
 import RecipeChip from "./RecipeChips.vue";
+import { computed, defineComponent, onMounted, ref, useNuxtApp } from "#imports";
 import { Recipe } from "~/lib/api/types/recipe";
 import { useUserApi } from "~/composables/api";
 import { UserSummary } from "~/lib/api/types/user";
@@ -104,7 +104,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { $auth, i18n } = useContext();
+    const { $auth, $i18n } = useNuxtApp();
     const groupSlug = $auth.user?.groupSlug;
 
     function setValue(value: Recipe[]) {
@@ -115,41 +115,41 @@ export default defineComponent({
       const hdrs = [];
 
       if (props.showHeaders.id) {
-        hdrs.push({ text: i18n.t("general.id"), value: "id" });
+        hdrs.push({ text: $i18n.t("general.id"), value: "id" });
       }
       if (props.showHeaders.owner) {
-        hdrs.push({ text: i18n.t("general.owner"), value: "userId", align: "center" });
+        hdrs.push({ text: $i18n.t("general.owner"), value: "userId", align: "center" });
       }
-      hdrs.push({ text: i18n.t("general.name"), value: "name" });
+      hdrs.push({ text: $i18n.t("general.name"), value: "name" });
       if (props.showHeaders.categories) {
-        hdrs.push({ text: i18n.t("recipe.categories"), value: "recipeCategory" });
+        hdrs.push({ text: $i18n.t("recipe.categories"), value: "recipeCategory" });
       }
 
       if (props.showHeaders.tags) {
-        hdrs.push({ text: i18n.t("tag.tags"), value: "tags" });
+        hdrs.push({ text: $i18n.t("tag.tags"), value: "tags" });
       }
       if (props.showHeaders.tools) {
-        hdrs.push({ text: i18n.t("tool.tools"), value: "tools" });
+        hdrs.push({ text: $i18n.t("tool.tools"), value: "tools" });
       }
       if (props.showHeaders.recipeServings) {
-        hdrs.push({ text: i18n.t("recipe.servings"), value: "recipeServings" });
+        hdrs.push({ text: $i18n.t("recipe.servings"), value: "recipeServings" });
       }
       if (props.showHeaders.recipeYieldQuantity) {
-        hdrs.push({ text: i18n.t("recipe.yield"), value: "recipeYieldQuantity" });
+        hdrs.push({ text: $i18n.t("recipe.yield"), value: "recipeYieldQuantity" });
       }
       if (props.showHeaders.recipeYield) {
-        hdrs.push({ text: i18n.t("recipe.yield-text"), value: "recipeYield" });
+        hdrs.push({ text: $i18n.t("recipe.yield-text"), value: "recipeYield" });
       }
       if (props.showHeaders.dateAdded) {
-        hdrs.push({ text: i18n.t("general.date-added"), value: "dateAdded" });
+        hdrs.push({ text: $i18n.t("general.date-added"), value: "dateAdded" });
       }
 
       return hdrs;
     });
 
-    function formatDate(date: string) {
+    function formatDate(date: string): string {
       try {
-        return i18n.d(Date.parse(date), "medium");
+        return $i18n.d(Date.parse(date), "medium") as string;
       } catch {
         return "";
       }
@@ -176,7 +176,7 @@ export default defineComponent({
         return members.value.find((m) => m.id === id)?.fullName;
       }
 
-      return i18n.t("general.none");
+      return String($i18n.t("general.none"));
     }
 
     return {

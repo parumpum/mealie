@@ -122,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, defineComponent, computed, useContext, watch, toRefs } from "@nuxtjs/composition-api";
+import { ref, reactive, defineComponent, computed, useNuxtApp, watch, toRefs } from "#imports";
 import { useUserApi } from "~/composables/api";
 import UserAvatar from "~/components/Domain/User/UserAvatar.vue";
 import { VForm } from "~/types/vuetify";
@@ -137,7 +137,7 @@ export default defineComponent({
   },
   middleware: "auth",
   setup() {
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const user = computed(() => $auth.user as unknown as UserOut);
 
     watch(user, () => {

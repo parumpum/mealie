@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, useContext, useRoute } from "@nuxtjs/composition-api";
+import { computed, defineComponent, onMounted, ref, useNuxtApp, useRoute } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import AppHeader from "@/components/Layout/LayoutParts/AppHeader.vue";
 import AppSidebar from "@/components/Layout/LayoutParts/AppSidebar.vue";
@@ -97,12 +97,12 @@ import { HouseholdSummary } from "~/lib/api/types/household";
 export default defineComponent({
   components: { AppHeader, AppSidebar, LanguageDialog, TheSnackbar },
   setup() {
-    const { $globals, $auth, $vuetify, i18n } = useContext();
+    const { $globals, $auth, $vuetify, $i18n } = useNuxtApp();
     const { isOwnGroup } = useLoggedInState();
 
-    const isAdmin = computed(() => $auth.user?.admin);
+    const isAdmin = computed(() => $auth.user?.admin as boolean);
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
     const { cookbooks } = isOwnGroup.value ? useCookbooks() : usePublicCookbooks(groupSlug.value || "");
     const cookbookPreferences = useCookbookPreferences();
     const { store: households } = isOwnGroup.value ? useHouseholdStore() : usePublicHouseholdStore(groupSlug.value || "");
@@ -121,7 +121,7 @@ export default defineComponent({
 
     const languageDialog = ref<boolean>(false);
 
-    const sidebar = ref<boolean | null>(null);
+    const sidebar = ref<boolean | undefined>(undefined);
 
     onMounted(() => {
       sidebar.value = !$vuetify.breakpoint.md;
@@ -137,9 +137,9 @@ export default defineComponent({
       };
     }
 
-    const currentUserHouseholdId = computed(() => $auth.user?.householdId);
+    const currentUserHouseholdId = computed(() => $auth.user?.householdId as string);
     const cookbookLinks = computed<SideBarLink[]>(() => {
-      if (!cookbooks.value) {
+      if (!cookbooks?.value) {
         return [];
       }
       cookbooks.value.sort((a, b) => (a.position || 0) - (b.position || 0));
@@ -181,8 +181,8 @@ export default defineComponent({
       {
         insertDivider: false,
         icon: $globals.icons.link,
-        title: i18n.tc("general.import"),
-        subtitle: i18n.tc("new-recipe.import-by-url"),
+        title: $i18n.tc("general.import"),
+        subtitle: $i18n.tc("new-recipe.import-by-url"),
         to: `/g/${groupSlug.value}/r/create/url`,
         restricted: true,
         hide: false,
@@ -190,8 +190,8 @@ export default defineComponent({
       {
         insertDivider: false,
         icon: $globals.icons.fileImage,
-        title: i18n.tc("recipe.create-from-image"),
-        subtitle: i18n.tc("recipe.create-recipe-from-an-image"),
+        title: $i18n.tc("recipe.create-from-image"),
+        subtitle: $i18n.tc("recipe.create-recipe-from-an-image"),
         to: `/g/${groupSlug.value}/r/create/image`,
         restricted: true,
         hide: !showImageImport.value,
@@ -199,8 +199,8 @@ export default defineComponent({
       {
         insertDivider: true,
         icon: $globals.icons.edit,
-        title: i18n.tc("general.create"),
-        subtitle: i18n.tc("new-recipe.create-manually"),
+        title: $i18n.tc("general.create"),
+        subtitle: $i18n.tc("new-recipe.create-manually"),
         to: `/g/${groupSlug.value}/r/create/new`,
         restricted: true,
         hide: false,
@@ -210,7 +210,7 @@ export default defineComponent({
     const bottomLinks = computed<SideBarLink[]>(() => [
       {
         icon: $globals.icons.cog,
-        title: i18n.tc("general.settings"),
+        title: $i18n.tc("general.settings"),
         to: "/admin/site-settings",
         restricted: true,
       },
@@ -220,54 +220,54 @@ export default defineComponent({
       {
         icon: $globals.icons.silverwareForkKnife,
         to: `/g/${groupSlug.value}`,
-        title: i18n.tc("general.recipes"),
+        title: $i18n.tc("general.recipes"),
         restricted: true,
       },
       {
         icon: $globals.icons.calendarMultiselect,
-        title: i18n.tc("meal-plan.meal-planner"),
+        title: $i18n.tc("meal-plan.meal-planner"),
         to: "/household/mealplan/planner/view",
         restricted: true,
       },
       {
         icon: $globals.icons.formatListCheck,
-        title: i18n.tc("shopping-list.shopping-lists"),
+        title: $i18n.tc("shopping-list.shopping-lists"),
         to: "/shopping-lists",
         restricted: true,
       },
       {
         icon: $globals.icons.timelineText,
-        title: i18n.tc("recipe.timeline"),
+        title: $i18n.tc("recipe.timeline"),
         to: `/g/${groupSlug.value}/recipes/timeline`,
         restricted: true,
       },
       {
         icon: $globals.icons.book,
         to: `/g/${groupSlug.value}/cookbooks`,
-        title: i18n.tc("cookbook.cookbooks"),
+        title: $i18n.tc("cookbook.cookbooks"),
         restricted: true,
       },
       {
         icon: $globals.icons.organizers,
-        title: i18n.tc("general.organizers"),
+        title: $i18n.tc("general.organizers"),
         restricted: true,
         children: [
           {
             icon: $globals.icons.categories,
             to: `/g/${groupSlug.value}/recipes/categories`,
-            title: i18n.tc("sidebar.categories"),
+            title: $i18n.tc("sidebar.categories"),
             restricted: true,
           },
           {
             icon: $globals.icons.tags,
             to: `/g/${groupSlug.value}/recipes/tags`,
-            title: i18n.tc("sidebar.tags"),
+            title: $i18n.tc("sidebar.tags"),
             restricted: true,
           },
           {
             icon: $globals.icons.potSteam,
             to: `/g/${groupSlug.value}/recipes/tools`,
-            title: i18n.tc("tool.tools"),
+            title: $i18n.tc("tool.tools"),
             restricted: true,
           },
         ],

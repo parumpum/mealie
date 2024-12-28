@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { reactive, toRefs, defineComponent, useContext } from "@nuxtjs/composition-api";
+import { reactive, toRefs, defineComponent, useNuxtApp } from "#imports";
 export default defineComponent({
   props: {
     inputTextProp: {
@@ -108,22 +108,22 @@ export default defineComponent({
       state.dialog = false;
     }
 
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     const utilities = [
       {
         id: "trim-whitespace",
-        description: i18n.tc("new-recipe.trim-whitespace-description"),
+        description: $i18n.tc("new-recipe.trim-whitespace-description"),
         action: trimAllLines,
       },
       {
         id: "trim-prefix",
-        description: i18n.tc("new-recipe.trim-prefix-description"),
+        description: $i18n.tc("new-recipe.trim-prefix-description"),
         action: removeFirstCharacter,
       },
       {
         id: "split-by-numbered-line",
-        description: i18n.tc("new-recipe.split-by-numbered-line-description"),
+        description: $i18n.tc("new-recipe.split-by-numbered-line-description"),
         action: splitByNumberedLine,
       },
     ];

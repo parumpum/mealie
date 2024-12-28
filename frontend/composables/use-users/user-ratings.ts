@@ -1,4 +1,4 @@
-import { ref, useContext } from "@nuxtjs/composition-api";
+import { ref, useNuxtApp } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { UserRatingSummary } from "~/lib/api/types/user";
 
@@ -7,7 +7,7 @@ const loading = ref(false);
 const ready = ref(false);
 
 export const useUserSelfRatings = function () {
-  const { $auth } = useContext();
+  const { $auth } = useNuxtApp();
   const api = useUserApi();
 
   async function refreshUserRatings() {

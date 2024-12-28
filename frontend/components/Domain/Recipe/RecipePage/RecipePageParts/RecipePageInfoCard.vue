@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useNuxtApp } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import RecipeRating from "~/components/Domain/Recipe/RecipeRating.vue";
 import RecipeLastMade from "~/components/Domain/Recipe/RecipeLastMade.vue";
@@ -87,7 +87,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const { $vuetify } = useContext();
+    const { $vuetify } = useNuxtApp();
     const useMobile = computed(() => $vuetify.breakpoint.smAndDown);
 
     const { isOwnGroup } = useLoggedInState();

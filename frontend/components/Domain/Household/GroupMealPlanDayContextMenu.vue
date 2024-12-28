@@ -36,10 +36,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, toRefs, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, reactive, ref, toRefs, useNuxtApp } from "#imports";
 import { Recipe } from "~/lib/api/types/recipe";
 import RecipeDialogAddToShoppingList from "~/components/Domain/Recipe/RecipeDialogAddToShoppingList.vue";
-import { ShoppingListSummary } from "~/lib/api/types/household";
+import { ShoppingListOut } from "~/lib/api/types/household";
 import { useUserApi } from "~/composables/api";
 
 export interface ContextMenuItem {
@@ -77,7 +77,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { $globals, i18n } = useContext();
+    const { $globals, $i18n } = useNuxtApp();
     const api = useUserApi();
 
     const state = reactive({
@@ -85,7 +85,7 @@ export default defineComponent({
       shoppingListDialog: false,
       menuItems: [
         {
-          title: i18n.tc("recipe.add-to-list"),
+          title: $i18n.tc("recipe.add-to-list"),
           icon: $globals.icons.cartCheck,
           color: undefined,
           event: "shoppingList",
@@ -96,7 +96,7 @@ export default defineComponent({
 
     const icon = props.menuIcon || $globals.icons.dotsVertical;
 
-    const shoppingLists = ref<ShoppingListSummary[]>();
+    const shoppingLists = ref<ShoppingListOut[]>();
     const recipesWithScales = computed(() => {
       return props.recipes.map((recipe) => {
         return {

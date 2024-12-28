@@ -58,7 +58,7 @@
 
 <script lang="ts">
 import draggable from "vuedraggable";
-import { computed, defineComponent, ref, useContext, useRoute } from "@nuxtjs/composition-api";
+import { computed, defineComponent, ref, useNuxtApp, useRoute } from "#imports";
 import { usePageState, usePageUser } from "~/composables/recipe-page/shared-state";
 import { NoUndefinedField } from "~/lib/api/types/non-generated";
 import { Recipe } from "~/lib/api/types/recipe";
@@ -80,12 +80,12 @@ export default defineComponent({
   setup(props) {
     const { user } = usePageUser();
     const { imageKey } = usePageState(props.recipe.slug);
-    const { $auth, i18n } = useContext();
+    const { $auth, $i18n } = useNuxtApp();
 
     const drag = ref(false);
 
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug || $auth.user?.groupSlug || "");
 
     const hasFoodOrUnit = computed(() => {
       if (!props.recipe) {
@@ -104,11 +104,11 @@ export default defineComponent({
 
     const parserToolTip = computed(() => {
       if (props.recipe.settings.disableAmount) {
-        return i18n.t("recipe.enable-ingredient-amounts-to-use-this-feature");
+        return $i18n.t("recipe.enable-ingredient-amounts-to-use-this-feature");
       } else if (hasFoodOrUnit.value) {
-        return i18n.t("recipe.recipes-with-units-or-foods-defined-cannot-be-parsed");
+        return $i18n.t("recipe.recipes-with-units-or-foods-defined-cannot-be-parsed");
       }
-      return i18n.t("recipe.parse-ingredients");
+      return $i18n.t("recipe.parse-ingredients");
     });
 
     function addIngredient(ingredients: Array<string> | null = null) {

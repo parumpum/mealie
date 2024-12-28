@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, useContext, useRouter } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, toRefs, useNuxtApp, useRouter } from "#imports";
 import { fieldTypes } from "~/composables/forms";
 import { useGroups } from "~/composables/use-groups";
 import { GroupInDB } from "~/lib/api/types/user";
@@ -84,7 +84,7 @@ import { GroupInDB } from "~/lib/api/types/user";
 export default defineComponent({
   layout: "admin",
   setup() {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const { groups, refreshAllGroups, deleteGroup, createGroup } = useGroups();
 
     const state = reactive({
@@ -94,21 +94,21 @@ export default defineComponent({
       search: "",
       headers: [
         {
-          text: i18n.t("group.group"),
+          text: $i18n.t("group.group"),
           align: "start",
           sortable: false,
           value: "id",
         },
-        { text: i18n.t("general.name"), value: "name" },
-        { text: i18n.t("group.total-households"), value: "households" },
-        { text: i18n.t("user.total-users"), value: "users" },
-        { text: i18n.t("general.delete"), value: "actions" },
+        { text: $i18n.t("general.name"), value: "name" },
+        { text: $i18n.t("group.total-households"), value: "households" },
+        { text: $i18n.t("user.total-users"), value: "users" },
+        { text: $i18n.t("general.delete"), value: "actions" },
       ],
       updateMode: false,
       createGroupForm: {
         items: [
           {
-            label: i18n.t("group.group-name"),
+            label: $i18n.t("group.group-name"),
             varName: "name",
             type: fieldTypes.TEXT,
             rules: ["required"],

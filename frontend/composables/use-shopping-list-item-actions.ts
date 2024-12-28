@@ -1,4 +1,4 @@
-import { computed, reactive, watch } from "@nuxtjs/composition-api";
+import { computed, reactive, watch } from "#imports";
 import { useLocalStorage } from "@vueuse/core";
 import { useUserApi } from "~/composables/api";
 import { ShoppingListItemOut, ShoppingListOut } from "~/lib/api/types/household";
@@ -188,7 +188,7 @@ export function useShoppingListItemActions(shoppingListId: string) {
   }
 
   async function process() {
-    if(queueEmpty.value) {
+    if (queueEmpty.value) {
       queue.lastUpdate = Date.now();
       return;
     }

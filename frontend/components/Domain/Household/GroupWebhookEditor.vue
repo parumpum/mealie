@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from "@nuxtjs/composition-api";
+import { defineComponent, computed, ref } from "#imports";
 import { ReadWebhook } from "~/lib/api/types/household";
 import { timeLocalToUTC, timeUTCToLocal } from "~/composables/use-group-webhooks";
 

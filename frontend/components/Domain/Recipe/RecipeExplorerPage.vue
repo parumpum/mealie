@@ -146,8 +146,9 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, useRouter, onMounted, useContext, computed, Ref, useRoute, watch } from "@nuxtjs/composition-api";
 import { watchDebounced } from "@vueuse/shared";
+import { ComputedRef, Ref } from "vue";
+import { ref, defineComponent, useRouter, onMounted, useNuxtApp, computed, useRoute, watch } from "#imports";
 import SearchFilter from "~/components/Domain/SearchFilter.vue";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import {
@@ -174,7 +175,7 @@ export default defineComponent({
   components: { SearchFilter, RecipeCardSection },
   setup() {
     const router = useRouter();
-    const { $auth, $globals, i18n } = useContext();
+    const { $auth, $globals, $i18n } = useNuxtApp();
 
     const { isOwnGroup } = useLoggedInState();
     const state = ref({
@@ -192,7 +193,7 @@ export default defineComponent({
     });
 
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug: ComputedRef<string> = computed((): string => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
     const searchQuerySession = useUserSearchQuerySession();
 
     const { recipes, appendRecipes, assignSorted, removeRecipe, replaceRecipes } = useLazyRecipes(isOwnGroup.value ? null : groupSlug.value);
@@ -348,40 +349,40 @@ export default defineComponent({
     const sortable = [
       {
         icon: $globals.icons.orderAlphabeticalAscending,
-        name: i18n.tc("general.sort-alphabetically"),
+        name: $i18n.tc("general.sort-alphabetically"),
         value: "name",
       },
       {
         icon: $globals.icons.newBox,
-        name: i18n.tc("general.created"),
+        name: $i18n.tc("general.created"),
         value: "created_at",
       },
       {
         icon: $globals.icons.chefHat,
-        name: i18n.tc("general.last-made"),
+        name: $i18n.tc("general.last-made"),
         value: "last_made",
       },
       {
         icon: $globals.icons.star,
-        name: i18n.tc("general.rating"),
+        name: $i18n.tc("general.rating"),
         value: "rating",
       },
       {
         icon: $globals.icons.update,
-        name: i18n.tc("general.updated"),
+        name: $i18n.tc("general.updated"),
         value: "updated_at",
       },
       {
         icon: $globals.icons.diceMultiple,
-        name: i18n.tc("general.random"),
+        name: $i18n.tc("general.random"),
         value: "random",
       },
     ];
 
     watch(
-      () => route.value.query,
+      () => route.query as string,
       () => {
-        if (!Object.keys(route.value.query).length) {
+        if (!Object.keys(route.query as string).length) {
           reset();
         }
       }
@@ -525,7 +526,8 @@ export default defineComponent({
 
     onMounted(async () => {
       // restore the user's last search query
-      if (searchQuerySession.value.recipe && !(Object.keys(route.value.query).length > 0)) {
+      const query: string = route.query;
+      if (searchQuerySession.value.recipe && !(Object.keys(query).length > 0)) {
         try {
           const query = JSON.parse(searchQuerySession.value.recipe);
           await router.replace({ query });

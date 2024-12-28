@@ -15,7 +15,7 @@
       </BaseDialog>
 
       <!-- Import Dialog -->
-      <BaseDialog v-model="importDialog" color="error" :title="$t('settings.backup.backup-restore')" :icon="$globals.icons.database">
+      <BaseDialog v-model="importDialog" color="error" :title="String($t('settings.backup.backup-restore'))" :icon="$globals.icons.database">
         <v-divider></v-divider>
         <v-card-text>
           <i18n path="settings.backup.back-restore-description">
@@ -117,7 +117,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, toRefs, useContext, onMounted, useRoute } from "@nuxtjs/composition-api";
+import { computed, defineComponent, reactive, ref, toRefs, useNuxtApp, onMounted, useRoute } from "#imports";
 import { useAdminApi } from "~/composables/api";
 import { AllBackups } from "~/lib/api/types/admin";
 import { alert } from "~/composables/use-toast";
@@ -125,9 +125,9 @@ import { alert } from "~/composables/use-toast";
 export default defineComponent({
   layout: "admin",
   setup() {
-    const { i18n, $auth } = useContext();
+    const { $i18n, $auth } = useNuxtApp();
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => String(route.params.groupSlug) || String($auth.user?.groupSlug) || "");
 
     const adminApi = useAdminApi();
     const selected = ref("");
@@ -149,9 +149,9 @@ export default defineComponent({
 
       if (data?.error === false) {
         refreshBackups();
-        alert.success(i18n.tc("settings.backup.backup-created"));
+        alert.success(String($i18n.tc("settings.backup.backup-created")));
       } else {
-        alert.error(i18n.tc("settings.backup.error-creating-backup-see-log-file"));
+        alert.error(String($i18n.tc("settings.backup.error-creating-backup-see-log-file")));
       }
     }
 
@@ -163,9 +163,9 @@ export default defineComponent({
         console.log(error);
         state.importDialog = false;
         state.runningRestore = false;
-        alert.error(i18n.tc("settings.backup.restore-fail"));
+        alert.error(String($i18n.tc("settings.backup.restore-fail")));
       } else {
-        alert.success(i18n.tc("settings.backup.restore-success"));
+        alert.success(String($i18n.tc("settings.backup.restore-success")));
         $auth.logout();
       }
     }
@@ -176,7 +176,7 @@ export default defineComponent({
       const { data } = await adminApi.backups.delete(deleteTarget.value);
 
       if (!data?.error) {
-        alert.success(i18n.tc("settings.backup.backup-deleted"));
+        alert.success(String($i18n.tc("settings.backup.backup-deleted")));
         refreshBackups();
       }
     }
@@ -189,9 +189,9 @@ export default defineComponent({
       runningRestore: false,
       search: "",
       headers: [
-        { text: i18n.t("general.name"), value: "name" },
-        { text: i18n.t("general.created"), value: "date" },
-        { text: i18n.t("export.size"), value: "size" },
+        { text: $i18n.t("general.name"), value: "name" },
+        { text: $i18n.t("general.created"), value: "date" },
+        { text: $i18n.t("export.size"), value: "size" },
         { text: "", value: "actions", align: "right" },
       ],
     });

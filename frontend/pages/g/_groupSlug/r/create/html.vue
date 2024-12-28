@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRefs, ref, useContext, useRoute, useRouter } from "@nuxtjs/composition-api";
+import { computed, defineComponent, reactive, toRefs, ref, useNuxtApp, useRoute, useRouter } from "#imports";
 import { AxiosResponse } from "axios";
 import { useTagStore } from "~/composables/store/use-tag-store";
 import { useUserApi } from "~/composables/api";
@@ -77,9 +77,9 @@ export default defineComponent({
       loading: false,
       isEditJSON: false,
     });
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug || $auth.user?.groupSlug || "");
     const domUrlForm = ref<VForm | null>(null);
 
     const api = useUserApi();
@@ -88,19 +88,19 @@ export default defineComponent({
 
     const importKeywordsAsTags = computed({
       get() {
-        return route.value.query.use_keywords === "1";
+        return route.query.use_keywords === "1";
       },
       set(v: boolean) {
-        router.replace({ query: { ...route.value.query, use_keywords: v ? "1" : "0" } });
+        router.replace({ query: { ...route.query, use_keywords: v ? "1" : "0" } });
       },
     });
 
     const stayInEditMode = computed({
       get() {
-        return route.value.query.edit === "1";
+        return route.query.edit === "1";
       },
       set(v: boolean) {
-        router.replace({ query: { ...route.value.query, edit: v ? "1" : "0" } });
+        router.replace({ query: { ...route.query, edit: v ? "1" : "0" } });
       },
     });
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Merge Dialog -->
-    <BaseDialog v-model="mergeDialog" :icon="$globals.icons.units" :title="$t('data-pages.units.combine-unit')" @confirm="mergeUnits">
+    <BaseDialog v-model="mergeDialog" :icon="$globals.icons.units" :title="String($t('data-pages.units.combine-unit'))" @confirm="mergeUnits">
       <v-card-text>
       <i18n path="data-pages.units.combine-unit-description">
         <template #source-unit-will-be-deleted>
@@ -28,7 +28,7 @@
     <BaseDialog
       v-model="createDialog"
       :icon="$globals.icons.units"
-      :title="$t('data-pages.units.create-unit')"
+      :title="String($t('data-pages.units.create-unit'))"
       :submit-icon="$globals.icons.save"
       :submit-text="$tc('general.save')"
       @submit="createUnit"
@@ -77,7 +77,7 @@
     <BaseDialog
       v-model="editDialog"
       :icon="$globals.icons.units"
-      :title="$t('data-pages.units.edit-unit')"
+      :title="String($t('data-pages.units.edit-unit'))"
       :submit-icon="$globals.icons.save"
       :submit-text="$tc('general.save')"
       @submit="editSaveUnit"
@@ -237,8 +237,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, useContext } from "@nuxtjs/composition-api";
 import type { LocaleObject } from "@nuxtjs/i18n";
+import { computed, defineComponent, onMounted, ref, useNuxtApp } from "#imports";
 import RecipeDataAliasManagerDialog from "~/components/Domain/Recipe/RecipeDataAliasManagerDialog.vue";
 import { validators } from "~/composables/use-validators";
 import { useUserApi } from "~/composables/api";
@@ -251,54 +251,54 @@ export default defineComponent({
   components: { RecipeDataAliasManagerDialog },
   setup() {
     const userApi = useUserApi();
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const tableConfig = {
       hideColumns: true,
       canExport: true,
     };
     const tableHeaders = [
       {
-        text: i18n.t("general.id"),
+        text: $i18n.t("general.id"),
         value: "id",
         show: false,
       },
       {
-        text: i18n.t("general.name"),
+        text: $i18n.t("general.name"),
         value: "name",
         show: true,
       },
       {
-        text: i18n.t("general.plural-name"),
+        text: $i18n.t("general.plural-name"),
         value: "pluralName",
         show: true,
       },
       {
-        text: i18n.t("data-pages.units.abbreviation"),
+        text: $i18n.t("data-pages.units.abbreviation"),
         value: "abbreviation",
         show: true,
       },
       {
-        text: i18n.t("data-pages.units.plural-abbreviation"),
+        text: $i18n.t("data-pages.units.plural-abbreviation"),
         value: "pluralAbbreviation",
         show: true,
       },
       {
-        text: i18n.t("data-pages.units.use-abbv"),
+        text: $i18n.t("data-pages.units.use-abbv"),
         value: "useAbbreviation",
         show: true,
       },
       {
-        text: i18n.t("data-pages.units.description"),
+        text: $i18n.t("data-pages.units.description"),
         value: "description",
         show: false,
       },
       {
-        text: i18n.t("data-pages.units.fraction"),
+        text: $i18n.t("data-pages.units.fraction"),
         value: "fraction",
         show: true,
       },
       {
-        text: i18n.tc("general.date-added"),
+        text: $i18n.tc("general.date-added"),
         value: "createdAt",
         show: false,
       },
@@ -306,7 +306,7 @@ export default defineComponent({
 
     function formatDate(date: string) {
       try {
-        return i18n.d(Date.parse(date), "medium");
+        return String($i18n.d(Date.parse(date), "medium"));
       } catch {
         return "";
       }
@@ -451,7 +451,7 @@ export default defineComponent({
     });
 
     const locales = LOCALES.filter((locale) =>
-      (i18n.locales as LocaleObject[]).map((i18nLocale) => i18nLocale.code).includes(locale.value)
+      ($i18n.locales as LocaleObject[]).map((i18nLocale) => i18nLocale.code).includes(locale.value)
     );
 
     async function seedDatabase() {

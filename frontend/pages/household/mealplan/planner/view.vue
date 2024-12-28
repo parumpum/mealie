@@ -40,7 +40,7 @@
             class="mb-2"
             :rating="mealplan.recipe ? mealplan.recipe.rating : 0"
             :slug="mealplan.recipe ? mealplan.recipe.slug : mealplan.title"
-            :description="mealplan.recipe ? mealplan.recipe.description : mealplan.text"
+            :description="mealplan.recipe ? mealplan.recipe.description || '' : mealplan.text"
             :name="mealplan.recipe ? mealplan.recipe.name : mealplan.title"
             :tags="mealplan.recipe ? mealplan.recipe.tags : []"
           />
@@ -51,12 +51,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext } from "@nuxtjs/composition-api";
-import { MealsByDate } from "./types";
-import { ReadPlanEntry } from "~/lib/api/types/meal-plan";
+import type { MealsByDate } from "./types";
+import { computed, defineComponent, useNuxtApp } from "#imports";
+import type { ReadPlanEntry } from "~/lib/api/types/meal-plan";
 import GroupMealPlanDayContextMenu from "~/components/Domain/Household/GroupMealPlanDayContextMenu.vue";
 import RecipeCardMobile from "~/components/Domain/Recipe/RecipeCardMobile.vue";
-import { RecipeSummary } from "~/lib/api/types/recipe";
+import type { Recipe } from "~/lib/api/types/recipe";
 
 export default defineComponent({
   components: {
@@ -78,20 +78,20 @@ export default defineComponent({
     type Days = {
       date: Date;
       sections: DaySection[];
-      recipes: RecipeSummary[];
+      recipes: Recipe[];
     };
 
-  const { i18n } = useContext();
+  const { $i18n } = useNuxtApp();
 
     const plan = computed<Days[]>(() => {
       return props.mealplans.reduce((acc, day) => {
         const out: Days = {
           date: day.date,
           sections: [
-            { title: i18n.tc("meal-plan.breakfast"), meals: [] },
-            { title: i18n.tc("meal-plan.lunch"), meals: [] },
-            { title: i18n.tc("meal-plan.dinner"), meals: [] },
-            { title: i18n.tc("meal-plan.side"), meals: [] },
+            { title: $i18n.tc("meal-plan.breakfast"), meals: [] },
+            { title: $i18n.tc("meal-plan.lunch"), meals: [] },
+            { title: $i18n.tc("meal-plan.dinner"), meals: [] },
+            { title: $i18n.tc("meal-plan.side"), meals: [] },
           ],
           recipes: [],
         };

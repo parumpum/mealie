@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@nuxtjs/composition-api";
+import { defineComponent, ref } from "#imports";
 import { useAdminApi } from "~/composables/api";
 import { alert } from "~/composables/use-toast";
 import { VForm } from "~/types/vuetify";

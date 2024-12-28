@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, computed, useNuxtApp } from "#imports";
 import { ReadHouseholdPreferences } from "~/lib/api/types/household";
 
 export default defineComponent({
@@ -66,7 +66,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     type Preference = {
       key: keyof ReadHouseholdPreferences;
@@ -77,68 +77,63 @@ export default defineComponent({
     const recipePreferences: Preference[] = [
       {
         key: "recipePublic",
-        label: i18n.tc("group.allow-users-outside-of-your-group-to-see-your-recipes"),
-        description: i18n.tc("group.allow-users-outside-of-your-group-to-see-your-recipes-description"),
+        label: $i18n.tc("group.allow-users-outside-of-your-group-to-see-your-recipes"),
+        description: $i18n.tc("group.allow-users-outside-of-your-group-to-see-your-recipes-description"),
       },
       {
         key: "recipeShowNutrition",
-        label: i18n.tc("group.show-nutrition-information"),
-        description: i18n.tc("group.show-nutrition-information-description"),
+        label: $i18n.tc("group.show-nutrition-information"),
+        description: $i18n.tc("group.show-nutrition-information-description"),
       },
       {
         key: "recipeShowAssets",
-        label: i18n.tc("group.show-recipe-assets"),
-        description: i18n.tc("group.show-recipe-assets-description"),
+        label: $i18n.tc("group.show-recipe-assets"),
+        description: $i18n.tc("group.show-recipe-assets-description"),
       },
       {
         key: "recipeLandscapeView",
-        label: i18n.tc("group.default-to-landscape-view"),
-        description: i18n.tc("group.default-to-landscape-view-description"),
+        label: $i18n.tc("group.default-to-landscape-view"),
+        description: $i18n.tc("group.default-to-landscape-view-description"),
       },
       {
         key: "recipeDisableComments",
-        label: i18n.tc("group.disable-users-from-commenting-on-recipes"),
-        description: i18n.tc("group.disable-users-from-commenting-on-recipes-description"),
+        label: $i18n.tc("group.disable-users-from-commenting-on-recipes"),
+        description: $i18n.tc("group.disable-users-from-commenting-on-recipes-description"),
       },
       {
         key: "recipeDisableAmount",
-        label: i18n.tc("group.disable-organizing-recipe-ingredients-by-units-and-food"),
-        description: i18n.tc("group.disable-organizing-recipe-ingredients-by-units-and-food-description"),
-      },
-      {
-        key: "foodAutoLabel",
-        label: i18n.tc("group.auto-label-foods"),
-        description: i18n.tc("group.auto-label-foods-description"),
+        label: $i18n.tc("group.disable-organizing-recipe-ingredients-by-units-and-food"),
+        description: $i18n.tc("group.disable-organizing-recipe-ingredients-by-units-and-food-description"),
       }
     ];
 
     const allDays = [
       {
-        name: i18n.t("general.sunday"),
+        name: $i18n.t("general.sunday"),
         value: 0,
       },
       {
-        name: i18n.t("general.monday"),
+        name: $i18n.t("general.monday"),
         value: 1,
       },
       {
-        name: i18n.t("general.tuesday"),
+        name: $i18n.t("general.tuesday"),
         value: 2,
       },
       {
-        name: i18n.t("general.wednesday"),
+        name: $i18n.t("general.wednesday"),
         value: 3,
       },
       {
-        name: i18n.t("general.thursday"),
+        name: $i18n.t("general.thursday"),
         value: 4,
       },
       {
-        name: i18n.t("general.friday"),
+        name: $i18n.t("general.friday"),
         value: 5,
       },
       {
-        name: i18n.t("general.saturday"),
+        name: $i18n.t("general.saturday"),
         value: 6,
       },
     ];

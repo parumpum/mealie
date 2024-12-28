@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@nuxtjs/composition-api";
+import { defineComponent } from "#imports";
 import RecipeExplorerPage from "~/components/Domain/Recipe/RecipeExplorerPage.vue";
 
 export default defineComponent({

@@ -3,10 +3,10 @@
     <!-- User Profile -->
     <template v-if="loggedIn">
       <v-list-item two-line :to="userProfileLink" exact>
-        <UserAvatar list :user-id="$auth.user.id" :tooltip="false" />
+        <UserAvatar list :user-id="$auth.user?.id?.toString()" :tooltip="false" />
 
         <v-list-item-content>
-          <v-list-item-title class="pr-2"> {{ $auth.user.fullName }}</v-list-item-title>
+          <v-list-item-title class="pr-2"> {{ $auth.user?.fullName }}</v-list-item-title>
           <v-list-item-subtitle>
             <v-btn v-if="isOwnGroup" class="px-2 pa-0" text :to="userFavoritesLink" small>
               <v-icon left small>
@@ -135,10 +135,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRefs, useContext, watch } from "@nuxtjs/composition-api";
+import { computed, defineComponent, reactive, toRefs, useNuxtApp, watch } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import { SidebarLinks } from "~/types/application-types";
+import { User } from "~/lib/api/types/user";
 import UserAvatar from "~/components/Domain/User/UserAvatar.vue";
+
 
 export default defineComponent({
   components: {
@@ -150,7 +152,7 @@ export default defineComponent({
       default: null,
     },
     user: {
-      type: Object,
+      type: User,
       default: null,
     },
     topLink: {
@@ -185,11 +187,13 @@ export default defineComponent({
       },
     });
 
-    const { $auth } = useContext();
+    const { $auth, $i18n } = useNuxtApp();
+
+    const user: User = $auth.user;
     const { loggedIn, isOwnGroup } = useLoggedInState();
 
-    const userFavoritesLink = computed(() => $auth.user ? `/user/${$auth.user.id}/favorites` : undefined);
-    const userProfileLink = computed(() => $auth.user ? "/user/profile" : undefined);
+    const userFavoritesLink = computed(() => user ? `/user/${$auth.user.id}/favorites` : undefined);
+    const userProfileLink = computed(() => user ? "/user/profile" : undefined);
 
     const state = reactive({
       dropDowns: {} as Record<string, boolean>,
@@ -199,7 +203,7 @@ export default defineComponent({
       hasOpenedBefore: false as boolean,
     });
 
-    const allLinks = computed(() => [...props.topLink, ...(props.secondaryLinks || []), ...(props.bottomLinks || [])]);
+    const allLinks = computed(() => [...(props.topLink || []), ...(props.secondaryLinks || []), ...(props.bottomLinks || [])]);
     function initDropdowns() {
       allLinks.value.forEach((link) => {
         state.dropDowns[link.title] = link.childrenStartExpanded || false;

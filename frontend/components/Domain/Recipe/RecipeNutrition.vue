@@ -44,12 +44,11 @@ dense :value="value[key]" :label="labels[key].label" :suffix="labels[key].suffix
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, useRoute } from "@nuxtjs/composition-api";
-import { parseIngredientText, useNutritionLabels, useRecipe } from "~/composables/recipes";
+import { computed, defineComponent, ref } from "#imports";
+import { parseIngredientText, useNutritionLabels } from "~/composables/recipes";
 import { Nutrition, Recipe } from "~/lib/api/types/recipe";
 import { NutritionLabelType } from "~/composables/recipes/use-recipe-nutrition";
 import { useAppInfo, useUserApi } from "~/composables/api";
-import { parser } from "~/.eslintrc";
 
 export default defineComponent({
   props: {
@@ -130,10 +129,10 @@ export default defineComponent({
     // Build a new list that only contains nutritional information that has a value
     const renderedList = computed(() => {
       return Object.entries(labels).reduce((item: NutritionLabelType, [key, label]) => {
-        if (props.value[key]?.trim()) {
+        if (props.value[key as keyof Nutrition]?.trim()) {
           item[key] = {
             ...label,
-            value: props.value[key],
+            value: props.value[key as keyof Nutrition],
           };
         }
         return item;

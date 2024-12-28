@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, useNuxtApp } from "#imports";
 
 /**
  * Renderless component that only renders if the user is logged in.
@@ -11,7 +11,7 @@ import { defineComponent, useContext } from "@nuxtjs/composition-api";
  */
 export default defineComponent({
   setup(_, ctx) {
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
 
     const r = $auth?.user?.advanced || false;
 

@@ -3,14 +3,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useAsync, useContext, useRouter } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useLazyAsyncData, useNuxtApp, useRouter } from "#imports";
 import { useAsyncKey } from "~/composables/use-utils";
 import { AppInfo, AppStartupInfo } from "~/lib/api/types/admin";
 
 export default defineComponent({
   layout: "blank",
   setup() {
-    const { $auth, $axios } = useContext();
+    const { $auth, $axios } = useNuxtApp();
     const router = useRouter();
     const groupSlug = computed(() => $auth.user?.groupSlug);
 
@@ -23,7 +23,7 @@ export default defineComponent({
       }
     }
 
-    useAsync(async () => {
+    useLazyAsyncData(async () => {
       if (groupSlug.value) {
         const data = await $axios.get<AppStartupInfo>("/api/app/about/startup-info");
         const isDemo = data.data.isDemo;

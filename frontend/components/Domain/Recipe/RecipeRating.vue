@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from "@nuxtjs/composition-api";
+import { computed, defineComponent, ref, watch } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import { useUserSelfRatings } from "~/composables/use-users";
 export default defineComponent({

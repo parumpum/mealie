@@ -1,4 +1,4 @@
-import { reactive } from "@nuxtjs/composition-api";
+import { reactive } from "#imports";
 
 export enum States {
   Initial,

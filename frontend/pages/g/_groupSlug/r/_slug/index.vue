@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, useAsync, useContext, useMeta, useRoute, useRouter } from "@nuxtjs/composition-api";
 import { whenever } from "@vueuse/core";
+import { computed, defineComponent, ref, useLazyAsyncData, useNuxtApp, useNuxt2Meta, useRoute, useRouter } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import { useAsyncKey } from "~/composables/use-utils";
 import RecipePage from "~/components/Domain/Recipe/RecipePage/RecipePage.vue";
@@ -17,22 +17,25 @@ import { Recipe } from "~/lib/api/types/recipe";
 export default defineComponent({
   components: { RecipePage },
   setup() {
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const { isOwnGroup } = useLoggedInState();
-    const { title } = useMeta();
+    const title = ref("Recipe");
+    useNuxt2Meta({
+      title,
+    })
     const route = useRoute();
     const router = useRouter();
-    const slug = route.value.params.slug;
+    const slug = route.params.slug;
 
     let recipe = ref<Recipe | null>(null);
     if (isOwnGroup.value) {
-      const { recipe: data } = useRecipe(slug);
+      const { recipe: data } = useRecipe(slug as string);
       recipe = data;
     } else {
-      const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "")
+      const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "")
       const api = usePublicExploreApi(groupSlug.value);
-      recipe = useAsync(async () => {
-        const { data, error } = await api.explore.recipes.getOne(slug);
+      recipe = useLazyAsyncData(async () => {
+        const { data, error } = await api.explore.recipes.getOne(slug as string);
         if (error) {
           console.error("error loading recipe -> ", error);
           router.push(`/g/${groupSlug.value}`);
@@ -45,7 +48,7 @@ export default defineComponent({
     whenever(
       () => recipe.value,
       () => {
-        if (recipe.value) {
+        if (recipe.value && recipe.value.name) {
           title.value = recipe.value.name;
         }
       },

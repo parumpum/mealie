@@ -1,5 +1,6 @@
-import { ref, Ref } from "@nuxtjs/composition-api";
+import { Ref } from "vue";
 import { useReadOnlyStore } from "../partials/use-store-factory";
+import { ref } from "#imports";
 import { HouseholdSummary } from "~/lib/api/types/household";
 import { usePublicExploreApi, useUserApi } from "~/composables/api";
 

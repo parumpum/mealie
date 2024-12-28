@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, ref, onMounted, useNuxtApp } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { UserOut } from "~/lib/api/types/user";
 import UserAvatar from "~/components/Domain/User/UserAvatar.vue";
@@ -93,19 +93,19 @@ export default defineComponent({
   setup() {
     const api = useUserApi();
 
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     const members = ref<UserOut[] | null[]>([]);
 
     const headers = [
       { text: "", value: "avatar", sortable: false, align: "center" },
-      { text: i18n.t("user.username"), value: "username" },
-      { text: i18n.t("user.full-name"), value: "fullName" },
-      { text: i18n.t("user.admin"), value: "admin" },
-      { text: i18n.t("group.manage"), value: "manage", sortable: false, align: "center" },
-      { text: i18n.t("settings.organize"), value: "organize", sortable: false, align: "center" },
-      { text: i18n.t("group.invite"), value: "invite", sortable: false, align: "center" },
-      { text: i18n.t("group.manage-household"), value: "manageHousehold", sortable: false, align: "center" },
+      { text: $i18n.t("user.username"), value: "username" },
+      { text: $i18n.t("user.full-name"), value: "fullName" },
+      { text: $i18n.t("user.admin"), value: "admin" },
+      { text: $i18n.t("group.manage"), value: "manage", sortable: false, align: "center" },
+      { text: $i18n.t("settings.organize"), value: "organize", sortable: false, align: "center" },
+      { text: $i18n.t("group.invite"), value: "invite", sortable: false, align: "center" },
+      { text: $i18n.t("group.manage-household"), value: "manageHousehold", sortable: false, align: "center" },
     ];
 
     async function refreshMembers() {

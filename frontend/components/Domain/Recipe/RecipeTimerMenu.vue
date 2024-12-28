@@ -121,7 +121,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref, toRefs, useContext, watch } from "@nuxtjs/composition-api";
+import { computed, defineComponent, reactive, ref, toRefs, useNuxtApp, watch } from "#imports";
 import { ButtonOption } from "~/components/global/BaseButtonGroup.vue";
 
 // @ts-ignore typescript can't find our audio file, but it's there!
@@ -139,7 +139,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const { $globals, i18n } = useContext();
+    const { $globals, $i18n } = useNuxtApp();
     const state = reactive({
       showMenu: false,
       timerInitialized: false,
@@ -169,25 +169,25 @@ export default defineComponent({
 
     const initializeButton: ButtonOption = {
       icon: $globals.icons.timerPlus,
-      text: i18n.tc("recipe.timer.start-timer"),
+      text: $i18n.tc("recipe.timer.start-timer"),
       event: "initialize-timer",
     }
 
     const pauseButton: ButtonOption = {
       icon: $globals.icons.pause,
-      text: i18n.tc("recipe.timer.pause-timer"),
+      text: $i18n.tc("recipe.timer.pause-timer"),
       event: "pause-timer",
     };
 
     const resumeButton: ButtonOption = {
       icon: $globals.icons.play,
-      text: i18n.tc("recipe.timer.resume-timer"),
+      text: $i18n.tc("recipe.timer.resume-timer"),
       event: "resume-timer",
     };
 
     const stopButton: ButtonOption = {
       icon: $globals.icons.stop,
-      text: i18n.tc("recipe.timer.stop-timer"),
+      text: $i18n.tc("recipe.timer.stop-timer"),
       event: "stop-timer",
       color: "red",
     };

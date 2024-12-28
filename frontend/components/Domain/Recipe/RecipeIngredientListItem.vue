@@ -10,7 +10,7 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent } from "@nuxtjs/composition-api";
+import { computed, defineComponent } from "#imports";
 import { RecipeIngredient } from "~/lib/api/types/household";
 import { useParsedIngredientText } from "~/composables/recipes";
 

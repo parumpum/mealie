@@ -52,11 +52,13 @@
                 delete: false,
                 edit: false,
                 download: true,
+                duplicate: false,
                 mealplanner: true,
                 shoppingList: true,
                 print: false,
                 printPreferences: false,
                 share: true,
+                recipeActions: true,
               }"
               @delete="$emit('delete', slug)"
             />
@@ -69,13 +71,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext, useRoute } from "@nuxtjs/composition-api";
 import RecipeFavoriteBadge from "./RecipeFavoriteBadge.vue";
 import RecipeChips from "./RecipeChips.vue";
 import RecipeContextMenu from "./RecipeContextMenu.vue";
 import RecipeCardImage from "./RecipeCardImage.vue";
 import RecipeRating from "./RecipeRating.vue";
+import { computed, defineComponent, useNuxtApp, useRoute } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
+import { RecipeCategory, RecipeTag, RecipeTool } from "~/lib/api/types/recipe";
 
 export default defineComponent({
   components: { RecipeFavoriteBadge, RecipeChips, RecipeContextMenu, RecipeRating, RecipeCardImage },
@@ -107,7 +110,7 @@ export default defineComponent({
       default: "abc123",
     },
     tags: {
-      type: Array,
+      type: Array as () => RecipeCategory[] | RecipeTag[] | RecipeTool[],
       default: () => [],
     },
     recipeId: {
@@ -120,11 +123,11 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const { isOwnGroup } = useLoggedInState();
 
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
     const showRecipeContent = computed(() => props.recipeId && props.slug);
     const recipeRoute = computed<string>(() => {
       return showRecipeContent.value ? `/g/${groupSlug.value}/r/${props.slug}` : "";

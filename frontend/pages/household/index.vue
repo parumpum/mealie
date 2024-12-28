@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, ref, useNuxtApp } from "#imports";
 import HouseholdPreferencesEditor from "~/components/Domain/Household/HouseholdPreferencesEditor.vue";
 import { VForm } from "~/types/vuetify";
 import { useHouseholdSelf } from "~/composables/use-households";
@@ -35,7 +35,7 @@ export default defineComponent({
   middleware: ["auth", "can-manage-household-only"],
   setup() {
     const { household, actions: householdActions } = useHouseholdSelf();
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     const refHouseholdEditForm = ref<VForm | null>(null);
 
@@ -54,69 +54,69 @@ export default defineComponent({
         {
           key: "recipePublic",
           value: household.value.preferences.recipePublic || false,
-          label: i18n.t("household.allow-users-outside-of-your-household-to-see-your-recipes"),
-          description: i18n.t("household.allow-users-outside-of-your-household-to-see-your-recipes-description"),
+          label: $i18n.t("household.allow-users-outside-of-your-household-to-see-your-recipes"),
+          description: $i18n.t("household.allow-users-outside-of-your-household-to-see-your-recipes-description"),
         } as Preference,
         {
           key: "recipeShowNutrition",
           value: household.value.preferences.recipeShowNutrition || false,
-          label: i18n.t("group.show-nutrition-information"),
-          description: i18n.t("group.show-nutrition-information-description"),
+          label: $i18n.t("group.show-nutrition-information"),
+          description: $i18n.t("group.show-nutrition-information-description"),
         } as Preference,
         {
           key: "recipeShowAssets",
           value: household.value.preferences.recipeShowAssets || false,
-          label: i18n.t("group.show-recipe-assets"),
-          description: i18n.t("group.show-recipe-assets-description"),
+          label: $i18n.t("group.show-recipe-assets"),
+          description: $i18n.t("group.show-recipe-assets-description"),
         } as Preference,
         {
           key: "recipeLandscapeView",
           value: household.value.preferences.recipeLandscapeView || false,
-          label: i18n.t("group.default-to-landscape-view"),
-          description: i18n.t("group.default-to-landscape-view-description"),
+          label: $i18n.t("group.default-to-landscape-view"),
+          description: $i18n.t("group.default-to-landscape-view-description"),
         } as Preference,
         {
           key: "recipeDisableComments",
           value: household.value.preferences.recipeDisableComments || false,
-          label: i18n.t("group.disable-users-from-commenting-on-recipes"),
-          description: i18n.t("group.disable-users-from-commenting-on-recipes-description"),
+          label: $i18n.t("group.disable-users-from-commenting-on-recipes"),
+          description: $i18n.t("group.disable-users-from-commenting-on-recipes-description"),
         } as Preference,
         {
           key: "recipeDisableAmount",
           value: household.value.preferences.recipeDisableAmount || false,
-          label: i18n.t("group.disable-organizing-recipe-ingredients-by-units-and-food"),
-          description: i18n.t("group.disable-organizing-recipe-ingredients-by-units-and-food-description"),
+          label: $i18n.t("group.disable-organizing-recipe-ingredients-by-units-and-food"),
+          description: $i18n.t("group.disable-organizing-recipe-ingredients-by-units-and-food-description"),
         } as Preference
       ];
     });
 
     const allDays = [
       {
-        name: i18n.t("general.sunday"),
+        name: $i18n.t("general.sunday"),
         value: 0,
       },
       {
-        name: i18n.t("general.monday"),
+        name: $i18n.t("general.monday"),
         value: 1,
       },
       {
-        name: i18n.t("general.tuesday"),
+        name: $i18n.t("general.tuesday"),
         value: 2,
       },
       {
-        name: i18n.t("general.wednesday"),
+        name: $i18n.t("general.wednesday"),
         value: 3,
       },
       {
-        name: i18n.t("general.thursday"),
+        name: $i18n.t("general.thursday"),
         value: 4,
       },
       {
-        name: i18n.t("general.friday"),
+        name: $i18n.t("general.friday"),
         value: 5,
       },
       {
-        name: i18n.t("general.saturday"),
+        name: $i18n.t("general.saturday"),
         value: 6,
       },
     ];
@@ -129,9 +129,9 @@ export default defineComponent({
 
       const data = await householdActions.updatePreferences();
       if (data) {
-        alert.success(i18n.tc("settings.settings-updated"));
+        alert.success($i18n.tc("settings.settings-updated"));
       } else {
-        alert.error(i18n.tc("settings.settings-update-failed"));
+        alert.error($i18n.tc("settings.settings-update-failed"));
       }
     }
 

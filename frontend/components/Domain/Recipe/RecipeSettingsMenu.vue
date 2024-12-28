@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@nuxtjs/composition-api";
+import { defineComponent } from "#imports";
 import RecipeSettingsSwitches from "./RecipeSettingsSwitches.vue";
 
 export default defineComponent({

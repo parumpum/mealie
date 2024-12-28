@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRefs, ref, useContext, useRoute, useRouter } from "@nuxtjs/composition-api";
+import { computed, defineComponent, reactive, toRefs, ref, useNuxtApp, useRoute, useRouter } from "#imports";
 import { AxiosResponse } from "axios";
 import { useUserApi } from "~/composables/api";
 import { validators } from "~/composables/use-validators";
@@ -41,9 +41,9 @@ export default defineComponent({
       error: false,
       loading: false,
     });
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug || $auth.user?.groupSlug || "");
 
     const api = useUserApi();
     const router = useRouter();

@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@nuxtjs/composition-api";
+import { defineComponent } from "#imports";
 import { ContextMenuItem } from "~/composables/use-context-presents";
 
 export default defineComponent({

@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from "@nuxtjs/composition-api";
+import { computed, defineComponent, ref, watch } from "#imports";
 import { useStaticRoutes, useUserApi } from "~/composables/api";
 
 export default defineComponent({

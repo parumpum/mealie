@@ -85,11 +85,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, useContext } from "@nuxtjs/composition-api";
 import RecipeContextMenu from "./RecipeContextMenu.vue";
 import RecipeFavoriteBadge from "./RecipeFavoriteBadge.vue";
 import RecipeTimerMenu from "./RecipeTimerMenu.vue";
 import RecipeTimelineBadge from "./RecipeTimelineBadge.vue";
+import { defineComponent, ref, useNuxtApp } from "#imports";
 import { Recipe } from "~/lib/api/types/recipe";
 
 const SAVE_EVENT = "save";
@@ -136,28 +136,28 @@ export default defineComponent({
   setup(_, context) {
     const deleteDialog = ref(false);
 
-    const { i18n, $globals } = useContext();
+    const { $i18n, $globals } = useNuxtApp();
     const editorButtons = [
       {
-        text: i18n.t("general.delete"),
+        text: $i18n.t("general.delete"),
         icon: $globals.icons.delete,
         event: DELETE_EVENT,
         color: "error",
       },
       {
-        text: i18n.t("general.json"),
+        text: $i18n.t("general.json"),
         icon: $globals.icons.codeBraces,
         event: JSON_EVENT,
         color: "accent",
       },
       {
-        text: i18n.t("general.close"),
+        text: $i18n.t("general.close"),
         icon: $globals.icons.close,
         event: CLOSE_EVENT,
         color: "",
       },
       {
-        text: i18n.t("general.save"),
+        text: $i18n.t("general.save"),
         icon: $globals.icons.save,
         event: SAVE_EVENT,
         color: "success",

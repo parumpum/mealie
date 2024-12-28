@@ -2,10 +2,10 @@
   <div>
     <BaseDialog
       v-model="dialog"
-      :title="$t('data-pages.manage-aliases')"
+      :title="$t('data-pages.manage-aliases').toString()"
       :icon="$globals.icons.edit"
       :submit-icon="$globals.icons.check"
-      :submit-text="$tc('general.confirm')"
+      :submit-text="$tc('general.confirm').toString()"
       @submit="saveAliases"
       @cancel="$emit('cancel')"
     >
@@ -46,8 +46,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "@nuxtjs/composition-api";
 import { whenever } from "@vueuse/core";
+import { computed, defineComponent, ref } from "#imports";
 import { validators } from "~/composables/use-validators";
 import { IngredientFood, IngredientUnit } from "~/lib/api/types/recipe";
 

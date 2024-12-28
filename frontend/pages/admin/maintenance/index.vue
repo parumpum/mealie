@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ref, defineComponent, reactive, useContext } from "@nuxtjs/composition-api";
+import { computed, ref, defineComponent, reactive, useNuxtApp } from "#imports";
 import { useAdminApi } from "~/composables/api";
 import { MaintenanceStorageDetails, MaintenanceSummary } from "~/lib/api/types/admin";
 
@@ -99,13 +99,13 @@ export default defineComponent({
     });
 
     const adminApi = useAdminApi();
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     // ==========================================================================
     // General Info
 
     const infoResults = ref<MaintenanceSummary>({
-      dataDirSize: i18n.tc("about.unknown-version"),
+      dataDirSize: $i18n.tc("about.unknown-version"),
       cleanableDirs: 0,
       cleanableImages: 0,
     });
@@ -115,7 +115,7 @@ export default defineComponent({
       const { data } = await adminApi.maintenance.getInfo();
 
       infoResults.value = data ?? {
-        dataDirSize: i18n.tc("about.unknown-version"),
+        dataDirSize: $i18n.tc("about.unknown-version"),
         cleanableDirs: 0,
         cleanableImages: 0,
       };
@@ -126,15 +126,15 @@ export default defineComponent({
     const info = computed(() => {
       return [
         {
-          name: i18n.t("admin.maintenance.info-description-data-dir-size"),
+          name: $i18n.t("admin.maintenance.info-description-data-dir-size"),
           value: infoResults.value.dataDirSize,
         },
         {
-          name: i18n.t("admin.maintenance.info-description-cleanable-directories"),
+          name: $i18n.t("admin.maintenance.info-description-cleanable-directories"),
           value: infoResults.value.cleanableDirs,
         },
         {
-          name: i18n.t("admin.maintenance.info-description-cleanable-images"),
+          name: $i18n.t("admin.maintenance.info-description-cleanable-images"),
           value: infoResults.value.cleanableImages,
         },
       ];
@@ -144,15 +144,15 @@ export default defineComponent({
     // Storage Details
 
     const storageTitles: { [key: string]: string } = {
-      tempDirSize: i18n.t("admin.maintenance.storage.title-temporary-directory") as string,
-      backupsDirSize: i18n.t("admin.maintenance.storage.title-backups-directory") as string,
-      groupsDirSize: i18n.t("admin.maintenance.storage.title-groups-directory") as string,
-      recipesDirSize: i18n.t("admin.maintenance.storage.title-recipes-directory") as string,
-      userDirSize: i18n.t("admin.maintenance.storage.title-user-directory") as string,
+      tempDirSize: $i18n.t("admin.maintenance.storage.title-temporary-directory") as string,
+      backupsDirSize: $i18n.t("admin.maintenance.storage.title-backups-directory") as string,
+      groupsDirSize: $i18n.t("admin.maintenance.storage.title-groups-directory") as string,
+      recipesDirSize: $i18n.t("admin.maintenance.storage.title-recipes-directory") as string,
+      userDirSize: $i18n.t("admin.maintenance.storage.title-user-directory") as string,
     };
 
     function storageDetailsText(key: string) {
-      return storageTitles[key] ?? i18n.tc("about.unknown-version");
+      return storageTitles[key] ?? $i18n.tc("about.unknown-version");
     }
 
     const storageDetails = ref<MaintenanceStorageDetails | null>(null);
@@ -193,19 +193,19 @@ export default defineComponent({
 
     const actions = [
       {
-        name: i18n.t("admin.maintenance.action-clean-directories-name"),
+        name: $i18n.t("admin.maintenance.action-clean-directories-name"),
         handler: handleCleanDirectories,
-        subtitle: i18n.t("admin.maintenance.action-clean-directories-description"),
+        subtitle: $i18n.t("admin.maintenance.action-clean-directories-description"),
       },
       {
-        name: i18n.t("admin.maintenance.action-clean-temporary-files-name"),
+        name: $i18n.t("admin.maintenance.action-clean-temporary-files-name"),
         handler: handleCleanTemp,
-        subtitle: i18n.t("admin.maintenance.action-clean-temporary-files-description"),
+        subtitle: $i18n.t("admin.maintenance.action-clean-temporary-files-description"),
       },
       {
-        name: i18n.t("admin.maintenance.action-clean-images-name"),
+        name: $i18n.t("admin.maintenance.action-clean-images-name"),
         handler: handleCleanImages,
-        subtitle: i18n.t("admin.maintenance.action-clean-images-description"),
+        subtitle: $i18n.t("admin.maintenance.action-clean-images-description"),
       },
     ];
 

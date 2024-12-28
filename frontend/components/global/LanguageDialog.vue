@@ -22,8 +22,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "@nuxtjs/composition-api";
 import type { LocaleObject } from "@nuxtjs/i18n";
+import { computed, defineComponent } from "#imports";
 import { useLocales } from "~/composables/use-locales";
 
 export default defineComponent({
@@ -43,15 +43,15 @@ export default defineComponent({
       },
     });
 
-    const { locales: LOCALES, locale, i18n } = useLocales();
+    const { locales: LOCALES, locale, $i18n } = useLocales();
 
     const locales = LOCALES.filter((locale) =>
-      (i18n.locales as LocaleObject[]).map((i18nLocale) => i18nLocale.code).includes(locale.value)
+      ($i18n.locales as LocaleObject[]).map((i18nLocale) =>i18nLocale.code).includes(locale.value)
     );
 
     return {
       dialog,
-      i18n,
+      $i18n,
       locales,
       locale,
     };

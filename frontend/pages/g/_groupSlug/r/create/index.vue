@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, useRouter } from "@nuxtjs/composition-api";
+import { defineComponent, onMounted, useRouter } from "#imports";
 
 export default defineComponent({
   setup() {

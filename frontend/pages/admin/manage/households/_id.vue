@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useRoute, onMounted, ref, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, useRoute, onMounted, ref, useNuxtApp, $i18n } from "#imports";
 import HouseholdPreferencesEditor from "~/components/Domain/Household/HouseholdPreferencesEditor.vue";
 import { useGroups } from "~/composables/use-groups";
 import { useAdminApi } from "~/composables/api";
@@ -58,10 +58,10 @@ export default defineComponent({
   layout: "admin",
   setup() {
     const route = useRoute();
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     const { groups } = useGroups();
-    const householdId = route.value.params.id;
+    const householdId = route.params.id;
 
     // ==============================================
     // New User Form
@@ -75,10 +75,10 @@ export default defineComponent({
     const userError = ref(false);
 
     onMounted(async () => {
-      const { data, error } = await adminApi.households.getOne(householdId);
+      const { data, error } = await adminApi.households.getOne(String(householdId));
 
       if (error?.response?.status === 404) {
-        alert.error(i18n.tc("user.user-not-found"));
+        alert.error(String($i18n.tc("user.user-not-found")));
         userError.value = true;
       }
 
@@ -95,9 +95,9 @@ export default defineComponent({
       const { response, data } = await adminApi.households.updateOne(household.value.id, household.value);
       if (response?.status === 200 && data) {
         household.value = data;
-        alert.success(i18n.tc("settings.settings-updated"));
+        alert.success(String($i18n.tc("settings.settings-updated")));
       } else {
-        alert.error(i18n.tc("settings.settings-update-failed"));
+        alert.error(String($i18n.tc("settings.settings-update-failed")));
       }
     }
 

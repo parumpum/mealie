@@ -1,4 +1,5 @@
-import { computed, ref, Ref, useAsync } from "@nuxtjs/composition-api";
+import { Ref } from "vue";
+import { computed, ref, useLazyAsyncData } from "#imports";
 import { useAdminApi, useUserApi } from "~/composables/api";
 import { HouseholdCreate, HouseholdInDB } from "~/lib/api/types/household";
 
@@ -53,8 +54,8 @@ export const useAdminHouseholds = function () {
   function getAllHouseholds() {
     loading.value = true;
     const asyncKey = String(Date.now());
-    const households = useAsync(async () => {
-      const { data } = await api.households.getAll(1, -1, {orderBy: "name, group.name", orderDirection: "asc"});
+    const households = useLazyAsyncData(async () => {
+      const { data } = await api.households.getAll(1, -1, { orderBy: "name, group.name", orderDirection: "asc" });
 
       if (data) {
         return data.items;
@@ -69,12 +70,12 @@ export const useAdminHouseholds = function () {
 
   async function refreshAllHouseholds() {
     loading.value = true;
-    const { data } = await api.households.getAll(1, -1, {orderBy: "name, group.name", orderDirection: "asc"});;
+    const { data } = await api.households.getAll(1, -1, { orderBy: "name, group.name", orderDirection: "asc" });;
 
     if (data) {
       households.value = data.items;
     } else {
-        households.value = null;
+      households.value = null;
     }
 
     loading.value = false;
@@ -93,7 +94,7 @@ export const useAdminHouseholds = function () {
     const { data } = await api.households.createOne(payload);
 
     if (data && households.value) {
-        households.value.push(data);
+      households.value.push(data);
     }
   }
 
@@ -102,8 +103,8 @@ export const useAdminHouseholds = function () {
     return computed(
       () => {
         return (households.value && groupIdRef.value)
-        ? households.value.filter((h) => h.groupId === groupIdRef.value)
-        : [];
+          ? households.value.filter((h: { groupId: string; }) => h.groupId === groupIdRef.value)
+          : [];
       },
     );
   }

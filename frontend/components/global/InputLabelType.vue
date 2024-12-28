@@ -44,7 +44,7 @@
  * Both the ID and Item can be synced. The item can be synced using the v-model syntax and the itemId can be synced
  * using the .sync syntax `item-id.sync="item.labelId"`
  */
-import { computed, defineComponent, ref } from "@nuxtjs/composition-api";
+import { computed, defineComponent, ref } from "#imports";
 import { MultiPurposeLabelSummary } from "~/lib/api/types/labels";
 import { IngredientFood, IngredientUnit } from "~/lib/api/types/recipe";
 

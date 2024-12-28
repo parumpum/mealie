@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@nuxtjs/composition-api";
+import { defineComponent } from "#imports";
 import CookbookPage from "@/components/Domain/Cookbook/CookbookPage.vue";
 
 export default defineComponent({

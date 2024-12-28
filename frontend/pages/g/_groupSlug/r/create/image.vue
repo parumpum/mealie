@@ -86,10 +86,10 @@ import {
   reactive,
   ref,
   toRefs,
-  useContext,
+  useNuxtApp,
   useRoute,
   useRouter,
-} from "@nuxtjs/composition-api";
+} from "#imports";
 import { useUserApi } from "~/composables/api";
 import { alert } from "~/composables/use-toast";
 import { VForm } from "~/types/vuetify";
@@ -100,11 +100,11 @@ export default defineComponent({
       loading: false,
     });
 
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const api = useUserApi();
     const route = useRoute();
     const router = useRouter();
-    const groupSlug = computed(() => route.value.params.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || "");
 
     const domUrlForm = ref<VForm | null>(null);
     const uploadedImage = ref<Blob | File>();
@@ -135,10 +135,10 @@ export default defineComponent({
       }
 
       state.loading = true;
-      const translateLanguage = shouldTranslate.value ? i18n.locale : undefined;
-      const { data, error } = await api.recipes.createOneFromImage(uploadedImage.value, uploadedImageName.value, translateLanguage);
+      const translateLanguage = shouldTranslate.value ? $i18n.locale : undefined;
+      const { data, error } = await api.recipes.createOneFromImage(uploadedImage.value, uploadedImageName.value, translateLanguage as string);
       if (error || !data) {
-        alert.error(i18n.tc("events.something-went-wrong"));
+        alert.error(String($i18n.tc("events.something-went-wrong")));
         state.loading = false;
       } else {
         router.push(`/g/${groupSlug.value}/r/${data}`);

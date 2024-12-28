@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, useNuxtApp } from "#imports";
 import { ReadCookBook } from "~/lib/api/types/cookbook";
 import { Organizer } from "~/lib/api/types/non-generated";
 import QueryFilterBuilder from "~/components/Domain/QueryFilterBuilder.vue";
@@ -40,7 +40,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     function handleInput(value: string | undefined) {
       props.cookbook.queryFilterString = value || "";
@@ -49,37 +49,37 @@ export default defineComponent({
     const fieldDefs: FieldDefinition[] = [
       {
         name: "recipe_category.id",
-        label: i18n.tc("category.categories"),
+        label: $i18n.tc("category.categories"),
         type: Organizer.Category,
       },
       {
         name: "tags.id",
-        label: i18n.tc("tag.tags"),
+        label: $i18n.tc("tag.tags"),
         type: Organizer.Tag,
       },
       {
         name: "recipe_ingredient.food.id",
-        label: i18n.tc("recipe.ingredients"),
+        label: $i18n.tc("recipe.ingredients"),
         type: Organizer.Food,
       },
       {
         name: "tools.id",
-        label: i18n.tc("tool.tools"),
+        label: $i18n.tc("tool.tools"),
         type: Organizer.Tool,
       },
       {
         name: "household_id",
-        label: i18n.tc("household.households"),
+        label: $i18n.tc("household.households"),
         type: Organizer.Household,
       },
       {
         name: "created_at",
-        label: i18n.tc("general.date-created"),
+        label: $i18n.tc("general.date-created"),
         type: "date",
       },
       {
         name: "updated_at",
-        label: i18n.tc("general.date-updated"),
+        label: $i18n.tc("general.date-updated"),
         type: "date",
       },
     ];

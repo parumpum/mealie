@@ -5,6 +5,8 @@
 /* Do not modify it by hand - just update the pydantic models and then re-run the script
 */
 
+import { Recipe } from "./recipe";
+
 export type PlanEntryType = "breakfast" | "lunch" | "dinner" | "side";
 export type PlanRulesDay = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday" | "unset";
 export type PlanRulesType = "breakfast" | "lunch" | "dinner" | "side" | "unset";
@@ -72,7 +74,7 @@ export interface ReadPlanEntry {
   groupId: string;
   userId: string;
   householdId: string;
-  recipe?: RecipeSummary | null;
+  recipe?: Recipe | null;
 }
 export interface RecipeSummary {
   id?: string | null;

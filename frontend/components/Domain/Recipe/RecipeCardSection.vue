@@ -72,15 +72,15 @@
     <div v-if="recipes && ready">
       <div class="mt-2">
         <v-row v-if="!useMobileCards">
-          <v-col v-for="(recipe, index) in recipes" :key="recipe.slug + index" :sm="6" :md="6" :lg="4" :xl="3">
+          <v-col v-for="(recipe, index) in recipes" :key="recipe.slug ? recipe.slug + index : index" :sm="6" :md="6" :lg="4" :xl="3">
             <v-lazy>
               <RecipeCard
-                :name="recipe.name"
-                :description="recipe.description"
-                :slug="recipe.slug"
+                :name="recipe.name || ''"
+                :description="recipe.description || ''"
+                :slug="recipe.slug || ''"
                 :rating="recipe.rating"
                 :image="recipe.image"
-                :tags="recipe.tags"
+                :tags="recipe.tags || []"
                 :recipe-id="recipe.id"
               />
             </v-lazy>
@@ -99,7 +99,7 @@
             <v-lazy>
               <RecipeCardMobile
                 :name="recipe.name"
-                :description="recipe.description"
+                :description="recipe.description || ''"
                 :slug="recipe.slug"
                 :rating="recipe.rating"
                 :image="recipe.image"
@@ -119,6 +119,9 @@
 </template>
 
 <script lang="ts">
+import { useThrottleFn } from "@vueuse/core";
+import RecipeCard from "./RecipeCard.vue";
+import RecipeCardMobile from "./RecipeCardMobile.vue";
 import {
   computed,
   defineComponent,
@@ -126,15 +129,12 @@ import {
   reactive,
   ref,
   toRefs,
-  useAsync,
-  useContext,
+  useLazyAsyncData,
+  useNuxtApp,
   useRoute,
   useRouter,
   watch,
-} from "@nuxtjs/composition-api";
-import { useThrottleFn } from "@vueuse/core";
-import RecipeCard from "./RecipeCard.vue";
-import RecipeCardMobile from "./RecipeCardMobile.vue";
+} from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import { useAsyncKey } from "~/composables/use-utils";
 import { useLazyRecipes } from "~/composables/recipes";
@@ -188,14 +188,14 @@ export default defineComponent({
       shuffle: "shuffle",
     };
 
-    const { $auth, $globals, $vuetify } = useContext();
+    const { $auth, $globals, $vuetify } = useNuxtApp();
     const { isOwnGroup } = useLoggedInState();
     const useMobileCards = computed(() => {
-      return $vuetify.breakpoint.smAndDown || preferences.value.useMobileCards;
+      return $vuetify.breakpoint.smAndDown as boolean || preferences.value.useMobileCards;
     });
 
     const displayTitleIcon = computed(() => {
-      return props.icon || $globals.icons.tags;
+      return props.icon || $globals.icons.tags as string;
     });
 
     const state = reactive({
@@ -203,7 +203,7 @@ export default defineComponent({
     });
 
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
 
     const page = ref(1);
     const perPage = 32;
@@ -276,7 +276,7 @@ export default defineComponent({
     }
 
     const infiniteScroll = useThrottleFn(() => {
-      useAsync(async () => {
+      useLazyAsyncData(async () => {
         if (!hasMore.value || loading.value) {
           return;
         }
@@ -322,32 +322,32 @@ export default defineComponent({
         case EVENTS.az:
           setter(
             "name",
-            $globals.icons.sortAlphabeticalAscending,
-            $globals.icons.sortAlphabeticalDescending,
+            $globals.icons.sortAlphabeticalAscending as string,
+            $globals.icons.sortAlphabeticalDescending as string,
             "asc",
             false
           );
           break;
         case EVENTS.rating:
-          setter("rating", $globals.icons.sortAscending, $globals.icons.sortDescending, "desc", true);
+          setter("rating", $globals.icons.sortAscending as string, $globals.icons.sortDescending as string, "desc", true);
           break;
         case EVENTS.created:
           setter(
             "created_at",
-            $globals.icons.sortCalendarAscending,
-            $globals.icons.sortCalendarDescending,
+            $globals.icons.sortCalendarAscending as string,
+            $globals.icons.sortCalendarDescending as string,
             "desc",
             false
           );
           break;
         case EVENTS.updated:
-          setter("updated_at", $globals.icons.sortClockAscending, $globals.icons.sortClockDescending, "desc", false);
+          setter("updated_at", $globals.icons.sortClockAscending as string, $globals.icons.sortClockDescending as string, "desc", false);
           break;
         case EVENTS.lastMade:
           setter(
             "last_made",
-            $globals.icons.sortCalendarAscending,
-            $globals.icons.sortCalendarDescending,
+            $globals.icons.sortCalendarAscending as string,
+            $globals.icons.sortCalendarDescending as string,
             "desc",
             true
           );
@@ -357,7 +357,7 @@ export default defineComponent({
           return;
       }
 
-      useAsync(async () => {
+      useLazyAsyncData(async () => {
         // reset pagination
         page.value = 1;
         hasMore.value = true;

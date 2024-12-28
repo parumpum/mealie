@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useRoute } from "@nuxtjs/composition-api";
+import { defineComponent, useRoute } from "#imports";
 import RecipeCardSection from "~/components/Domain/Recipe/RecipeCardSection.vue";
 import { useLazyRecipes } from "~/composables/recipes";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
@@ -27,7 +27,7 @@ export default defineComponent({
     const route = useRoute();
     const { isOwnGroup } = useLoggedInState();
 
-    const userId = route.value.params.id;
+    const userId = route.params.id;
     const query = { queryFilter: `favoritedBy.id = "${userId}"` }
     const { recipes, appendRecipes, assignSorted, removeRecipe, replaceRecipes } = useLazyRecipes();
 

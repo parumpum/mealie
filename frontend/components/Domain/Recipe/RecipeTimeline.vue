@@ -85,9 +85,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, useAsync, useContext } from "@nuxtjs/composition-api";
 import { useThrottleFn, whenever } from "@vueuse/core";
 import RecipeTimelineItem from "./RecipeTimelineItem.vue"
+import { computed, defineComponent, onMounted, ref, useLazyAsyncData, useNuxtApp } from "#imports";
 import { useTimelinePreferences } from "~/composables/use-users/preferences";
 import { useTimelineEventTypes } from "~/composables/recipes/use-recipe-timeline-events";
 import { useAsyncKey } from "~/composables/use-utils";
@@ -119,7 +119,7 @@ export default defineComponent({
 
   setup(props) {
     const api = useUserApi();
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const preferences = useTimelinePreferences();
     const { eventTypeOptions } = useTimelineEventTypes();
     const loading = ref(true);
@@ -203,22 +203,22 @@ export default defineComponent({
 
         const { response } = await api.recipes.updateTimelineEvent(event.id, payload);
         if (response?.status !== 200) {
-          alert.error(i18n.t("events.something-went-wrong") as string);
+          alert.error($i18n.t("events.something-went-wrong") as string);
           return;
         }
 
-        alert.success(i18n.t("events.event-updated") as string);
+        alert.success($i18n.t("events.event-updated") as string);
       };
 
     async function deleteTimelineEvent(index: number) {
       const { response } = await api.recipes.deleteTimelineEvent(timelineEvents.value[index].id);
       if (response?.status !== 200) {
-        alert.error(i18n.t("events.something-went-wrong") as string);
+        alert.error($i18n.t("events.something-went-wrong") as string);
         return;
       }
 
       timelineEvents.value.splice(index, 1);
-      alert.success(i18n.t("events.event-deleted") as string);
+      alert.success($i18n.t("events.event-deleted") as string);
     };
 
     async function getRecipe(recipeId: string): Promise<Recipe | null> {
@@ -290,7 +290,7 @@ export default defineComponent({
     }
 
     const infiniteScroll = useThrottleFn(() => {
-      useAsync(async () => {
+      useLazyAsyncData(async () => {
         if (!hasMore.value || loading.value) {
           return;
         }

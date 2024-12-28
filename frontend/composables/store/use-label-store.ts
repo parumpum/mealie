@@ -1,5 +1,6 @@
-import { ref, Ref } from "@nuxtjs/composition-api";
+import { Ref } from "vue";
 import { useData, useStore } from "../partials/use-store-factory";
+import { ref } from "#imports";
 import { MultiPurposeLabelOut } from "~/lib/api/types/labels";
 import { useUserApi } from "~/composables/api";
 

@@ -95,7 +95,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, computed, ref, useNuxtApp } from "#imports";
 import RecipeIngredientListItem from "../Recipe/RecipeIngredientListItem.vue";
 import ShoppingListItemEditor from "./ShoppingListItemEditor.vue";
 import MultiPurposeLabel from "./MultiPurposeLabel.vue";
@@ -138,17 +138,17 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const displayRecipeRefs = ref(false);
     const itemLabelCols = ref<string>(props.value.checked ? "auto" : props.showLabel ? "4" : "6");
 
     const contextMenu: actions[] = [
       {
-        text: i18n.t("general.edit") as string,
+        text: $i18n.t("general.edit") as string,
         event: "edit",
       },
       {
-        text: i18n.t("general.delete") as string,
+        text: $i18n.t("general.delete") as string,
         event: "delete",
       },
     ];

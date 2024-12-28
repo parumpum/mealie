@@ -230,6 +230,10 @@ export interface UserOut {
   tokens?: LongLiveTokenOut[] | null;
   cacheKey: string;
 }
+export interface User {
+  id: number;
+  fullName: string;
+}
 export interface UserRatingCreate {
   recipeId: string;
   rating?: number | null;

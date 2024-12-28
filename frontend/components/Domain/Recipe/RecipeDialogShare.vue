@@ -62,8 +62,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, toRefs, reactive, useContext, useRoute } from "@nuxtjs/composition-api";
 import { useClipboard, useShare, whenever } from "@vueuse/core";
+import { defineComponent, computed, toRefs, reactive, useNuxtApp, useRoute } from "#imports";
 import { RecipeShareToken } from "~/lib/api/types/recipe";
 import { useUserApi } from "~/composables/api";
 import { useHouseholdSelf } from "~/composables/use-households";
@@ -112,10 +112,10 @@ export default defineComponent({
       }
     );
 
-    const { $auth, i18n } = useContext();
+    const { $auth, $i18n } = useNuxtApp();
     const { household } = useHouseholdSelf();
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => String(route.params.groupSlug) || String($auth.user?.groupSlug) || "");
 
     const firstDayOfWeek = computed(() => {
       return household.value?.preferences?.firstDayOfWeek || 0;
@@ -158,7 +158,7 @@ export default defineComponent({
     const { copy, copied, isSupported } = useClipboard();
 
     function getRecipeText() {
-      return i18n.t("recipe.share-recipe-message", [props.name]);
+      return String($i18n.t("recipe.share-recipe-message", [props.name]));
     }
 
     function getTokenLink(token: string) {
@@ -169,14 +169,14 @@ export default defineComponent({
       if (isSupported.value) {
         await copy(getTokenLink(token));
         if (copied.value) {
-          alert.success(i18n.t("recipe-share.recipe-link-copied-message") as string);
+          alert.success(String($i18n.t("recipe-share.recipe-link-copied-message")));
         }
         else {
-          alert.error(i18n.t("general.clipboard-copy-failure") as string);
+          alert.error(String($i18n.t("general.clipboard-copy-failure")));
         }
       }
       else {
-        alert.error(i18n.t("general.clipboard-not-supported") as string);
+        alert.error(String($i18n.t("general.clipboard-not-supported")));
       }
     }
 
@@ -185,7 +185,7 @@ export default defineComponent({
         share({
           title: props.name,
           url: getTokenLink(token),
-          text: getRecipeText() as string,
+          text: getRecipeText(),
         });
       } else {
         await copyTokenLink(token);

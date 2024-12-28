@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "@nuxtjs/composition-api";
+import { computed, defineComponent } from "#imports";
 
 export interface ButtonOption {
   icon?: string;

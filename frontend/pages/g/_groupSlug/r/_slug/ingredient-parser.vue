@@ -99,10 +99,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, useContext, useRoute, useRouter, watch } from "@nuxtjs/composition-api";
 import { invoke, until } from "@vueuse/core";
 import draggable from "vuedraggable";
-import { get_app_settings , settings } from "~/composables/use-app-settings";
+import { computed, defineComponent, ref, useNuxtApp, useRoute, useRouter, watch } from "#imports";
+// import { get_app_settings , settings } from "~/composables/use-app-settings";
 import RecipeIngredientEditor from "~/components/Domain/Recipe/RecipeIngredientEditor.vue";
 import { alert } from "~/composables/use-toast";
 import { useAppInfo, useUserApi } from "~/composables/api";
@@ -135,18 +135,18 @@ export default defineComponent({
   },
   middleware: ["auth", "group-only"],
   setup() {
-    const { $auth, i18n } = useContext();
+    const { $auth, $i18n } = useNuxtApp();
     const panels = ref<number[]>([]);
 
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
 
     const router = useRouter();
-    const slug = route.value.params.slug;
+    const slug = route.params.slug;
     const api = useUserApi();
     const appInfo = useAppInfo();
 
-    const { recipe, loading } = useRecipe(slug);
+    const { recipe, loading } = useRecipe(slug as string);
     const parserLoading = ref(false);
 
     invoke(async () => {
@@ -160,15 +160,15 @@ export default defineComponent({
     const availableParsers = computed(() => {
       return [
         {
-          "text": i18n.tc("recipe.parser.natural-language-processor"),
+          "text": $i18n.tc("recipe.parser.natural-language-processor"),
           "value": "nlp",
         },
         {
-          "text": i18n.tc("recipe.parser.brute-parser"),
+          "text": $i18n.tc("recipe.parser.brute-parser"),
           "value": "brute",
         },
         {
-          "text": i18n.tc("recipe.parser.openai-parser"),
+          "text": $i18n.tc("recipe.parser.openai-parser"),
           "value": "openai",
           "hide": !appInfo.value?.enableOpenai,
         },
@@ -194,15 +194,15 @@ export default defineComponent({
       if (unitError || foodError) {
         if (unitError) {
           if (ing?.ingredient?.unit?.name) {
-            const unit = ing.ingredient.unit.name || i18n.tc("recipe.parser.no-unit");
-            unitErrorMessage = i18n.t("recipe.parser.missing-unit", { unit }).toString();
+            const unit = ing.ingredient.unit.name || $i18n.tc("recipe.parser.no-unit");
+            unitErrorMessage = $i18n.t("recipe.parser.missing-unit", { unit }).toString();
           }
         }
 
         if (foodError) {
           if (ing?.ingredient?.food?.name) {
-            const food = ing.ingredient.food.name || i18n.tc("recipe.parser.no-food");
-            foodErrorMessage = i18n.t("recipe.parser.missing-food", { food }).toString();
+            const food = ing.ingredient.food.name || $i18n.tc("recipe.parser.no-food");
+            foodErrorMessage = $i18n.t("recipe.parser.missing-food", { food }).toString();
           }
         }
       }
@@ -244,7 +244,7 @@ export default defineComponent({
           return processIngredientError(ing, index);
         });
       } else {
-        alert.error(i18n.t("events.something-went-wrong") as string);
+        alert.error($i18n.t("events.something-went-wrong") as string);
         parsedIng.value = [];
       }
     }
@@ -256,7 +256,7 @@ export default defineComponent({
       return !(ing.confidence.average >= 0.75);
     }
 
-    function asPercentage(num: number | undefined): string {
+    function asPercentage(num: number | null | undefined): string {
       if (!num) {
         return "0%";
       }
@@ -274,15 +274,15 @@ export default defineComponent({
 
     const errors = ref<Error[]>([]);
 
-    function checkForUnit(unit?: IngredientUnit | CreateIngredientUnit) {
+    function checkForUnit(unit?: IngredientUnit | CreateIngredientUnit | null | undefined) {
       return !!unit?.id;
     }
 
-    function checkForFood(food?: IngredientFood | CreateIngredientFood) {
+    function checkForFood(food?: IngredientFood | CreateIngredientFood | null | undefined) {
       return !!food?.id;
     }
 
-    async function createFood(food: CreateIngredientFood | undefined, index: number) {
+    async function createFood(food: CreateIngredientFood | null | undefined, index: number) {
       if (!food) {
         return;
       }
@@ -305,7 +305,7 @@ export default defineComponent({
       foodData.reset();
     }
 
-    async function createUnit(unit: CreateIngredientUnit | undefined, index: number) {
+    async function createUnit(unit: CreateIngredientUnit | null | undefined, index: number) {
       if (!unit) {
         return;
       }

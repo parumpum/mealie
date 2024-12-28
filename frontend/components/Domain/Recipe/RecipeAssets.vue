@@ -23,14 +23,14 @@
             </v-list-item-title>
           </v-list-item-content>
           <v-list-item-action>
-            <v-btn v-if="!edit" color="primary" icon :href="assetURL(item.fileName)" target="_blank" top>
+            <v-btn v-if="!edit" color="primary" icon :href="assetURL(item.fileName || '')" target="_blank" top>
               <v-icon> {{ $globals.icons.download }} </v-icon>
             </v-btn>
             <div v-else>
               <v-btn color="error" icon top @click="value.splice(i, 1)">
                 <v-icon>{{ $globals.icons.delete }}</v-icon>
               </v-btn>
-              <AppButtonCopy color="" :copy-text="assetEmbed(item.fileName)" />
+              <AppButtonCopy color="" :copy-text="assetEmbed(item.fileName || '')" />
             </div>
           </v-list-item-action>
         </v-list-item>
@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, useNuxtApp } from "#imports";
 import { useStaticRoutes, useUserApi } from "~/composables/api";
 import { alert } from "~/composables/use-toast";
 import { detectServerBaseUrl } from "~/composables/use-utils";
@@ -115,32 +115,32 @@ export default defineComponent({
       },
     });
 
-    const { $globals, i18n, req } = useContext();
+    const { $globals, $i18n, req } = useNuxtApp();
 
     const iconOptions = [
       {
         name: "mdi-file",
-        title: i18n.t("asset.file"),
+        title: $i18n.t("asset.file"),
         icon: $globals.icons.file,
       },
       {
         name: "mdi-file-pdf-box",
-        title: i18n.t("asset.pdf"),
+        title: $i18n.t("asset.pdf"),
         icon: $globals.icons.filePDF,
       },
       {
         name: "mdi-file-image",
-        title: i18n.t("asset.image"),
+        title: $i18n.t("asset.image"),
         icon: $globals.icons.fileImage,
       },
       {
         name: "mdi-code-json",
-        title: i18n.t("asset.code"),
+        title: $i18n.t("asset.code"),
         icon: $globals.icons.codeJson,
       },
       {
         name: "mdi-silverware-fork-knife",
-        title: i18n.t("asset.recipe"),
+        title: $i18n.t("asset.recipe"),
         icon: $globals.icons.primary,
       },
     ];
@@ -170,7 +170,7 @@ export default defineComponent({
 
     async function addAsset() {
       if (!validFields()) {
-        alert.error(i18n.t("asset.error-submitting-form") as string);
+        alert.error(String($i18n.t("asset.error-submitting-form")));
         return;
       }
 

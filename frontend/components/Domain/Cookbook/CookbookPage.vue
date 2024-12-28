@@ -53,7 +53,7 @@
 </template>
 
   <script lang="ts">
-  import { computed, defineComponent, useRoute, ref, useContext, useMeta, reactive, useRouter } from "@nuxtjs/composition-api";
+  import { computed, defineComponent, useRoute, ref, useNuxtApp, useNuxt2Meta, reactive, useRouter } from "#imports";
   import { useLazyRecipes } from "~/composables/recipes";
   import RecipeCardSection from "@/components/Domain/Recipe/RecipeCardSection.vue";
   import { useCookbook, useCookbooks } from "~/composables/use-group-cookbooks";
@@ -64,14 +64,14 @@
   export default defineComponent({
     components: { RecipeCardSection, CookbookEditor },
     setup() {
-      const { $auth } = useContext();
+      const { $auth } = useNuxtApp();
       const { isOwnGroup } = useLoggedInState();
 
       const route = useRoute();
-      const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+      const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
 
       const { recipes, appendRecipes, assignSorted, removeRecipe, replaceRecipes } = useLazyRecipes(isOwnGroup.value ? null : groupSlug.value);
-      const slug = route.value.params.slug;
+      const slug = route.params.slug;
       const { getOne } = useCookbook(isOwnGroup.value ? null : groupSlug.value);
       const { actions } = useCookbooks();
       const router = useRouter();
@@ -106,13 +106,13 @@
 
         // if name changed, redirect to new slug
         if (response?.slug && book.value?.slug !== response?.slug) {
-          router.push(`/g/${route.value.params.groupSlug}/cookbooks/${response?.slug}`);
+          router.push(`/g/${route.params.groupSlug}/cookbooks/${response?.slug}`);
         }
         dialogStates.edit = false;
         editTarget.value = null;
       }
 
-      useMeta(() => {
+      useNuxt2Meta(() => {
         return {
           title: book?.value?.name || "Cookbook",
         };

@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useContext, computed, ref, watch } from "@nuxtjs/composition-api";
+import { defineComponent, useNuxtApp, computed, ref, watch } from "#imports";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 import { useRecipePermissions } from "~/composables/recipes";
 import RecipePageInfoCard from "~/components/Domain/Recipe/RecipePage/RecipePageParts/RecipePageInfoCard.vue";
@@ -53,7 +53,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { $vuetify } = useContext();
+    const { $vuetify } = useNuxtApp();
     const { recipeImage } = useStaticRoutes();
     const { imageKey, pageMode, editMode, setMode, toggleEditMode, isEditMode } = usePageState(props.recipe.slug);
     const { user } = usePageUser();

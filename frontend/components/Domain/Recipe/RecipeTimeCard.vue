@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useNuxtApp } from "#imports";
 
 export default defineComponent({
   props: {
@@ -70,7 +70,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     function isEmpty(str: string | null) {
       return !str || str.length === 0;
@@ -81,15 +81,15 @@ export default defineComponent({
     });
 
     const validateTotalTime = computed(() => {
-      return !isEmpty(props.totalTime) ? { name: i18n.t("recipe.total-time"), value: props.totalTime } : null;
+      return !isEmpty(props.totalTime) ? { name: $i18n.t("recipe.total-time"), value: props.totalTime } : null;
     });
 
     const validatePrepTime = computed(() => {
-      return !isEmpty(props.prepTime) ? { name: i18n.t("recipe.prep-time"), value: props.prepTime } : null;
+      return !isEmpty(props.prepTime) ? { name: $i18n.t("recipe.prep-time"), value: props.prepTime } : null;
     });
 
     const validatePerformTime = computed(() => {
-      return !isEmpty(props.performTime) ? { name: i18n.t("recipe.perform-time"), value: props.performTime } : null;
+      return !isEmpty(props.performTime) ? { name: $i18n.t("recipe.perform-time"), value: props.performTime } : null;
     });
 
     const allTimes = computed(() => {

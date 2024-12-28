@@ -1,5 +1,5 @@
-import { reactive, ref, useAsync } from "@nuxtjs/composition-api";
 import { useAsyncKey } from "../use-utils";
+import { reactive, ref, useLazyAsyncData } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { VForm } from "~/types/vuetify";
 import { RecipeTool } from "~/lib/api/types/recipe";
@@ -19,7 +19,7 @@ export const useTools = function (eager = true) {
   const actions = {
     getAll() {
       loading.value = true;
-      const units = useAsync(async () => {
+      const units = useLazyAsyncData(async () => {
         const { data } = await api.tools.getAll();
 
         if (data) {

@@ -115,7 +115,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, watch } from "@nuxtjs/composition-api";
+import { defineComponent, computed, watch } from "#imports";
 import { ShoppingListItemCreate, ShoppingListItemOut } from "~/lib/api/types/household";
 import { MultiPurposeLabelOut } from "~/lib/api/types/labels";
 import { IngredientFood, IngredientUnit } from "~/lib/api/types/recipe";

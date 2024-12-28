@@ -101,31 +101,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, ref, useNuxtApp } from "#imports";
 import { validators } from "~/composables/use-validators";
 import { useToolStore, useToolData } from "~/composables/store";
 import { RecipeTool } from "~/lib/api/types/admin";
 
 export default defineComponent({
   setup() {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
     const tableConfig = {
       hideColumns: true,
       canExport: true,
     };
     const tableHeaders = [
       {
-        text: i18n.t("general.id"),
+        text: $i18n.t("general.id"),
         value: "id",
         show: false,
       },
       {
-        text: i18n.t("general.name"),
+        text: $i18n.t("general.name"),
         value: "name",
         show: true,
       },
       {
-        text: i18n.t("tool.on-hand"),
+        text: $i18n.t("tool.on-hand"),
         value: "onHand",
         show: true,
       },

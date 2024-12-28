@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useRoute, onMounted, ref, useContext } from "@nuxtjs/composition-api";
+import { defineComponent, useRoute, onMounted, ref, useNuxtApp } from "#imports";
 import GroupPreferencesEditor from "~/components/Domain/Group/GroupPreferencesEditor.vue";
 import { useAdminApi } from "~/composables/api";
 import { alert } from "~/composables/use-toast";
@@ -39,9 +39,9 @@ export default defineComponent({
   setup() {
     const route = useRoute();
 
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
-    const groupId = route.value.params.id;
+    const groupId = route.params.id;
 
     // ==============================================
     // New User Form
@@ -58,7 +58,7 @@ export default defineComponent({
       const { data, error } = await adminApi.groups.getOne(groupId);
 
       if (error?.response?.status === 404) {
-        alert.error(i18n.tc("user.user-not-found"));
+        alert.error($i18n.tc("user.user-not-found"));
         userError.value = true;
       }
 
@@ -80,7 +80,7 @@ export default defineComponent({
         }
         group.value = data;
       } else {
-        alert.error(i18n.tc("settings.settings-update-failed"));
+        alert.error($i18n.tc("settings.settings-update-failed"));
       }
     }
 

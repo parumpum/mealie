@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useNuxtApp } from "#imports";
 
 export default defineComponent({
   props: {
@@ -70,8 +70,8 @@ export default defineComponent({
       };
     });
 
-    const { i18n } = useContext();
-    const waitingTextCalculated = props.waitingText == null ? i18n.t("general.loading-recipes") : props.waitingText;
+    const { $i18n } = useNuxtApp();
+    const waitingTextCalculated = props.waitingText == null ? $i18n.t("general.loading-recipes") : props.waitingText;
 
     return {
       size,

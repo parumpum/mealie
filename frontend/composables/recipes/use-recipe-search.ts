@@ -1,5 +1,6 @@
-import { Ref, ref } from "@nuxtjs/composition-api";
 import { watchDebounced } from "@vueuse/core";
+import { Ref } from "vue";
+import { ref } from "#imports";
 import { UserApi } from "~/lib/api";
 import { ExploreApi } from "~/lib/api/public/explore";
 import { Recipe } from "~/lib/api/types/recipe";

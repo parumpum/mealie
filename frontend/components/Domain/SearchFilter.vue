@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, computed } from "@nuxtjs/composition-api";
+import { defineComponent, reactive, computed } from "#imports";
 
 export interface SelectableItem {
   id: string;

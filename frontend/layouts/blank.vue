@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useNuxtApp } from "#imports";
 import TheSnackbar from "~/components/Layout/LayoutParts/TheSnackbar.vue";
 import { useAppInfo } from "~/composables/api";
 export default defineComponent({
@@ -27,8 +27,8 @@ export default defineComponent({
 
     const isDemo = computed(() => appInfo?.value?.demoStatus || false);
 
-    const { i18n } = useContext();
-    const version = computed(() => appInfo?.value?.version || i18n.t("about.unknown-version"));
+    const { $i18n } = useNuxtApp();
+    const version = computed(() => appInfo?.value?.version || $i18n.t("about.unknown-version"));
 
     return {
       appInfo,

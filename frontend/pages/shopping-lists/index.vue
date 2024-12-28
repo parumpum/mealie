@@ -1,12 +1,12 @@
 <template>
   <v-container v-if="shoppingListChoices && ready" class="narrow-container">
-    <BaseDialog v-model="createDialog" :title="$tc('shopping-list.create-shopping-list')" @submit="createOne">
+    <BaseDialog v-model="createDialog" :title="String($tc('shopping-list.create-shopping-list'))" @submit="createOne">
       <v-card-text>
         <v-text-field v-model="createName" autofocus :label="$t('shopping-list.new-list')"> </v-text-field>
       </v-card-text>
     </BaseDialog>
 
-    <BaseDialog v-model="deleteDialog" :title="$tc('general.confirm')" color="error" @confirm="deleteOne">
+    <BaseDialog v-model="deleteDialog" :title="String($tc('general.confirm'))" color="error" @confirm="deleteOne">
       <v-card-text>{{ $t('shopping-list.are-you-sure-you-want-to-delete-this-item') }}</v-card-text>
     </BaseDialog>
     <BasePageTitle divider>
@@ -17,7 +17,7 @@
     </BasePageTitle>
 
     <v-container class="d-flex justify-end px-0 pt-0 pb-4">
-      <v-checkbox v-model="preferences.viewAllLists" hide-details :label="$tc('general.show-all')" class="my-auto mr-4" />
+      <v-checkbox v-model="preferences.viewAllLists" hide-details :label="String($tc('general.show-all'))" class="my-auto mr-4" />
       <BaseButton create @click="createDialog = true" />
     </v-container>
 
@@ -42,28 +42,30 @@
       </v-card>
     </section>
     <div class="d-flex justify-end mt-10">
-      <ButtonLink :to="`/group/data/labels`" :text="$tc('shopping-list.manage-labels')" :icon="$globals.icons.tags" />
+      <ButtonLink :to="`/group/data/labels`" :text="String($tc('shopping-list.manage-labels'))" :icon="$globals.icons.tags" />
     </div>
   </v-container>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useAsync, useContext, reactive, ref, toRefs, useRoute, useRouter, watch } from "@nuxtjs/composition-api";
+import { Ref } from "vue";
+import { computed, defineComponent, useLazyAsyncData, useNuxtApp, reactive, ref, toRefs, useRoute, useRouter, watch } from "#imports";
 import { useUserApi } from "~/composables/api";
 import { useAsyncKey } from "~/composables/use-utils";
 import { useShoppingListPreferences } from "~/composables/use-users/preferences";
+import { ShoppingListOut } from "~/lib/api/types/household";
 
 export default defineComponent({
   middleware: "auth",
   setup() {
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const ready = ref(false);
     const userApi = useUserApi();
     const route = useRoute();
     const router = useRouter();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
     const overrideDisableRedirect = ref(false);
-    const disableRedirect = computed(() => route.value.query.disableRedirect === "true" || overrideDisableRedirect.value);
+    const disableRedirect = computed(() => route.query.disableRedirect === "true" || overrideDisableRedirect.value);
     const preferences = useShoppingListPreferences();
 
     const state = reactive({
@@ -73,17 +75,12 @@ export default defineComponent({
       deleteTarget: "",
     });
 
-    const shoppingLists = useAsync(async () => {
+    const shoppingLists: Ref<ShoppingListOut[]> = ref(useLazyAsyncData(async () => {
       return await fetchShoppingLists();
-    }, useAsyncKey());
+    }, useAsyncKey()).data);
 
-    const shoppingListChoices = computed(() => {
-      if (!shoppingLists.value) {
-        return [];
-      }
 
-      return shoppingLists.value.filter((list) => preferences.value.viewAllLists || list.userId === $auth.user?.id);
-    });
+    const shoppingListChoices: Ref<ShoppingListOut[]> = ref([]);
 
     // This has to appear before the shoppingListChoices watcher, otherwise that runs first and the redirect is not disabled
     watch(
@@ -94,11 +91,11 @@ export default defineComponent({
     );
 
     watch(
-      () => shoppingListChoices,
+      () => shoppingLists,
       () => {
-        if (!disableRedirect.value && shoppingListChoices.value.length === 1) {
-          router.push(`/shopping-lists/${shoppingListChoices.value[0].id}`);
-        } else {
+        console.log(shoppingLists.value);
+        if (Array.isArray(shoppingLists.value)) {
+          shoppingListChoices.value = shoppingLists.value.filter((list) => preferences.value.viewAllLists || list.userId === $auth.user?.id);
           ready.value = true;
         }
       },
@@ -106,6 +103,23 @@ export default defineComponent({
         deep: true,
       },
     );
+
+    watch(
+      () => shoppingListChoices,
+      () => {
+        if (!disableRedirect.value && shoppingListChoices.value.length === 1) {
+          router.push(`/shopping-lists/${shoppingListChoices.value[0].id}`);
+        } else {
+          console.log("ready");
+          ready.value = true;
+        }
+      },
+      {
+        deep: true,
+      },
+    );
+
+
 
     async function fetchShoppingLists() {
       const { data } = await userApi.shopping.lists.getAll(1, -1, { orderBy: "name", orderDirection: "asc" });

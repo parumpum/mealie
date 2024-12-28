@@ -1,6 +1,7 @@
-import { Ref, useAsync } from "@nuxtjs/composition-api";
+import { Ref } from "vue";
 import { useAsyncKey } from "../use-utils";
 import { BoundT } from "./types";
+import { useLazyAsyncData } from "#imports";
 import { BaseCRUDAPI, BaseCRUDAPIReadOnly } from "~/lib/api/base/base-clients";
 import { QueryValue } from "~/lib/api/base/route";
 
@@ -32,7 +33,7 @@ export function useReadOnlyActions<T extends BoundT>(
     params.orderDirection ??= "asc";
 
     loading.value = true;
-    const allItems = useAsync(async () => {
+    const allItems = useLazyAsyncData(async () => {
       const { data } = await api.getAll(page, perPage, params);
       loading.value = false;
 
@@ -86,7 +87,7 @@ export function useStoreActions<T extends BoundT>(
     params.orderDirection ??= "asc";
 
     loading.value = true;
-    const allItems = useAsync(async () => {
+    const allItems = useLazyAsyncData(async () => {
       const { data } = await api.getAll(page, perPage, params);
       loading.value = false;
 

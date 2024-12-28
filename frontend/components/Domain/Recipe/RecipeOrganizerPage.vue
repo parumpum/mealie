@@ -5,7 +5,7 @@
     <BaseDialog
       v-if="deleteTarget"
       v-model="dialogs.delete"
-      :title="$t('general.delete-with-name', { name: $t(translationKey) })"
+      :title="$t('general.delete-with-name', { name: $t(translationKey) }).toString()"
       color="error"
       :icon="$globals.icons.alertCircle"
       @confirm="deleteOne()"
@@ -16,7 +16,7 @@
       </v-card-text>
     </BaseDialog>
 
-    <BaseDialog v-if="updateTarget" v-model="dialogs.update" :title="$t('general.update')" @confirm="updateOne()">
+    <BaseDialog v-if="updateTarget" v-model="dialogs.update" :title="$t('general.update').toString()" @confirm="updateOne()">
       <v-card-text>
         <v-text-field v-model="updateTarget.name" :label="$t('general.name')"> </v-text-field>
         <v-checkbox v-if="itemType === Organizer.Tool" v-model="updateTarget.onHand" :label="$t('tool.on-hand')"></v-checkbox>
@@ -76,8 +76,8 @@
 
 <script lang="ts">
 import Fuse from "fuse.js";
-import { defineComponent, computed, ref, reactive, useContext, useRoute } from "@nuxtjs/composition-api";
-import { useContextPresets } from "~/composables/use-context-presents";
+import { defineComponent, computed, ref, reactive, useNuxtApp, useRoute } from "#imports";
+import { useNuxtAppPresets } from "~/composables/use-context-presents";
 import RecipeOrganizerDialog from "~/components/Domain/Recipe/RecipeOrganizerDialog.vue";
 import { Organizer, RecipeOrganizer } from "~/lib/api/types/non-generated";
 import { useRouteQuery } from "~/composables/use-router";
@@ -124,9 +124,9 @@ export default defineComponent({
       },
     });
 
-    const { $auth } = useContext();
+    const { $auth } = useNuxtApp();
     const route = useRoute();
-    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const groupSlug = computed(() => route.params.groupSlug as string || $auth.user?.groupSlug as string || "");
 
     // =================================================================
     // Context Menu
@@ -137,7 +137,7 @@ export default defineComponent({
       delete: false,
     });
 
-    const presets = useContextPresets();
+    const presets = useNuxtAppPresets();
 
     const translationKey = computed<string>(() => {
       const typeMap = {

@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, useNuxtApp } from "#imports";
 import DOMPurify from "dompurify";
 import { useScaledAmount } from "~/composables/recipes/use-scaled-amount";
 
@@ -39,7 +39,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { i18n } = useContext();
+    const { $i18n } = useNuxtApp();
 
     function sanitizeHTML(rawHtml: string) {
       return DOMPurify.sanitize(rawHtml, {
@@ -55,7 +55,7 @@ export default defineComponent({
 
       const { scaledAmountDisplay } = useScaledAmount(props.yieldQuantity, props.scale);
 
-      return i18n.t("recipe.yields-amount-with-text", {
+      return $i18n.t("recipe.yields-amount-with-text", {
         amount: scaledAmountDisplay,
         text: sanitizeHTML(props.yield),
       }) as string;
