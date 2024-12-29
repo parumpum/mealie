@@ -14,6 +14,7 @@ from sqlalchemy.orm.session import object_session
 from mealie.db.models._model_utils.auto_init import auto_init
 from mealie.db.models._model_utils.datetime import NaiveDateTime, get_utc_today
 from mealie.db.models._model_utils.guid import GUID
+from mealie.db.models.recipe.recipe_associations import RecipeAssociationsModel
 
 from .._model_base import BaseMixins, SqlAlchemyBase
 from ..users.user_to_recipe import UserToRecipe
@@ -111,6 +112,9 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
         order_by="RecipeInstruction.position",
         collection_class=ordering_list("position"),
     )
+    recipe_associations: Mapped[list["RecipeAssociationsModel"]] = orm.relationship(
+        "RecipeAssociationsModel", back_populates="recipe", cascade="all, delete-orphan"
+    )
 
     share_tokens: Mapped[list[RecipeShareTokenModel]] = orm.relationship(
         RecipeShareTokenModel, back_populates="recipe", cascade="all, delete, delete-orphan"
@@ -161,6 +165,7 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
             "nutrition",
             "recipe_ingredient",
             "recipe_instructions",
+            "recipe_associations",
             "settings",
             "comments",
             "timeline_events",
@@ -188,6 +193,7 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
         nutrition: dict | None = None,
         recipe_ingredient: list[dict] | None = None,
         recipe_instructions: list[dict] | None = None,
+        recipe_associations: list[dict] | None = None,
         settings: dict | None = None,
         **_,
     ) -> None:
@@ -198,6 +204,11 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
 
         if recipe_ingredient is not None:
             self.recipe_ingredient = [RecipeIngredientModel(**ingr, session=session) for ingr in recipe_ingredient]
+
+        if recipe_associations is not None:
+            self.recipe_associations = [
+                RecipeAssociationsModel(**assoc, session=session) for assoc in recipe_associations
+            ]
 
         if assets:
             self.assets = [RecipeAsset(**a) for a in assets]
