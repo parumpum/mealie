@@ -78,7 +78,10 @@ def get_secrets_dir() -> str | None:
 
     # Likewise, check we have permission to read from the secrets directory.
     if not os.access(secrets_dir, os.R_OK):
-        logger.warning(f"Secrets directory '{secrets_dir}' cannot be read from. Check permissions")
+        logger.warning(
+            f"Secrets directory '{
+                       secrets_dir}' cannot be read from. Check permissions"
+        )
         return None
 
     # The secrets directory exists and can be accessed.
@@ -153,7 +156,8 @@ class AppSettings(AppLoggingSettings):
             local_hour = 23
             local_minute = 45
             self.logger.exception(
-                f"Unable to parse {self.DAILY_SCHEDULE_TIME=} as HH:MM; defaulting to {local_hour}:{local_minute}"
+                f"Unable to parse {self.DAILY_SCHEDULE_TIME=} as HH:MM; defaulting to {
+                    local_hour}:{local_minute}"
             )
 
         # DAILY_SCHEDULE_TIME is in local time, so we convert it to UTC
@@ -162,7 +166,10 @@ class AppSettings(AppLoggingSettings):
         local_time = now.replace(hour=local_hour, minute=local_minute)
         utc_time = local_time.astimezone(UTC)
 
-        self.logger.debug(f"Local time: {local_hour}:{local_minute} | UTC time: {utc_time.hour}:{utc_time.minute}")
+        self.logger.debug(
+            f"Local time: {local_hour}:{local_minute} | UTC time: {
+                          utc_time.hour}:{utc_time.minute}"
+        )
         return ScheduleTime(utc_time.hour, utc_time.minute)
 
     # ===============================================
@@ -271,7 +278,8 @@ class AppSettings(AppLoggingSettings):
             required["SMTP_PASSWORD"] = password
             if not description:
                 missing_values = [key for (key, value) in required.items() if value is None]
-                description = f"Missing required values for {missing_values} because SMTP_AUTH_STRATEGY is not None"
+                description = f"Missing required values for {
+                    missing_values} because SMTP_AUTH_STRATEGY is not None"
 
         not_none = "" not in required.values() and None not in required.values()
 
