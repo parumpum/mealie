@@ -14,6 +14,7 @@ from .._model_utils.guid import GUID
 
 if TYPE_CHECKING:
     from ..group import Group
+    from .recipe import RecipeModel
 
 
 class IngredientUnitModel(SqlAlchemyBase, BaseMixins):
@@ -317,6 +318,10 @@ class RecipeIngredientModel(SqlAlchemyBase, BaseMixins):
 
     food_id: Mapped[GUID | None] = mapped_column(GUID, ForeignKey("ingredient_foods.id"), index=True)
     food: Mapped[IngredientFoodModel | None] = orm.relationship(IngredientFoodModel, uselist=False)
+
+    sub_recipe_id: Mapped[GUID | None] = mapped_column(GUID, ForeignKey("recipes.id"), index=True)
+    sub_recipe: Mapped["RecipeModel"] = orm.relationship("RecipeModel", foreign_keys=[sub_recipe_id])
+
     quantity: Mapped[float | None] = mapped_column(Float)
 
     original_text: Mapped[str | None] = mapped_column(String)

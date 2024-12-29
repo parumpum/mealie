@@ -99,11 +99,12 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
     )
     tools: Mapped[list["Tool"]] = orm.relationship("Tool", secondary=recipes_to_tools, back_populates="recipes")
 
-    recipe_ingredient: Mapped[list[RecipeIngredientModel]] = orm.relationship(
+    recipe_ingredient: Mapped[list["RecipeIngredientModel"]] = orm.relationship(
         "RecipeIngredientModel",
         cascade="all, delete-orphan",
         order_by="RecipeIngredientModel.position",
         collection_class=ordering_list("position"),
+        foreign_keys="RecipeIngredientModel.recipe_id",
     )
     recipe_instructions: Mapped[list[RecipeInstruction]] = orm.relationship(
         "RecipeInstruction",
@@ -111,9 +112,6 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
         order_by="RecipeInstruction.position",
         collection_class=ordering_list("position"),
     )
-    # recipe_associations: Mapped[list[RecipeAssociationsModel]] = orm.relationship(
-    #     "RecipeAssociationsModel", back_populates="recipe", cascade="all, delete-orphan"
-    # )
 
     share_tokens: Mapped[list[RecipeShareTokenModel]] = orm.relationship(
         RecipeShareTokenModel, back_populates="recipe", cascade="all, delete, delete-orphan"
@@ -164,7 +162,6 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
             "nutrition",
             "recipe_ingredient",
             "recipe_instructions",
-            # "recipe_associations",
             "settings",
             "comments",
             "timeline_events",
@@ -192,7 +189,6 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
         nutrition: dict | None = None,
         recipe_ingredient: list[dict] | None = None,
         recipe_instructions: list[dict] | None = None,
-        # recipe_associations: list[dict] | None = None,
         settings: dict | None = None,
         **_,
     ) -> None:
@@ -203,11 +199,6 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
 
         if recipe_ingredient is not None:
             self.recipe_ingredient = [RecipeIngredientModel(**ingr, session=session) for ingr in recipe_ingredient]
-
-        # if recipe_associations is not None:
-        #     self.recipe_associations = [
-        #         RecipeAssociationsModel(**assoc, session=session) for assoc in recipe_associations
-        #     ]
 
         if assets:
             self.assets = [RecipeAsset(**a) for a in assets]

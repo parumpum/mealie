@@ -10,6 +10,7 @@ def test_food_merger(unique_user: TestUser):
     recipe: Recipe | None = None
     database = unique_user.repos
     slug1 = random_string(10)
+    slug2 = random_string(10)
 
     food_1 = database.ingredient_foods.create(
         SaveIngredientFood(
@@ -37,8 +38,26 @@ def test_food_merger(unique_user: TestUser):
         )  # type: ignore
     )
 
+    recipe_with_subs = database.recipes.create(
+        Recipe(
+            name=slug2,
+            user_id=unique_user.user_id,
+            group_id=UUID(unique_user.group_id),
+            recipe_ingredient=[
+                RecipeIngredient(note="", sub_recipe=recipe),  # type: ignore
+                RecipeIngredient(note="", food=food_2),  # type: ignore
+            ],
+        )
+    )
+
     # Santiy check make sure recipe got created
     assert recipe.id is not None
+
+    assert recipe_with_subs.id is not None
+
+    for ing in recipe_with_subs.recipe_ingredient:
+        if ing.sub_recipe:
+            assert ing.sub_recipe == recipe
 
     for ing in recipe.recipe_ingredient:
         assert ing.food.id in [food_1.id, food_2.id]  # type: ignore

@@ -14,6 +14,7 @@ from mealie.db.models.recipe import IngredientFoodModel
 from mealie.schema._mealie import MealieModel
 from mealie.schema._mealie.mealie_model import UpdatedAtField
 from mealie.schema._mealie.types import NoneFloat
+from mealie.schema.recipe.recipe import Recipe
 from mealie.schema.response.pagination import PaginationBase
 
 INGREDIENT_QTY_PRECISION = 3
@@ -141,6 +142,7 @@ class RecipeIngredientBase(MealieModel):
     quantity: NoneFloat = 1
     unit: IngredientUnit | CreateIngredientUnit | None = None
     food: IngredientFood | CreateIngredientFood | None = None
+    sub_recipe: Recipe | None = None
     note: str | None = ""
 
     is_food: bool | None = None
