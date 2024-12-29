@@ -14,7 +14,6 @@ from sqlalchemy.orm import Session, joinedload, selectinload
 from sqlalchemy.orm.interfaces import LoaderOption
 
 from mealie.core.config import get_app_dirs
-from mealie.db.models.recipe.recipe_associations import RecipeAssociationsModel
 from mealie.db.models.users.users import User
 from mealie.schema._mealie import MealieModel, SearchType
 from mealie.schema._mealie.mealie_model import UpdatedAtField
@@ -146,7 +145,7 @@ class RecipePagination(PaginationBase):
 class Recipe(RecipeSummary):
     recipe_ingredient: Annotated[list[RecipeIngredient], Field(validate_default=True)] = []
     recipe_instructions: list[RecipeStep] | None = []
-    recipe_associations: list[RecipeAssociationsModel] | None = []
+    # recipe_associations: list[RecipeAssociationsModel] | None = []
     nutrition: Nutrition | None = None
 
     # Mealie Specific
@@ -290,7 +289,7 @@ class Recipe(RecipeSummary):
             .joinedload(RecipeIngredientModel.food)
             .joinedload(IngredientFoodModel.label),
             selectinload(RecipeModel.recipe_instructions).joinedload(RecipeInstruction.ingredient_references),
-            selectinload(RecipeModel.recipe_associations),
+            # selectinload(RecipeModel.recipe_associations),
             joinedload(RecipeModel.nutrition),
             joinedload(RecipeModel.settings),
             # for whatever reason, joinedload can mess up the order here, so use selectinload just this once
@@ -325,7 +324,12 @@ class Recipe(RecipeSummary):
                 .all()
             )
 
-            session.execute(text(f"set pg_trgm.word_similarity_threshold = {cls._fuzzy_similarity_threshold};"))
+            session.execute(
+                text(
+                    f"set pg_trgm.word_similarity_threshold = {
+                        cls._fuzzy_similarity_threshold};"
+                )
+            )
             return query.filter(
                 or_(
                     RecipeModel.name_normalized.op("%>")(search),

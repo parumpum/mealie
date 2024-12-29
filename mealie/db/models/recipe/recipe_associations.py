@@ -22,10 +22,10 @@ class RecipeAssociationsModel(SqlAlchemyBase, BaseMixins):
 
     quantity: Mapped[float] = mapped_column(Float, nullable=False, default=1.0)
 
-    recipe: Mapped["RecipeModel"] = orm.relationship(
+    recipe: Mapped[RecipeModel] = orm.relationship(
         "RecipeModel", foreign_keys=[recipe_id], back_populates="associations"
     )
-    associated_recipe: Mapped["RecipeModel"] = orm.relationship("RecipeModel", foreign_keys=[associated_recipe_id])
+    associated_recipe: Mapped[RecipeModel] = orm.relationship("RecipeModel", foreign_keys=[associated_recipe_id])
 
     @auto_init()
     def __init__(self, **_) -> None:
