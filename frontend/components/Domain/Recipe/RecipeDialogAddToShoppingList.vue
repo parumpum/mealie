@@ -247,13 +247,38 @@ export default defineComponent({
           continue;
         }
 
-        const shoppingListIngredients: ShoppingListIngredient[] = recipe.recipeIngredient.map((ing) => {
-          return {
+        // const shoppingListIngredients: ShoppingListIngredient[] = recipe.recipeIngredient.map((ing) => {
+        //     return {
+        //       checked: !ing.food?.onHand,
+        //       ingredient: ing,
+        //       disableAmount: recipe.settings?.disableAmount || false,
+        //     }
+        // });
+        const shoppingListIngredients: ShoppingListIngredient[] = [];
+
+        recipe.recipeIngredient.forEach((ing) => {
+        if (ing.isRecipe && ing.referencedRecipe) {
+          // If ing is a recipe, add all its ingredients
+          ing.referencedRecipe.recipeIngredient?.forEach((subIng) => {
+            const calculatedQty = (ing.quantity || 1) * (subIng.quantity || 1);
+            shoppingListIngredients.push({
+              checked: !subIng.food?.onHand,
+              ingredient: {
+            ...subIng,
+            quantity: calculatedQty,
+        },
+              disableAmount: recipe.settings?.disableAmount || false,
+            });
+          });
+        } else {
+          // If ing is not a recipe, add it directly
+          shoppingListIngredients.push({
             checked: !ing.food?.onHand,
             ingredient: ing,
             disableAmount: recipe.settings?.disableAmount || false,
-          }
-        });
+          });
+        }
+      });
 
         let currentTitle = "";
         const onHandIngs: ShoppingListIngredient[] = [];
