@@ -3,6 +3,10 @@
     <SafeMarkdown v-if="parsedIng.quantity" class="d-inline" :source="parsedIng.quantity" />
     <template v-if="parsedIng.unit">{{ parsedIng.unit }} </template>
     <SafeMarkdown v-if="parsedIng.note && !parsedIng.name" class="text-bold d-inline" :source="parsedIng.note" />
+    <template v-else-if="parsedIng.isRecipe">
+      <SafeMarkdown v-if="parsedIng.link" class="text-bold d-inline" :source="parsedIng.link" />
+      <SafeMarkdown v-if="parsedIng.note" class="note" :source="parsedIng.note" />
+    </template>
     <template v-else>
       <SafeMarkdown v-if="parsedIng.name" class="text-bold d-inline" :source="parsedIng.name" />
       <SafeMarkdown v-if="parsedIng.note" class="note" :source="parsedIng.note" />
@@ -10,7 +14,7 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent } from "@nuxtjs/composition-api";
+  import { computed, defineComponent, useRoute, useContext } from "@nuxtjs/composition-api";
 import { RecipeIngredient } from "~/lib/api/types/household";
 import { useParsedIngredientText } from "~/composables/recipes";
 
@@ -30,8 +34,12 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { $auth } = useContext();
+
+    const route = useRoute();
+    const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
     const parsedIng = computed(() => {
-      return useParsedIngredientText(props.ingredient, props.disableAmount, props.scale);
+      return useParsedIngredientText(props.ingredient, props.disableAmount, props.scale, true, groupSlug.value);
     });
 
     return {

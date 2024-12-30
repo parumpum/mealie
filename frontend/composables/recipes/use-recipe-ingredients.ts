@@ -1,4 +1,5 @@
 import DOMPurify from "isomorphic-dompurify";
+import { is } from "date-fns/locale";
 import { useFraction } from "./use-fraction";
 import { CreateIngredientFood, CreateIngredientUnit, IngredientFood, IngredientUnit, RecipeIngredient } from "~/lib/api/types/recipe";
 const { frac } = useFraction();
@@ -35,8 +36,8 @@ function useUnitName(unit: CreateIngredientUnit | IngredientUnit | undefined, us
   return returnVal;
 }
 
-export function useParsedIngredientText(ingredient: RecipeIngredient, disableAmount: boolean, scale = 1, includeFormating = true) {
-  if (disableAmount) {
+export function useParsedIngredientText(ingredient: RecipeIngredient, disableAmount: boolean, scale = 1, includeFormating = true, groupSlug?: string) {
+  if (disableAmount && !ingredient.isRecipe) {
     return {
       name: ingredient.note ? sanitizeIngredientHTML(ingredient.note) : undefined,
       quantity: undefined,
@@ -45,7 +46,7 @@ export function useParsedIngredientText(ingredient: RecipeIngredient, disableAmo
     };
   }
 
-  const { quantity, food, unit, note } = ingredient;
+  const { quantity, food, unit, note, referencedRecipe } = ingredient;
   const usePluralUnit = quantity !== undefined && ((quantity || 0) * scale > 1 || (quantity || 0) * scale === 0);
   const usePluralFood = (!quantity) || quantity * scale > 1
 
@@ -70,14 +71,40 @@ export function useParsedIngredientText(ingredient: RecipeIngredient, disableAmo
   }
 
   const unitName = useUnitName(unit || undefined, usePluralUnit);
-  const foodName = useFoodName(food || undefined, usePluralFood);
+  // TODO: Add support for sub-recipes here?
+  if (food) {
+    const foodName = useFoodName(food || undefined, usePluralFood);
 
-  return {
-    quantity: returnQty ? sanitizeIngredientHTML(returnQty) : undefined,
-    unit: unitName && quantity ? sanitizeIngredientHTML(unitName) : undefined,
-    name: foodName ? sanitizeIngredientHTML(foodName) : undefined,
-    note: note ? sanitizeIngredientHTML(note) : undefined,
-  };
+    return {
+      quantity: returnQty ? sanitizeIngredientHTML(returnQty) : undefined,
+      unit: unitName && quantity ? sanitizeIngredientHTML(unitName) : undefined,
+      name: foodName ? sanitizeIngredientHTML(foodName) : undefined,
+      note: note ? sanitizeIngredientHTML(note) : undefined,
+      isRecipe: false,
+    };
+  } else {
+    const subRecipeName: string = referencedRecipe ? referencedRecipe.name || "" : "";
+    if (referencedRecipe && referencedRecipe.name && groupSlug) {
+      return {
+        quantity: returnQty ? sanitizeIngredientHTML(returnQty) : undefined,
+        unit: unitName && quantity ? sanitizeIngredientHTML(unitName) : undefined,
+        name: subRecipeName ? sanitizeIngredientHTML(subRecipeName) : undefined,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        link: `<a href="/g/${groupSlug}/r/${referencedRecipe.slug}" target="_blank">${referencedRecipe.name}</a>`,
+        note: undefined,
+        isRecipe: true,
+      };
+    }
+
+    return {
+      name: ingredient.note ? sanitizeIngredientHTML(ingredient.note) : undefined,
+      quantity: undefined,
+      unit: undefined,
+      note: undefined,
+    };
+
+  }
+
 }
 
 export function parseIngredientText(ingredient: RecipeIngredient, disableAmount: boolean, scale = 1, includeFormating = true): string {

@@ -173,7 +173,7 @@ export default defineComponent({
     function insertNewRecipe(recipe: Recipe) {
       props.recipe.recipeIngredient.push({
             referenceId: uuid4(),
-            title: recipe.name || "",
+            title: "",
             note: recipe.name || "",
             // @ts-expect-error - prop can be null-type by NoUndefinedField type forces it to be set
             unit: undefined,

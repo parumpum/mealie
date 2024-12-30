@@ -11,30 +11,12 @@
           <v-divider v-if="showTitleEditor[index]"></v-divider>
         </template>
 
-          <div v-if="ingredient.isRecipe && ingredient.referencedRecipe">
-          <div v-for="(subIngredient,subIndex) in ingredient.referencedRecipe.recipeIngredient" :key="'subIngredient' + subIndex">
-            <v-list-item dense @click.stop="toggleChecked(index)">
-          <v-checkbox hide-details :value="checked[index]" class="pt-0 my-auto py-auto" color="secondary" />
-          <v-list-item-content :key="ingredient.quantity">
-            <RecipeIngredientListItem
-              :ingredient="subIngredient"
-              :disable-amount="disableAmount"
-              :scale="scale"
-            />
-          </v-list-item-content>
-        </v-list-item>
-
-            </div>
-          </div>
-            <div v-else>
               <v-list-item dense @click.stop="toggleChecked(index)">
-          <v-checkbox hide-details :value="checked[index]" class="pt-0 my-auto py-auto" color="secondary" />
-          <v-list-item-content :key="ingredient.quantity">
-            <RecipeIngredientListItem :ingredient="ingredient" :disable-amount="disableAmount" :scale="scale" />
-          </v-list-item-content>
-        </v-list-item>
-            </div>
-
+                <v-checkbox hide-details :value="checked[index]" class="pt-0 my-auto py-auto" color="secondary" />
+                <v-list-item-content :key="ingredient.quantity">
+                  <RecipeIngredientListItem :ingredient="ingredient" :disable-amount="disableAmount" :scale="scale" />
+                </v-list-item-content>
+              </v-list-item>
 
 
       </div>
