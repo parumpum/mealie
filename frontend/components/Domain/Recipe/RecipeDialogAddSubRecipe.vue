@@ -33,15 +33,7 @@
           </div>
         </v-card-actions>
         <RecipeList :recipes="search.data.value" show-description :disabled="$nuxt.isOffline">
-          <template v-for="(recipe, index) in search.data.value" #[`actions-${recipe.id}`]>
-            <!-- <v-list-item-action :key="'item-actions-decrease' + recipe.id">
-              <v-btn icon :disabled="$nuxt.isOffline" @click.prevent="removeRecipeReferenceToList(recipe.id)">
-                <v-icon color="grey lighten-1">{{ $globals.icons.minus }}</v-icon>
-              </v-btn>
-            </v-list-item-action>
-            <div :key="'item-actions-quantity' + recipe.id" class="pl-3">
-              {{ shoppingList.recipeReferences[index].recipeQuantity }}
-            </div> -->
+          <template v-for="(recipe) in search.data.value" #[`actions-${recipe.id}`]>
             <v-list-item-action :key="'item-actions-increase' + recipe.id">
               <v-btn icon :disabled="$nuxt.isOffline" @click.prevent="addRecipeReferenceToRecipe(recipe)">
                 <v-icon color="grey lighten-1">{{ $globals.icons.createAlt }}</v-icon>
@@ -49,19 +41,7 @@
             </v-list-item-action>
           </template>
         </RecipeList>
-        <!-- <RecipeCardMobile
-          v-for="(recipe, index) in search.data.value"
-          :key="index"
-          :tabindex="index"
-          class="ma-1 arrow-nav"
-          :name="recipe.name"
-          :description="recipe.description || ''"
-          :slug="recipe.slug"
-          :rating="recipe.rating"
-          :image="recipe.image"
-          :recipe-id="recipe.id"
-          v-on="$listeners.selected ? { selected: () => handleSelect(recipe) } : {}"
-        /> -->
+
       </v-card>
 
     </v-dialog>
@@ -76,30 +56,19 @@ import { Recipe, RecipeSummary } from "~/lib/api/types/recipe";
 import { useUserApi } from "~/composables/api";
 import { useRecipeSearch } from "~/composables/recipes/use-recipe-search";
 import { usePublicExploreApi } from "~/composables/api/api-client";
-import { RecipeIngredient } from "~/lib/api/types/household";
-import { uuid4 } from "~/composables/use-utils";
-const SELECTED_EVENT = "selected";
+
 export default defineComponent({
   components: {
     RecipeList,
   },
-  props: {
-    recipe: {
-      type: Object as () => Recipe,
-      required: true,
-    },
-  },
 
 
-  setup(props, context) {
+  setup(context) {
     const { $auth } = useContext();
     const state = reactive({
       loading: false,
       selectedIndex: -1,
     });
-    const loadingCounter = ref(1);
-    const recipeReferenceLoading = ref(false);
-    // const userApi = useUserApi();
     const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
     // ===========================================================================
     // Dialog State Management
@@ -165,7 +134,6 @@ export default defineComponent({
 
 
     const route = useRoute();
-    const advancedSearchUrl = computed(() => `/g/${groupSlug.value}`)
     watch(route, close);
 
     function open() {
@@ -193,7 +161,6 @@ export default defineComponent({
 
     return {
       ...toRefs(state),
-      advancedSearchUrl,
       dialog,
       open,
       close,
