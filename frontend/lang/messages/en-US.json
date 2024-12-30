@@ -669,7 +669,8 @@
       "no-food": "No Food"
     },
     "reset-servings-count": "Reset Servings Count",
-    "not-linked-ingredients": "Additional Ingredients"
+    "not-linked-ingredients": "Additional Ingredients",
+    "add-reference": "Add Recipe Reference"
   },
   "recipe-finder": {
     "recipe-finder": "Recipe Finder",

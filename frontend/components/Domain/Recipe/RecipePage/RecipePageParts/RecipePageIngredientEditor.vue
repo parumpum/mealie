@@ -2,7 +2,7 @@
   <div>
     <h2 class="mb-4">{{ $t("recipe.ingredients") }}</h2>
     <RecipeDialogAddSubRecipe ref="domSubRecipeSearchDialog" :recipe="recipe" @recipe-selected="insertNewRecipe"/>
-    <BaseButton class="mb-1" @click="showSearch" > {{ $t("general.add") }} </BaseButton>
+    <BaseButton class="mb-1" @click="showSearch" > {{ $t("recipe.add-reference") }} </BaseButton>
     <draggable
       v-if="recipe.recipeIngredient.length > 0"
       v-model="recipe.recipeIngredient"
