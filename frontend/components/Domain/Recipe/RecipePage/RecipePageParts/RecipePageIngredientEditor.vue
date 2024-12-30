@@ -1,6 +1,8 @@
 <template>
   <div>
     <h2 class="mb-4">{{ $t("recipe.ingredients") }}</h2>
+    <RecipeDialogAddSubRecipe ref="domSubRecipeSearchDialog" :recipe="recipe" @recipe-selected="insertNewRecipe"/>
+    <BaseButton class="mb-1" @click="showSearch" > {{ $t("general.add") }} </BaseButton>
     <draggable
       v-if="recipe.recipeIngredient.length > 0"
       v-model="recipe.recipeIngredient"
@@ -65,11 +67,14 @@ import { Recipe } from "~/lib/api/types/recipe";
 import RecipeIngredientEditor from "~/components/Domain/Recipe/RecipeIngredientEditor.vue";
 import RecipeDialogBulkAdd from "~/components/Domain/Recipe/RecipeDialogBulkAdd.vue";
 import { uuid4 } from "~/composables/use-utils";
+import RecipeDialogAddSubRecipe from "~/components/Domain/Recipe/RecipeDialogAddSubRecipe.vue";
+
 export default defineComponent({
   components: {
     draggable,
     RecipeDialogBulkAdd,
     RecipeIngredientEditor,
+    RecipeDialogAddSubRecipe,
   },
   props: {
     recipe: {
@@ -86,6 +91,9 @@ export default defineComponent({
 
     const route = useRoute();
     const groupSlug = computed(() => route.value.params.groupSlug || $auth.user?.groupSlug || "");
+    const domSubRecipeSearchDialog = ref<InstanceType<typeof RecipeDialogAddSubRecipe> | null>(null);
+
+
 
     const hasFoodOrUnit = computed(() => {
       if (!props.recipe) {
@@ -110,6 +118,10 @@ export default defineComponent({
       }
       return i18n.t("recipe.parse-ingredients");
     });
+
+    function showSearch() {
+      domSubRecipeSearchDialog.value?.open();
+    }
 
     function addIngredient(ingredients: Array<string> | null = null) {
       if (ingredients?.length) {
@@ -158,6 +170,21 @@ export default defineComponent({
           });
     }
 
+    function insertNewRecipe(recipe: Recipe) {
+      props.recipe.recipeIngredient.push({
+            referenceId: uuid4(),
+            title: "",
+            note: recipe.name || "",
+            // @ts-expect-error - prop can be null-type by NoUndefinedField type forces it to be set
+            unit: undefined,
+            // @ts-expect-error - prop can be null-type by NoUndefinedField type forces it to be set
+            referencedRecipe: recipe,
+            isRecipe: true,
+            disableAmount: true,
+            quantity: 1,
+          });
+    }
+
     return {
       user,
       groupSlug,
@@ -167,6 +194,9 @@ export default defineComponent({
       imageKey,
       drag,
       insertNewIngredient,
+      showSearch,
+      domSubRecipeSearchDialog,
+      insertNewRecipe,
     };
   },
 });

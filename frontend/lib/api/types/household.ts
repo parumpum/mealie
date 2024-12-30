@@ -5,6 +5,8 @@
 /* Do not modify it by hand - just update the pydantic models and then re-run the script
 */
 
+import { Recipe } from "./recipe";
+
 export type GroupRecipeActionType = "link" | "post";
 export type WebhookType = "mealplan";
 
@@ -281,14 +283,17 @@ export interface RecipeIngredient {
   quantity?: number | null;
   unit?: IngredientUnit | CreateIngredientUnit | null;
   food?: IngredientFood | CreateIngredientFood | null;
+  referencedRecipe?: Recipe;
   note?: string | null;
   isFood?: boolean | null;
+  isRecipe?: boolean | null;
   disableAmount?: boolean;
   display?: string;
   title?: string | null;
   originalText?: string | null;
   referenceId?: string;
 }
+
 export interface IngredientUnit {
   id: string;
   name: string;
