@@ -671,7 +671,8 @@
     "reset-servings-count": "Reset Servings Count",
     "not-linked-ingredients": "Additional Ingredients",
     "add-reference": "Add Recipe Reference",
-    "sub-recipes": "Include Linked Recipes"
+    "sub-recipes": "Include Linked Recipes",
+    "expand-child-recipe": "Linked Recipe Ingredients"
   },
   "recipe-finder": {
     "recipe-finder": "Recipe Finder",

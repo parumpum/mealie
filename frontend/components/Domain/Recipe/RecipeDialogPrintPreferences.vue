@@ -36,6 +36,7 @@
               <v-switch v-model="preferences.showNutrition" hide-details :label="$tc('recipe.nutrition')" />
             </v-row>
             <v-row no-gutters>
+              <v-switch v-model="preferences.expandChildRecipes" hide-details :label="$tc('recipe.expand-child-recipe')" />
             </v-row>
           </v-col>
         </v-row>

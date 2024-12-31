@@ -52,9 +52,10 @@
         :key="`ingredient-section-${sectionIndex}`"
         class="print-section"
       >
-        <h4 v-if="ingredientSection.ingredients[0].title" class="ingredient-title mt-2">
-          {{ ingredientSection.ingredients[0].title }}
+        <h4 v-if="ingredientSection.sectionName" class="ingredient-title mt-2">
+          {{ ingredientSection.sectionName }}
         </h4>
+
         <div
           class="ingredient-grid"
           :style="{ gridTemplateRows: `repeat(${Math.ceil(ingredientSection.ingredients.length / 2)}, min-content)` }"
@@ -211,31 +212,47 @@ export default defineComponent({
         return [];
       }
 
-      return props.recipe.recipeIngredient.reduce((sections, ingredient) => {
-        // if title append new section to the end of the array
-        if (ingredient.title) {
-          sections.push({
-            sectionName: ingredient.title,
-            ingredients: [ingredient],
-          });
+      const addIngredientsToSections = (ingredients: RecipeIngredient[], sections: IngredientSection[], title: string | null) => {
+        ingredients.forEach((ingredient) => {
+          // If the ingredient has a referencedRecipe, add its ingredients recursively
+          if (preferences.value.expandChildRecipes && ingredient.referencedRecipe && ingredient.referencedRecipe.recipeIngredient && ingredient.referencedRecipe.name) {
+            addIngredientsToSections(ingredient.referencedRecipe.recipeIngredient, sections, ingredient.referencedRecipe.name);
+          } else {
+            // Because of recursive call, we need to check if section exists
+            // Title gets set in recursive call if it's a referenced recipe because ingredient title is empty
+            const sectionName = ingredient.title || title || "";
 
-          return sections;
-        }
+            if (sectionName) {
+              const section = sections.find(sec => sec.sectionName === sectionName);
+              if (section) {
+                section.ingredients.push(ingredient);
+              } else {
+                sections.push({
+                  sectionName,
+                  ingredients: [ingredient],
+                });
+              }
 
-        // append new section if first
-        if (sections.length === 0) {
-          sections.push({
-            sectionName: "",
-            ingredients: [ingredient],
-          });
+            } else {
+              // Append new section if first
+              // eslint-disable-next-line no-lonely-if
+              if (sections.length === 0) {
+                sections.push({
+                  sectionName: "",
+                  ingredients: [ingredient],
+                });
+              } else {
+                // Otherwise add ingredient to last section in the array
+                sections[sections.length - 1].ingredients.push(ingredient);
+              }
+            }
+          }
+        });
+      };
 
-          return sections;
-        }
-
-        // otherwise add ingredient to last section in the array
-        sections[sections.length - 1].ingredients.push(ingredient);
-        return sections;
-      }, [] as IngredientSection[]);
+      const sections: IngredientSection[] = [];
+      addIngredientsToSections(props.recipe.recipeIngredient, sections, null);
+      return sections;
     });
 
     // Group instructions by section so we can style them independently
