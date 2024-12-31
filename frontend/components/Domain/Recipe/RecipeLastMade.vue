@@ -18,6 +18,25 @@
               persistent-hint
               rows="4"
             ></v-textarea>
+            <div v-if="childRecipes && childRecipes.length > 0">
+              <v-subheader>{{ $tc('recipe.sub-recipes') }}</v-subheader>
+              <v-list dense>
+                <v-list-item
+                  v-for="(childRecipe, i) in childRecipes"
+                  :key="childRecipe.recipeId + i"
+                  dense
+                  @click="childRecipe.checked = !childRecipe.checked"
+                >
+                  <v-checkbox
+                    hide-details
+                    :input-value="childRecipe.checked"
+                    :label="childRecipe.name"
+                    class="pt-0 my-auto py-auto"
+                    color="secondary"
+                  />
+                  </v-list-item>
+                  </v-list>
+                  </div>
             <v-container>
               <v-row>
                 <v-col cols="auto">
@@ -146,6 +165,20 @@ export default defineComponent({
     const newTimelineEventImagePreviewUrl = ref<string>();
     const newTimelineEventTimestamp = ref<string>();
 
+    const childRecipes = computed(() => {
+      return props.recipe.recipeIngredient?.map((ingredient) => {
+        if (ingredient.referencedRecipe) {
+          return {
+            checked: false, // Default value for checked
+            recipeId: ingredient.referencedRecipe.id || "", // Non-nullable recipeId
+            ...ingredient.referencedRecipe // Spread the rest of the referencedRecipe properties
+          };
+        } else {
+          return undefined;
+        }
+      }).filter(recipe => recipe !== undefined); // Filter out undefined values
+    });
+
     whenever(
       () => madeThisDialog.value,
       () => {
@@ -215,6 +248,18 @@ export default defineComponent({
         }
       }
 
+      // Update last made for any checked child recipes
+      if (childRecipes.value) {
+        for (const childRecipe of childRecipes.value) {
+          if (childRecipe.checked) {
+            // newTimelineEvent.value.recipeId = childRecipe.recipeId;
+            // await userApi.recipes.createTimelineEvent(newTimelineEvent.value);
+            if ((!props.value || newTimelineEvent.value.timestamp > props.value) && childRecipe.slug) {
+              await userApi.recipes.updateLastMade(childRecipe.slug, newTimelineEvent.value.timestamp);
+            }
+          }
+        }
+      }
       // reset form
       newTimelineEvent.value.eventMessage = "";
       newTimelineEvent.value.timestamp = undefined;
@@ -238,6 +283,7 @@ export default defineComponent({
       clearImage,
       uploadImage,
       updateUploadedImage,
+      childRecipes,
     };
   },
 });
