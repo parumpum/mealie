@@ -252,14 +252,17 @@ export default defineComponent({
       if (childRecipes.value) {
         for (const childRecipe of childRecipes.value) {
           if (childRecipe.checked) {
-            // newTimelineEvent.value.recipeId = childRecipe.recipeId;
-            // await userApi.recipes.createTimelineEvent(newTimelineEvent.value);
+            newTimelineEvent.value.eventMessage = "";
+            clearImage();
+            newTimelineEvent.value.recipeId = childRecipe.recipeId;
+            await userApi.recipes.createTimelineEvent(newTimelineEvent.value);
             if ((!props.value || newTimelineEvent.value.timestamp > props.value) && childRecipe.slug) {
               await userApi.recipes.updateLastMade(childRecipe.slug, newTimelineEvent.value.timestamp);
             }
           }
         }
       }
+
       // reset form
       newTimelineEvent.value.eventMessage = "";
       newTimelineEvent.value.timestamp = undefined;
