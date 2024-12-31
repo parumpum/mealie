@@ -73,8 +73,24 @@
               v-for="(ingredientSection, ingredientSectionIndex) in recipeSection.ingredientSections"
               :key="recipeSection.recipeId + recipeSectionIndex + ingredientSectionIndex"
             >
-              <v-card-title v-if="ingredientSection.sectionName" class="ingredient-title mt-2 pb-0 text-h6">
-                {{ ingredientSection.sectionName }}
+              <v-card-title v-if="ingredientSection.sectionName" class="ingredient-title mt-2 pb-0 text-h6 d-flex align-center justify-space-between">
+                <span>{{ ingredientSection.sectionName }}</span>
+                  <BaseButtonGroup
+                    :buttons="[
+                      {
+                        icon: $globals.icons.checkboxBlankOutline,
+                        text: $tc('shopping-list.uncheck-all-items'),
+                        event: 'uncheck',
+                      },
+                      {
+                        icon: $globals.icons.checkboxOutline,
+                        text: $tc('shopping-list.check-all-items'),
+                        event: 'check',
+                      },
+                    ]"
+                    @uncheck="bulkCheckIngredients(false, ingredientSection.sectionName)"
+                    @check="bulkCheckIngredients(true, ingredientSection.sectionName)"
+                  />
               </v-card-title>
               <div
                 :class="$vuetify.breakpoint.smAndDown ? '' : 'ingredient-grid'"
@@ -247,13 +263,6 @@ export default defineComponent({
           continue;
         }
 
-        // const shoppingListIngredients: ShoppingListIngredient[] = recipe.recipeIngredient.map((ing) => {
-        //     return {
-        //       checked: !ing.food?.onHand,
-        //       ingredient: ing,
-        //       disableAmount: recipe.settings?.disableAmount || false,
-        //     }
-        // });
         const shoppingListIngredients: ShoppingListIngredient[] = [];
 
         recipe.recipeIngredient.forEach((ing) => {
@@ -266,6 +275,7 @@ export default defineComponent({
               ingredient: {
             ...subIng,
             quantity: calculatedQty,
+            title: ing.referencedRecipe?.name || "",
         },
               disableAmount: recipe.settings?.disableAmount || false,
             });
@@ -350,12 +360,14 @@ export default defineComponent({
       state.shoppingListShowAllToggled = true;
     }
 
-    function bulkCheckIngredients(value = true) {
+    function bulkCheckIngredients(value = true, section?: string) {
       recipeIngredientSections.value.forEach((recipeSection) => {
         recipeSection.ingredientSections.forEach((ingSection) => {
-          ingSection.ingredients.forEach((ing) => {
-            ing.checked = value;
-          });
+          if (!section || ingSection.sectionName === section) {
+            ingSection.ingredients.forEach((ing) => {
+              ing.checked = value;
+            });
+          }
         });
       });
     }
