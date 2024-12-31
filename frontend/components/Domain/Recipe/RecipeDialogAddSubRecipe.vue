@@ -63,7 +63,7 @@ export default defineComponent({
   },
 
 
-  setup(context) {
+  setup(_, context) {
     const { $auth } = useContext();
     const state = reactive({
       loading: false,
