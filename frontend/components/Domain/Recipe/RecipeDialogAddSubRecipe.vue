@@ -32,7 +32,7 @@
             {{ $t("search.results") }}
           </div>
         </v-card-actions>
-        <RecipeList :recipes="search.data.value" show-description :disabled="$nuxt.isOffline">
+        <RecipeList :recipes="search.data.value" show-description show-image :disabled="$nuxt.isOffline">
           <template v-for="(recipe) in search.data.value" #[`actions-${recipe.id}`]>
             <v-list-item-action :key="'item-actions-increase' + recipe.id">
               <v-btn icon :disabled="$nuxt.isOffline" @click.prevent="addRecipeReferenceToRecipe(recipe)">
@@ -149,22 +149,12 @@ export default defineComponent({
     const api = isOwnGroup.value ? useUserApi() : usePublicExploreApi(groupSlug.value).explore;
     const search = useRecipeSearch(api);
 
-    // Select Handler
-
-    function handleSelect(recipe: RecipeSummary) {
-      close();
-      // Add selected sub recipe to parent recipe
-      if (recipe.name) {
-        console.log(`Add sub recipe to parent recipe ${recipe.name}`);
-      }
-    }
 
     return {
       ...toRefs(state),
       dialog,
       open,
       close,
-      handleSelect,
       search,
       addRecipeReferenceToRecipe,
     };

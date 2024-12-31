@@ -8,9 +8,21 @@
       :style="tile ? 'max-width: 100%; width: fit-content;' : 'width: 100%;'"
     >
       <v-list-item :to="disabled ? '' : '/g/' + groupSlug + '/r/' + recipe.slug" :class="attrs.class.listItem">
-        <v-list-item-avatar :class="attrs.class.avatar">
+        <v-list-item-avatar v-if="!showImage" :class="attrs.class.avatar">
           <v-icon :class="attrs.class.icon" dark :small="small"> {{ $globals.icons.primary }} </v-icon>
         </v-list-item-avatar>
+        <slot v-if="showImage" name="avatar">
+            <v-list-item-avatar tile :height="125" width="125" class="v-mobile-img rounded-sm my-0">
+              <RecipeCardImage
+                :icon-size="100"
+                :height="125"
+                :slug="groupSlug"
+                :recipe-id="recipe.id"
+                :image-version="recipe.image"
+                small
+              />
+            </v-list-item-avatar>
+          </slot>
         <v-list-item-content :class="attrs.class.text">
           <v-list-item-title :class="listItem && listItemDescriptions[index] ? '' : 'pr-4'" :style="attrs.style.text.title">
             {{ recipe.name }}
@@ -30,11 +42,16 @@
 <script lang="ts">
 import { computed, defineComponent, useContext, useRoute } from "@nuxtjs/composition-api";
 import DOMPurify from "dompurify";
+import RecipeCardImage from "./RecipeCardImage.vue";
 import { useFraction } from "~/composables/recipes/use-fraction";
 import { ShoppingListItemOut } from "~/lib/api/types/household";
 import { RecipeSummary } from "~/lib/api/types/recipe";
 
+
 export default defineComponent({
+  components: {
+    RecipeCardImage,
+  },
   props: {
     recipes: {
       type: Array as () => RecipeSummary[],
@@ -57,6 +74,10 @@ export default defineComponent({
       default: false,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    showImage: {
       type: Boolean,
       default: false,
     }
