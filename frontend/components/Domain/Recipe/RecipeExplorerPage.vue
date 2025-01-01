@@ -61,30 +61,26 @@
             {{ $t("household.households") }}
           </SearchFilter>
 
+            <!-- Button to toggle sort order -->
+            <v-btn class="ml-auto" small color="accent" @click="toggleOrderDirection">
+              <v-icon :left="!$vuetify.breakpoint.xsOnly">
+                {{ state.orderDirection === "asc" ? $globals.icons.sortAscending : $globals.icons.sortDescending }}
+              </v-icon>
+              {{ $vuetify.breakpoint.xsOnly ? null : (state.orderDirection === "asc" ? $tc("general.sort-ascending") : $tc("general.sort-descending")) }}
+            </v-btn>
+
           <!-- Sort Options -->
           <v-menu offset-y nudge-bottom="3">
             <template #activator="{ on, attrs }">
-              <v-btn class="ml-auto" small color="accent" v-bind="attrs" v-on="on">
+              <v-btn small color="accent" v-bind="attrs" v-on="on">
                 <v-icon :left="!$vuetify.breakpoint.xsOnly">
-                  {{ state.orderDirection === "asc" ? $globals.icons.sortAscending : $globals.icons.sortDescending }}
+                  {{ $globals.icons.sort }}
                 </v-icon>
                 {{ $vuetify.breakpoint.xsOnly ? null : sortText }}
               </v-btn>
             </template>
             <v-card>
               <v-list>
-                <v-list-item @click="toggleOrderDirection()">
-                  <v-icon left>
-                    {{
-                      state.orderDirection === "asc" ?
-                      $globals.icons.sortDescending : $globals.icons.sortAscending
-                    }}
-                  </v-icon>
-                  <v-list-item-title>
-                    {{ state.orderDirection === "asc" ? $tc("general.sort-descending") : $tc("general.sort-ascending") }}
-                  </v-list-item-title>
-                </v-list-item>
-                <v-divider />
                 <v-list-item
                   v-for="v in sortable"
                   :key="v.name"
