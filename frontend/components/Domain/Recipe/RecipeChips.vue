@@ -9,7 +9,8 @@
       color="accent"
       :small="small"
       dark
-      :to="`${baseRecipeRoute}?${urlPrefix}=${category.id}`"
+      append :to ="{ query: { ...$route.query, [urlPrefix]: category.id } }"
+      @click="() => $emit('tag-selected', category)"
     >
       {{ truncateText(category.name) }}
     </v-chip>

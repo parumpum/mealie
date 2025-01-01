@@ -82,6 +82,8 @@
                 :image="recipe.image"
                 :tags="recipe.tags"
                 :recipe-id="recipe.id"
+
+                @tag-selected="filterTags"
               />
             </v-lazy>
           </v-col>
@@ -141,6 +143,7 @@ import { useLazyRecipes } from "~/composables/recipes";
 import { Recipe } from "~/lib/api/types/recipe";
 import { useUserSortPreferences } from "~/composables/use-users/preferences";
 import { RecipeSearchQuery } from "~/lib/api/user/recipes/recipe";
+import { RecipeCategory } from "~/lib/api/types/household";
 
 const REPLACE_RECIPES_EVENT = "replaceRecipes";
 const APPEND_RECIPES_EVENT = "appendRecipes";
@@ -244,6 +247,20 @@ export default defineComponent({
       ready.value = true;
     });
 
+    async function filterTags(tag: RecipeCategory) {
+      // if (props.query.tags && tag.id && props.query.tags.includes(tag.id)) {
+      //   return;
+      // }
+
+      if (tag.id) {
+        props.query.tags = [tag.id];
+
+        ready.value = false;
+          await initRecipes();
+          ready.value = true;
+      }
+    }
+
     let lastQuery: string | undefined = JSON.stringify(props.query);
     watch(
       () => props.query,
@@ -295,6 +312,7 @@ export default defineComponent({
         loading.value = false;
       }, useAsyncKey());
     }, 500);
+
 
     function sortRecipes(sortType: string) {
       if (state.sortLoading || loading.value) {
@@ -399,6 +417,7 @@ export default defineComponent({
       sortRecipes,
       toggleMobileCards,
       useMobileCards,
+      filterTags,
     };
   },
 });
