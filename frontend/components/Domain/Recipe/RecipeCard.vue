@@ -9,6 +9,8 @@
         :min-height="imageHeight + 75"
         @click="$emit('click')"
       >
+
+      <div style="position: relative;">
         <RecipeCardImage
           :icon-size="imageHeight"
           :height="imageHeight"
@@ -17,6 +19,18 @@
           small
           :image-version="image"
         >
+        <div
+        class="d-flex justify-content-end" style="position: absolute !important;
+    right: 0;
+    transform: translate(5%, 0%);
+    background-color: black; padding: 5px;
+    border-bottom-left-radius: 5px;
+    ">
+        <RecipeToCookBadge
+v-if="isOwnGroup" class="ml-auto" :recipe-id="recipeId" show-always
+
+        />
+      </div>
           <v-expand-transition v-if="description">
             <div v-if="hover" class="d-flex transition-fast-in-fast-out secondary v-card--reveal" style="height: 100%">
               <v-card-text class="v-card--text-show white--text">
@@ -27,6 +41,8 @@
             </div>
           </v-expand-transition>
         </RecipeCardImage>
+</div>
+
         <v-card-title class="my-n3 px-2 mb-n6">
           <div class="headerClass">
             {{ name }}
@@ -75,10 +91,11 @@ import RecipeChips from "./RecipeChips.vue";
 import RecipeContextMenu from "./RecipeContextMenu.vue";
 import RecipeCardImage from "./RecipeCardImage.vue";
 import RecipeRating from "./RecipeRating.vue";
+import RecipeToCookBadge from "./RecipeToCookBadge.vue";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
 
 export default defineComponent({
-  components: { RecipeFavoriteBadge, RecipeChips, RecipeContextMenu, RecipeRating, RecipeCardImage },
+  components: { RecipeFavoriteBadge, RecipeChips, RecipeContextMenu, RecipeRating, RecipeCardImage, RecipeToCookBadge },
   props: {
     name: {
       type: String,

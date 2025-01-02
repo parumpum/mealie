@@ -234,12 +234,14 @@ export interface UserRatingCreate {
   recipeId: string;
   rating?: number | null;
   isFavorite?: boolean;
+  isBookmarked?: boolean;
   userId: string;
 }
 export interface UserRatingOut {
   recipeId: string;
   rating?: number | null;
   isFavorite?: boolean;
+  isBookmarked?: boolean;
   userId: string;
   id: string;
 }
@@ -247,10 +249,12 @@ export interface UserRatingSummary {
   recipeId: string;
   rating?: number | null;
   isFavorite?: boolean;
+  isBookmarked?: boolean;
 }
 export interface UserRatingUpdate {
   rating?: number | null;
   isFavorite?: boolean | null;
+  isBookmarked?: boolean;
 }
 export interface ValidateResetToken {
   token: string;

@@ -88,7 +88,7 @@ export default defineComponent({
       }
 
       if (!props.emitOnly) {
-        setRating(props.slug, val || 0, null);
+        setRating(props.slug, val || 0, null, null);
       }
       context.emit("input", val);
     }

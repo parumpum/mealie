@@ -9,7 +9,7 @@ from mealie.routes._base import BaseUserController, controller
 from mealie.routes._base.routers import UserAPIRouter
 from mealie.routes.users._helpers import assert_user_change_allowed
 from mealie.schema.response.responses import ErrorResponse
-from mealie.schema.user.user import UserRatingCreate, UserRatingOut, UserRatings, UserRatingUpdate
+from mealie.schema.user.user import UserBookmarks, UserRatingCreate, UserRatingOut, UserRatings, UserRatingUpdate
 
 router = UserAPIRouter()
 
@@ -51,6 +51,11 @@ class UserRatingsController(BaseUserController):
         """Get user's favorited recipes"""
         return UserRatings(ratings=self.repos.user_ratings.get_by_user(id, favorites_only=True))
 
+    @router.get("/{id}/bookmarks", response_model=UserRatings[UserRatingOut])
+    async def get_bookmarked(self, id: UUID4):
+        """Get user's bookmarked recipes"""
+        return UserBookmarks(ratings=self.repos.user_ratings.get_by_user(id, bookmarked_only=True))
+
     @router.post("/{id}/ratings/{slug}")
     def set_rating(self, id: UUID4, slug: str, data: UserRatingUpdate):
         """Sets the user's rating for a recipe"""
@@ -65,6 +70,7 @@ class UserRatingsController(BaseUserController):
                     recipe_id=recipe.id,
                     rating=data.rating,
                     is_favorite=data.is_favorite or False,
+                    is_bookmarked=data.is_bookmarked or False,
                 )
             )
         else:
@@ -72,6 +78,8 @@ class UserRatingsController(BaseUserController):
                 user_rating.rating = data.rating
             if data.is_favorite is not None:
                 user_rating.is_favorite = data.is_favorite
+            if data.is_bookmarked is not None:
+                user_rating.is_bookmarked = data.is_bookmarked
 
             self.repos.user_ratings.update(user_rating.id, user_rating)
 
@@ -84,3 +92,13 @@ class UserRatingsController(BaseUserController):
     def remove_favorite(self, id: UUID4, slug: str):
         """Removes a recipe from the user's favorites"""
         self.set_rating(id, slug, data=UserRatingUpdate(is_favorite=False))
+
+    @router.post("/{id}/bookmarks/{slug}")
+    def add_bookmarked(self, id: UUID4, slug: str):
+        """Adds a recipe to the user's bookmarked recipes"""
+        self.set_rating(id, slug, data=UserRatingUpdate(is_bookmarked=True))
+
+    @router.delete("/{id}/bookmarks/{slug}")
+    def remove_bookmarked(self, id: UUID4, slug: str):
+        """Removes a recipe from the user's bookmarked recipes"""
+        self.set_rating(id, slug, data=UserRatingUpdate(is_bookmarked=False))

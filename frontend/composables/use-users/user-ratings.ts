@@ -22,10 +22,10 @@ export const useUserSelfRatings = function () {
     ready.value = true;
   }
 
-  async function setRating(slug: string, rating: number | null, isFavorite: boolean | null) {
+  async function setRating(slug: string, rating: number | null, isFavorite: boolean | null, isBookmarked: boolean | null) {
     loading.value = true;
     const userId = $auth.user?.id || "";
-    await api.users.setRating(userId, slug, rating, isFavorite);
+    await api.users.setRating(userId, slug, rating, isFavorite, isBookmarked);
     loading.value = false;
     await refreshUserRatings();
   }

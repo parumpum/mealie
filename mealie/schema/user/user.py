@@ -67,6 +67,7 @@ class UserRatingSummary(MealieModel):
     recipe_id: UUID4
     rating: float | None = None
     is_favorite: Annotated[bool, Field(validate_default=True)] = False
+    is_bookmarked: Annotated[bool, Field(validate_default=True)] = False
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -85,6 +86,7 @@ class UserRatingCreate(UserRatingSummary):
 class UserRatingUpdate(MealieModel):
     rating: float | None = None
     is_favorite: bool | None = None
+    is_bookmarked: bool | None = None
 
 
 class UserRatingOut(UserRatingCreate):
@@ -99,6 +101,10 @@ class UserRatingOut(UserRatingCreate):
 
 class UserRatings(BaseModel, Generic[DataT]):
     ratings: list[DataT]
+
+
+class UserBookmarks(BaseModel, Generic[DataT]):
+    recipes: list[DataT]
 
 
 class UserBase(MealieModel):

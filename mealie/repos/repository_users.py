@@ -79,10 +79,13 @@ class RepositoryUserRatings(GroupRepositoryGeneric[UserRatingOut, UserToRecipe])
     # Since users can post events on recipes that belong to other households,
     # this is a group repository, rather than a household repository.
 
-    def get_by_user(self, user_id: UUID4, favorites_only=False) -> list[UserRatingOut]:
+    def get_by_user(self, user_id: UUID4, favorites_only=False, bookmarked_only=False) -> list[UserRatingOut]:
         stmt = select(UserToRecipe).filter(UserToRecipe.user_id == user_id)
         if favorites_only:
             stmt = stmt.filter(UserToRecipe.is_favorite)
+
+        if bookmarked_only:
+            stmt = stmt.filter(UserToRecipe.is_bookmarked)
 
         results = self.session.execute(stmt).scalars().all()
         return [self.schema.model_validate(x) for x in results]

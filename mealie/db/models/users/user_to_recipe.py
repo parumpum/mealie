@@ -27,6 +27,7 @@ class UserToRecipe(SqlAlchemyBase, BaseMixins):
 
     rating = Column(Float, index=True, nullable=True)
     is_favorite = Column(Boolean, index=True, nullable=False)
+    is_bookmarked = Column(Boolean, index=True, nullable=False)
 
     @auto_init()
     def __init__(self, **_) -> None:

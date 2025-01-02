@@ -32,6 +32,9 @@ const routes = {
   usersIdImage: (id: string) => `${prefix}/users/${id}/image`,
   usersIdResetPassword: (id: string) => `${prefix}/users/${id}/reset-password`,
   usersId: (id: string) => `${prefix}/users/${id}`,
+  usersIdBookmarks: (id: string) => `${prefix}/users/${id}/bookmarks`,
+  usersIdBookmarksSlug: (id: string, slug: string) => `${prefix}/users/${id}/bookmarks/${slug}`,
+  usersSelfBookmarksId: (id: string) => `${prefix}/users/self/bookmarks/${id}`,
   usersIdFavorites: (id: string) => `${prefix}/users/${id}/favorites`,
   usersIdFavoritesSlug: (id: string, slug: string) => `${prefix}/users/${id}/favorites/${slug}`,
   usersIdRatings: (id: string) => `${prefix}/users/${id}/ratings`,
@@ -46,6 +49,22 @@ const routes = {
 export class UserApi extends BaseCRUDAPI<UserIn, UserOut, UserBase> {
   baseRoute: string = routes.users;
   itemRoute = (itemid: string) => routes.usersId(itemid);
+
+  async addBookmark(id: string, slug: string) {
+    return await this.requests.post(routes.usersIdBookmarksSlug(id, slug), {});
+  }
+
+  async removeBookmark(id: string, slug: string) {
+    return await this.requests.delete(routes.usersIdBookmarksSlug(id, slug));
+  }
+
+  async getBookmarks(id: string) {
+    return await this.requests.get<UserRatingsOut>(routes.usersIdBookmarks(id));
+  }
+
+  async getSelfBookmarks() {
+    return await this.requests.get<UserRatingsSummaries>(routes.ratingsSelf);
+  }
 
   async addFavorite(id: string, slug: string) {
     return await this.requests.post(routes.usersIdFavoritesSlug(id, slug), {});
@@ -67,8 +86,8 @@ export class UserApi extends BaseCRUDAPI<UserIn, UserOut, UserBase> {
     return await this.requests.get<UserRatingsOut>(routes.usersIdRatings(id));
   }
 
-  async setRating(id: string, slug: string, rating: number | null, isFavorite: boolean | null) {
-    return await this.requests.post(routes.usersIdRatingsSlug(id, slug), { rating, isFavorite });
+  async setRating(id: string, slug: string, rating: number | null, isFavorite: boolean | null, isBookmarked: boolean | null) {
+    return await this.requests.post(routes.usersIdRatingsSlug(id, slug), { rating, isFavorite, isBookmarked });
   }
 
   async getSelfRatings() {
