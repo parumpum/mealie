@@ -83,9 +83,6 @@ export default defineComponent({
 
       const rating = await api.users.getHouseholdBookmarks($auth.user.id, props.recipeId);
       if (rating && rating.data) {
-
-
-        console.log("HH Flagged", rating.data);
           isHouseholdFlagged.value = true;
           forceRerender();
 
