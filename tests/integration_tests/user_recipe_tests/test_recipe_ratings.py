@@ -25,6 +25,7 @@ def recipes(user_tuple: tuple[TestUser, TestUser]) -> Generator[list[Recipe], No
                 Recipe(
                     user_id=unique_user.user_id,
                     group_id=unique_user.group_id,
+                    household_id=unique_user.household_id,
                     name=slug,
                     slug=slug,
                 )
@@ -92,6 +93,114 @@ def test_user_recipe_favorites(
         assert recipe_id not in fetched_recipe_ids
     for recipe_id in fetched_recipe_ids:
         assert recipe_id in favorited_recipe_ids
+
+
+@pytest.mark.parametrize("use_self_route", [True, False])
+def test_user_recipe_bookmark(
+    api_client: TestClient, user_tuple: tuple[TestUser, TestUser], recipes: list[Recipe], use_self_route: bool
+):
+    # we use two different users because pytest doesn't support function-scopes within parametrized tests
+    if use_self_route:
+        unique_user = user_tuple[0]
+    else:
+        unique_user = user_tuple[1]
+
+    response = api_client.get(api_routes.users_id_bookmarks(unique_user.user_id), headers=unique_user.token)
+
+    recipes_to_bookmark = random.sample(recipes, random_int(5, len(recipes)))
+
+    # add bookmarks
+    for recipe in recipes_to_bookmark:
+        response = api_client.post(
+            api_routes.users_id_bookmarks_slug(unique_user.user_id, recipe.slug), headers=unique_user.token
+        )
+        assert response.status_code == 200
+
+    if use_self_route:
+        get_url = api_routes.users_self_bookmarks
+    else:
+        get_url = api_routes.users_id_bookmarks(unique_user.user_id)
+
+    response = api_client.get(get_url, headers=unique_user.token)
+    ratings = response.json()["ratings"]
+
+    assert len(ratings) == len(recipes_to_bookmark)
+    fetched_recipe_ids = {rating["recipeId"] for rating in ratings}
+    bookmarked_recipe_ids = {str(recipe.id) for recipe in recipes_to_bookmark}
+    assert fetched_recipe_ids == bookmarked_recipe_ids
+
+    # remove bookmarks
+    recipe_bookmarks_to_remove = random.sample(recipes_to_bookmark, 3)
+    for recipe in recipe_bookmarks_to_remove:
+        response = api_client.delete(
+            api_routes.users_id_bookmarks_slug(unique_user.user_id, recipe.slug), headers=unique_user.token
+        )
+        assert response.status_code == 200
+
+    response = api_client.get(get_url, headers=unique_user.token)
+    ratings = response.json()["ratings"]
+
+    assert len(ratings) == len(recipes_to_bookmark) - len(recipe_bookmarks_to_remove)
+    fetched_recipe_ids = {rating["recipeId"] for rating in ratings}
+    removed_recipe_ids = {str(recipe.id) for recipe in recipe_bookmarks_to_remove}
+
+    for recipe_id in removed_recipe_ids:
+        assert recipe_id not in fetched_recipe_ids
+    for recipe_id in fetched_recipe_ids:
+        assert recipe_id in bookmarked_recipe_ids
+
+
+def test_user_recipe_bookmark_household(
+    api_client: TestClient, user_tuple: tuple[TestUser, TestUser], recipes: list[Recipe]
+):
+    usr_1, usr_2 = user_tuple
+    # unique_user = random.choice(user_tuple)
+    # h2_user = random.choice(user_tuple)
+    recipes_to_bookmark = random.sample(recipes, random_int(5, len(recipes)))
+
+    # add bookmark for unique_user to first recipe
+    response = api_client.post(
+        api_routes.users_id_bookmarks_slug(usr_1.user_id, recipes_to_bookmark[0].slug), headers=usr_1.token
+    )
+    assert response.status_code == 200
+
+    # add bookmark for h2_user to second recipe
+    response = api_client.post(
+        api_routes.users_id_bookmarks_slug(usr_2.user_id, recipes_to_bookmark[1].slug), headers=usr_2.token
+    )
+    assert response.status_code == 200
+
+    # get bookmarks for household as usr_1
+    response = api_client.get(api_routes.users_household_bookmarks, headers=usr_1.token)
+    ratings = response.json()["ratings"]
+
+    assert len(ratings) == 2
+
+    # get bookmarks for household as usr_2
+    response = api_client.get(api_routes.users_household_bookmarks, headers=usr_2.token)
+    ratings = response.json()["ratings"]
+
+    assert len(ratings) == 2
+
+    # get bookmark by slug for household as usr_1
+    response = api_client.get(
+        api_routes.users_self_household_bookmarks_recipe_id(recipes_to_bookmark[1].id), headers=usr_1.token
+    )
+    assert response.status_code == 200
+    bookmarked_by_household = bool(response.content)
+
+    # assert ratings["recipeId"] == str(recipes_to_bookmark[1].id)
+    assert bookmarked_by_household is True
+
+    # get bookmark by slug for household as usr_2
+    response = api_client.get(
+        api_routes.users_self_household_bookmarks_recipe_id(recipes_to_bookmark[0].id), headers=usr_2.token
+    )
+    assert response.status_code == 200
+    bookmarked_by_household = bool(response.content)
+
+    # assert ratings["recipeId"] == str(recipes_to_bookmark[0].id)
+    assert bookmarked_by_household is True
 
 
 @pytest.mark.parametrize("add_favorite", [True, False])
@@ -185,6 +294,25 @@ def test_set_rating_and_favorite(api_client: TestClient, user_tuple: tuple[TestU
     assert data["isFavorite"] is True
 
 
+def test_set_rating_and_bookmark(api_client: TestClient, user_tuple: tuple[TestUser, TestUser], recipes: list[Recipe]):
+    unique_user = random.choice(user_tuple)
+    recipe = random.choice(recipes)
+
+    rating = UserRatingUpdate(rating=random.uniform(1, 5), is_bookmarked=True)
+    response = api_client.post(
+        api_routes.users_id_ratings_slug(unique_user.user_id, recipe.slug),
+        json=rating.model_dump(),
+        headers=unique_user.token,
+    )
+    assert response.status_code == 200
+
+    response = api_client.get(api_routes.users_self_ratings_recipe_id(recipe.id), headers=unique_user.token)
+    data = response.json()
+    assert data["recipeId"] == str(recipe.id)
+    assert data["rating"] == rating.rating
+    assert data["isBookmarked"] is True
+
+
 @pytest.mark.parametrize("favorite_value", [True, False])
 def test_set_rating_preserve_favorite(
     api_client: TestClient, user_tuple: tuple[TestUser, TestUser], recipes: list[Recipe], favorite_value: bool
@@ -209,7 +337,8 @@ def test_set_rating_preserve_favorite(
     assert data["isFavorite"] == favorite_value
 
     rating.rating = updated_rating_value
-    rating.is_favorite = None  # this should be ignored and the favorite value should be preserved
+    # this should be ignored and the favorite value should be preserved
+    rating.is_favorite = None
     response = api_client.post(
         api_routes.users_id_ratings_slug(unique_user.user_id, recipe.slug),
         json=rating.model_dump(),

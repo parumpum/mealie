@@ -81,6 +81,21 @@ class UserController(BaseUserController):
     def get_logged_in_user_favorites(self):
         return UserRatings(ratings=self.repos.user_ratings.get_by_user(self.user.id, favorites_only=True))
 
+    @user_router.get("/self/bookmarks", response_model=UserRatings[UserRatingSummary])
+    def get_logged_in_user_bookmarks(self):
+        return UserRatings(ratings=self.repos.user_ratings.get_by_user(self.user.id, bookmarks_only=True))
+
+    @user_router.get("/self/household/bookmarks", response_model=UserRatings[UserRatingSummary])
+    def get_logged_in_user_household_bookmarks(self):
+        return UserRatings(
+            ratings=self.repos.user_ratings.get_by_household(self.user.household_id, bookmarks_only=True)
+        )
+
+    @user_router.get("/self/household/bookmarks/{recipe_id}", response_model=bool)
+    def get_logged_in_user_household_bookmarks_for_recipe(self, recipe_id: UUID4):
+        response = self.repos.user_ratings.get_recipe_bookmarked_by_household(recipe_id, self.user.household_id)
+        return response
+
     @user_router.put("/password")
     def update_password(self, password_change: ChangePassword):
         """Resets the User Password"""

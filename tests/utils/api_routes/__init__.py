@@ -187,6 +187,10 @@ users_reset_password = "/api/users/reset-password"
 """`/api/users/reset-password`"""
 users_self = "/api/users/self"
 """`/api/users/self`"""
+users_household_bookmarks = "/api/users/self/household/bookmarks"
+"""`/api/users/self/household/bookmarks`"""
+users_self_bookmarks = "/api/users/self/bookmarks"
+"""`/api/users/self/bookmarks`"""
 users_self_favorites = "/api/users/self/favorites"
 """`/api/users/self/favorites`"""
 users_self_ratings = "/api/users/self/ratings"
@@ -530,6 +534,16 @@ def users_id_favorites(id):
     return f"{prefix}/users/{id}/favorites"
 
 
+def users_id_bookmarks(id):
+    """`/api/users/{id}/bookmarks`"""
+    return f"{prefix}/users/{id}/bookmarks"
+
+
+def users_id_bookmarks_slug(id, slug):
+    """`/api/users/{id}/bookmarks/{slug}`"""
+    return f"{prefix}/users/{id}/bookmarks/{slug}"
+
+
 def users_id_favorites_slug(id, slug):
     """`/api/users/{id}/favorites/{slug}`"""
     return f"{prefix}/users/{id}/favorites/{slug}"
@@ -558,3 +572,8 @@ def users_item_id(item_id):
 def users_self_ratings_recipe_id(recipe_id):
     """`/api/users/self/ratings/{recipe_id}`"""
     return f"{prefix}/users/self/ratings/{recipe_id}"
+
+
+def users_self_household_bookmarks_recipe_id(recipe_id):
+    """`/api/users/self/household/bookmarks/{recipe_id}`"""
+    return f"{prefix}/users/self/household/bookmarks/{recipe_id}"

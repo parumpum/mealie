@@ -103,10 +103,6 @@ class UserRatings(BaseModel, Generic[DataT]):
     ratings: list[DataT]
 
 
-class UserBookmarks(BaseModel, Generic[DataT]):
-    recipes: list[DataT]
-
-
 class UserBase(MealieModel):
     id: UUID4 | None = None
     username: str | None = None

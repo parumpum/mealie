@@ -79,21 +79,42 @@ class RepositoryUserRatings(GroupRepositoryGeneric[UserRatingOut, UserToRecipe])
     # Since users can post events on recipes that belong to other households,
     # this is a group repository, rather than a household repository.
 
-    def get_by_user(self, user_id: UUID4, favorites_only=False, bookmarked_only=False) -> list[UserRatingOut]:
+    def get_by_user(self, user_id: UUID4, favorites_only=False, bookmarks_only=False) -> list[UserRatingOut]:
         stmt = select(UserToRecipe).filter(UserToRecipe.user_id == user_id)
         if favorites_only:
             stmt = stmt.filter(UserToRecipe.is_favorite)
 
-        if bookmarked_only:
+        if bookmarks_only:
             stmt = stmt.filter(UserToRecipe.is_bookmarked)
 
         results = self.session.execute(stmt).scalars().all()
         return [self.schema.model_validate(x) for x in results]
 
-    def get_by_recipe(self, recipe_id: UUID4, favorites_only=False) -> list[UserRatingOut]:
+    def get_by_household(
+        self, household_id: UUID4, favorites_only=False, bookmarks_only=False, recipe_id: UUID4 | None = None
+    ) -> list[UserRatingOut]:
+        stmt = select(UserToRecipe).filter(UserToRecipe.household_id == household_id)
+
+        if favorites_only:
+            stmt = stmt.filter(UserToRecipe.is_favorite)
+
+        if bookmarks_only:
+            stmt = stmt.filter(UserToRecipe.is_bookmarked)
+
+        if recipe_id:
+            stmt = stmt.filter(UserToRecipe.recipe_id == recipe_id)
+
+        results = self.session.execute(stmt).scalars().all()
+        validated_results = [self.schema.model_validate(x) for x in results]
+        return validated_results
+
+    def get_by_recipe(self, recipe_id: UUID4, favorites_only=False, bookmarks_only=False) -> list[UserRatingOut]:
         stmt = select(UserToRecipe).filter(UserToRecipe.recipe_id == recipe_id)
         if favorites_only:
             stmt = stmt.filter(UserToRecipe.is_favorite)
+
+        if bookmarks_only:
+            stmt = stmt.filter(UserToRecipe.is_bookmarked)
 
         results = self.session.execute(stmt).scalars().all()
         return [self.schema.model_validate(x) for x in results]
@@ -102,3 +123,13 @@ class RepositoryUserRatings(GroupRepositoryGeneric[UserRatingOut, UserToRecipe])
         stmt = select(UserToRecipe).filter(UserToRecipe.user_id == user_id, UserToRecipe.recipe_id == recipe_id)
         result = self.session.execute(stmt).scalars().one_or_none()
         return None if result is None else self.schema.model_validate(result)
+
+    # get_by_recipe_and_household
+    def get_recipe_bookmarked_by_household(self, recipe_id: UUID4, household_id: UUID4) -> bool:
+        stmt = select(UserToRecipe).filter(
+            UserToRecipe.recipe_id == recipe_id, UserToRecipe.household_id == household_id, UserToRecipe.is_bookmarked
+        )
+        results = self.session.execute(stmt).scalars().all()
+        if len(results) >= 1:
+            return True
+        return False

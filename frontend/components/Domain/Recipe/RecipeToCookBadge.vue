@@ -2,17 +2,17 @@
   <v-tooltip bottom nudge-right="50" :color="buttonStyle ? 'info' : 'secondary'">
     <template #activator="{ on, attrs }">
       <v-btn
-        v-if="isFlagged || showAlways"
+        v-bind="attrs"
+
         small
         :color="buttonStyle ? 'info' : 'secondary'"
         :icon="!buttonStyle"
         :fab="buttonStyle"
-        v-bind="attrs"
         @click.prevent="toggleWantToCook"
         v-on="on"
       >
-        <v-icon :small="false" :color="buttonStyle ? 'white' : 'secondary'">
-          {{ isFlagged ? $globals.icons.bookmark : $globals.icons.bookmarkOutline }}
+        <v-icon :key="componentKey" :small="false" :color="isFlagged ? 'secondary' : 'grey darken-1'">
+          {{ isFlagged ? $globals.icons.bookmark : isHouseholdFlagged ? $globals.icons.bookmark : $globals.icons.bookmarkOutline }}
         </v-icon>
       </v-btn>
     </template>
@@ -21,11 +21,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, onMounted, ref, useContext } from "@nuxtjs/composition-api";
 import { useUserSelfRatings } from "~/composables/use-users";
 import { useUserApi } from "~/composables/api";
 import { UserOut } from "~/lib/api/types/user";
 import { useLoggedInState } from "~/composables/use-logged-in-state";
+
 export default defineComponent({
   props: {
     recipeId: {
@@ -49,16 +50,50 @@ export default defineComponent({
     const api = useUserApi();
     const { $auth } = useContext();
     const { userRatings, refreshUserRatings, setRating } = useUserSelfRatings();
-    const { isOwnGroup } = useLoggedInState();
 
+    const ready = ref(false);
+    const componentKey = ref(0);
     // TODO Setup the correct type for $auth.user
     // See https://github.com/nuxt-community/auth-module/issues/1097
     const user = computed(() => $auth.user as unknown as UserOut);
+    const isHouseholdFlagged = ref(false)
+
+    function forceRerender() {
+      componentKey.value += 1;
+    }
 
     const isFlagged = computed(() => {
       const rating = userRatings.value.find((r) => r.recipeId === props.recipeId);
-      return rating?.isBookmarked || false;
+      if (rating?.isBookmarked) {
+        return true;
+      }
+      return false;
     });
+
+
+    onMounted(async () => {
+      await checkHouseholdFlagged();
+      ready.value = true;
+    });
+
+     async function checkHouseholdFlagged() {
+      if (!$auth.user) {
+        return;
+      }
+
+      const rating = await api.users.getHouseholdBookmarks($auth.user.id, props.recipeId);
+      if (rating && rating.data) {
+
+
+        console.log("HH Flagged", rating.data);
+          isHouseholdFlagged.value = true;
+          forceRerender();
+
+      } else {
+          isHouseholdFlagged.value = false;
+        }
+
+    }
 
     async function toggleWantToCook() {
        if (!isFlagged.value) {
@@ -69,7 +104,7 @@ export default defineComponent({
        await refreshUserRatings();
     }
 
-    return { isFlagged, toggleWantToCook };
+    return { isFlagged, toggleWantToCook, isHouseholdFlagged, componentKey };
   },
 });
 </script>

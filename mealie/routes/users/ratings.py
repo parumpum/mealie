@@ -9,7 +9,7 @@ from mealie.routes._base import BaseUserController, controller
 from mealie.routes._base.routers import UserAPIRouter
 from mealie.routes.users._helpers import assert_user_change_allowed
 from mealie.schema.response.responses import ErrorResponse
-from mealie.schema.user.user import UserBookmarks, UserRatingCreate, UserRatingOut, UserRatings, UserRatingUpdate
+from mealie.schema.user.user import UserRatingCreate, UserRatingOut, UserRatings, UserRatingUpdate
 
 router = UserAPIRouter()
 
@@ -52,9 +52,9 @@ class UserRatingsController(BaseUserController):
         return UserRatings(ratings=self.repos.user_ratings.get_by_user(id, favorites_only=True))
 
     @router.get("/{id}/bookmarks", response_model=UserRatings[UserRatingOut])
-    async def get_bookmarked(self, id: UUID4):
+    async def get_bookmarks(self, id: UUID4):
         """Get user's bookmarked recipes"""
-        return UserBookmarks(ratings=self.repos.user_ratings.get_by_user(id, bookmarked_only=True))
+        return UserRatings(ratings=self.repos.user_ratings.get_by_user(id, bookmarks_only=True))
 
     @router.post("/{id}/ratings/{slug}")
     def set_rating(self, id: UUID4, slug: str, data: UserRatingUpdate):
@@ -102,3 +102,17 @@ class UserRatingsController(BaseUserController):
     def remove_bookmarked(self, id: UUID4, slug: str):
         """Removes a recipe from the user's bookmarked recipes"""
         self.set_rating(id, slug, data=UserRatingUpdate(is_bookmarked=False))
+
+    @router.get("/{id}/household/ratings/{slug}", response_model=UserRatings[UserRatingOut])
+    async def get_household_ratings(self, id: UUID4, slug: str):
+        """Get all household ratings"""
+        ratings = self.repos.user_ratings.get_by_household(self.household_id, bookmarks_only=True, recipe_id=slug)
+        if len(ratings) == 1:
+            return UserRatingOut(
+                recipe_id=slug,
+                rating=ratings["rating"],
+                is_favorite=ratings["is_favorite"],
+                is_bookmarked=ratings["is_bookmarked"],
+            )
+        else:
+            return None

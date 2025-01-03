@@ -25,6 +25,7 @@ const prefix = "/api";
 const routes = {
   usersSelf: `${prefix}/users/self`,
   ratingsSelf: `${prefix}/users/self/ratings`,
+  householdBookmarksSelf: `${prefix}/users/self/household/bookmarks`,
   passwordReset: `${prefix}/users/reset-password`,
   passwordChange: `${prefix}/users/password`,
   users: `${prefix}/users`,
@@ -44,6 +45,8 @@ const routes = {
 
   usersApiTokens: `${prefix}/users/api-tokens`,
   usersApiTokensTokenId: (token_id: string | number) => `${prefix}/users/api-tokens/${token_id}`,
+
+  householdBookmarks: (id: string, slug: string) => `${prefix}/users/self/household/bookmarks/${slug}`
 };
 
 export class UserApi extends BaseCRUDAPI<UserIn, UserOut, UserBase> {
@@ -56,6 +59,12 @@ export class UserApi extends BaseCRUDAPI<UserIn, UserOut, UserBase> {
 
   async removeBookmark(id: string, slug: string) {
     return await this.requests.delete(routes.usersIdBookmarksSlug(id, slug));
+  }
+
+  async getHouseholdBookmarks(id: string, slug: string) {
+    // const { data } = await this.requests.get<UserRatingsOut>(routes.householdBookmarks(id, slug));
+    return await this.requests.get<boolean>(routes.householdBookmarks(id, slug));
+
   }
 
   async getBookmarks(id: string) {
