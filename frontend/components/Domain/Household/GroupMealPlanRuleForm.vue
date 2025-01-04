@@ -134,6 +134,11 @@ export default defineComponent({
         type: Organizer.Household,
       },
       {
+        name: "bookmarked_by.id",
+        label: i18n.tc("general.is-bookmarked"),
+        type: Organizer.User,
+      },
+      {
         name: "last_made",
         label: i18n.tc("general.last-made"),
         type: "date",

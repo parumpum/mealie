@@ -3,7 +3,7 @@
     <template #activator="{ on, attrs }">
       <v-btn
         v-bind="attrs"
-
+        :class="buttonStyle ? 'ml-1' : ''"
         small
         :color="buttonStyle ? 'info' : 'secondary'"
         :icon="!buttonStyle"

@@ -217,7 +217,8 @@
     "show-advanced": "Show Advanced",
     "add-field": "Add Field",
     "date-created": "Date Created",
-    "date-updated": "Date Updated"
+    "date-updated": "Date Updated",
+    "is-bookmarked": "Want To Cook"
   },
   "group": {
     "are-you-sure-you-want-to-delete-the-group": "Are you sure you want to delete <b>{groupName}<b/>?",

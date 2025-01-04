@@ -6,7 +6,7 @@
     :label="label"
     chips
     deletable-chips
-    item-text="name"
+    :item-text="itemText"
     multiple
     :prepend-inner-icon="icon"
     return-object
@@ -49,7 +49,9 @@ import { IngredientFood, RecipeCategory, RecipeTag } from "~/lib/api/types/recip
 import { RecipeTool } from "~/lib/api/types/admin";
 import { useCategoryStore, useFoodStore, useHouseholdStore, useTagStore, useToolStore } from "~/composables/store";
 import { Organizer, RecipeOrganizer } from "~/lib/api/types/non-generated";
-import { HouseholdSummary } from "~/lib/api/types/household";
+import { HouseholdSummary, HouseholdUserSummary } from "~/lib/api/types/household";
+import { UserSummary } from "~/lib/api/types/user";
+import { useUserStore } from "~/composables/store/use-user-store";
 
 export default defineComponent({
   components: {
@@ -63,6 +65,7 @@ export default defineComponent({
         | RecipeCategory
         | RecipeTool
         | IngredientFood
+        | UserSummary
         | string
       )[] | undefined,
       required: true,
@@ -128,8 +131,18 @@ export default defineComponent({
           return i18n.t("general.foods");
         case Organizer.Household:
           return i18n.t("household.households");
+        case Organizer.User:
+          return i18n.t("user.user");
         default:
           return i18n.t("general.organizer");
+      }
+    });
+
+    const itemText = computed(() => {
+      if (props.selectorType === Organizer.User) {
+        return "fullName";
+      } else {
+        return "name";
       }
     });
 
@@ -149,6 +162,8 @@ export default defineComponent({
           return $globals.icons.foods;
         case Organizer.Household:
           return $globals.icons.household;
+        case Organizer.User:
+          return $globals.icons.user;
         default:
           return $globals.icons.tags;
       }
@@ -163,6 +178,7 @@ export default defineComponent({
       [Organizer.Tool]: useToolStore(),
       [Organizer.Food]: useFoodStore(),
       [Organizer.Household]: useHouseholdStore(),
+      [Organizer.User]: useUserStore(),
     };
 
     const store = computed(() => {
@@ -212,6 +228,7 @@ export default defineComponent({
       removeByIndex,
       searchInput,
       resetSearchInput,
+      itemText,
     };
   },
 });

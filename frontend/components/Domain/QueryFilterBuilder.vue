@@ -211,6 +211,15 @@
                 :show-icon="false"
                 @input="setOrganizerValues(field, index, $event)"
               />
+              <RecipeOrganizerSelector
+                v-else-if="field.type === Organizer.User"
+                v-model="field.organizers"
+                :selector-type="Organizer.User"
+                :show-add="false"
+                :show-label="false"
+                :show-icon="false"
+                @input="setOrganizerValues(field, index, $event)"
+              />
             </v-col>
             <v-col
               v-if="showAdvanced"
@@ -275,6 +284,7 @@ import { Organizer } from "~/lib/api/types/non-generated";
 import { LogicalOperator, QueryFilterJSON, QueryFilterJSONPart, RelationalKeyword, RelationalOperator } from "~/lib/api/types/response";
 import { useCategoryStore, useFoodStore, useHouseholdStore, useTagStore, useToolStore } from "~/composables/store";
 import { Field, FieldDefinition, FieldValue, OrganizerBase, useQueryFilterBuilder } from "~/composables/use-query-filter-builder";
+import { useUserStore } from "~/composables/store/use-user-store";
 
 export default defineComponent({
   components: {
@@ -312,6 +322,7 @@ export default defineComponent({
       [Organizer.Tool]: useToolStore(),
       [Organizer.Food]: useFoodStore(),
       [Organizer.Household]: useHouseholdStore(),
+      [Organizer.User]: useUserStore(),
     };
 
     function onDragEnd(event: any) {

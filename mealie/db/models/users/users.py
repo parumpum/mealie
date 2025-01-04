@@ -106,6 +106,13 @@ class User(SqlAlchemyBase, BaseMixins):
         back_populates="favorited_by",
         overlaps="recipe,rated_by,rated_recipes",
     )
+    bookmarked_recipes: Mapped[list["RecipeModel"]] = orm.relationship(
+        "RecipeModel",
+        secondary=UserToRecipe.__tablename__,
+        primaryjoin="and_(User.id==UserToRecipe.user_id, UserToRecipe.is_bookmarked==True)",
+        back_populates="bookmarked_by",
+        overlaps="recipe,rated_by,rated_recipes",
+    )
     model_config = ConfigDict(
         exclude={
             "password",
