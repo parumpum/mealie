@@ -87,9 +87,7 @@ class UserController(BaseUserController):
 
     @user_router.get("/self/household/bookmarks", response_model=UserRatings[UserRatingSummary])
     def get_logged_in_user_household_bookmarks(self):
-        return UserRatings(
-            ratings=self.repos.user_ratings.get_by_household(self.user.household_id, bookmarks_only=True)
-        )
+        return UserRatings(ratings=self.repos.user_ratings.get_bookmarked_by_household(self.user.household_id))
 
     @user_router.get("/self/household/bookmarks/{recipe_id}", response_model=bool)
     def get_logged_in_user_household_bookmarks_for_recipe(self, recipe_id: UUID4):

@@ -28,7 +28,7 @@
         dark
         @click:close="removeByIndex(data.index)"
       >
-        {{ data.item.name || data.item }}
+        {{ data.item.name || data.item.fullName || data.item }}
       </v-chip>
     </template>
     <template v-if="showAdd" #append-outer>
@@ -100,6 +100,14 @@ export default defineComponent({
   },
 
   setup(props, context) {
+    const itemText = computed(() => {
+      if (props.selectorType === Organizer.User) {
+        return "fullName";
+      } else {
+        return "name";
+      }
+    });
+
     const selected = computed({
       get: () => props.value,
       set: (val) => {
@@ -135,14 +143,6 @@ export default defineComponent({
           return i18n.t("user.user");
         default:
           return i18n.t("general.organizer");
-      }
-    });
-
-    const itemText = computed(() => {
-      if (props.selectorType === Organizer.User) {
-        return "fullName";
-      } else {
-        return "name";
       }
     });
 
@@ -188,7 +188,7 @@ export default defineComponent({
 
     const items = computed(() => {
       if (!props.returnObject) {
-        return store.value.map((item) => item.name);
+        return store.value.map((item) => item.name || item.fullName);
       }
       return store.value;
     });

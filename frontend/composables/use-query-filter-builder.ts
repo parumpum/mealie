@@ -16,6 +16,7 @@ export interface OrganizerBase {
   id: string;
   slug: string;
   name: string;
+  fullName: string;
 }
 
 export type FieldType =

@@ -19,18 +19,7 @@
           small
           :image-version="image"
         >
-        <div
-        class="d-flex justify-content-end" style="position: absolute !important;
-    right: 0;
-    transform: translate(5%, 0%);
-    background-color: black; padding: 5px;
-    border-bottom-left-radius: 5px;
-    ">
-        <RecipeToCookBadge
-v-if="isOwnGroup" class="ml-auto" :recipe-id="recipeId" show-always
 
-        />
-      </div>
           <v-expand-transition v-if="description">
             <div v-if="hover" class="d-flex transition-fast-in-fast-out secondary v-card--reveal" style="height: 100%">
               <v-card-text class="v-card--text-show white--text">
@@ -40,6 +29,18 @@ v-if="isOwnGroup" class="ml-auto" :recipe-id="recipeId" show-always
               </v-card-text>
             </div>
           </v-expand-transition>
+          <div
+        class="d-flex justify-content-end" style="position: absolute !important;
+    right: 0;
+    transform: translate(5%, 0%);
+    background-color: white; padding: 5px;
+    border-bottom-left-radius: 5px;
+    ">
+        <RecipeToCookBadge
+v-if="isOwnGroup" class="ml-auto" :recipe-id="recipeId" show-always
+
+        />
+      </div>
         </RecipeCardImage>
 </div>
 

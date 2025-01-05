@@ -21,9 +21,10 @@
 
     <v-spacer></v-spacer>
     <div v-if="!open" class="custom-btn-group ma-1">
+      <RecipeToCookBadge v-if="loggedIn" class="ml-1" color="info" button-style :recipe-id="recipe.id" show-always />
       <RecipeFavoriteBadge v-if="loggedIn" class="ml-1" color="info" button-style :recipe-id="recipe.id" show-always />
       <RecipeTimelineBadge v-if="loggedIn" button-style class="ml-1" :slug="recipe.slug" :recipe-name="recipe.name" />
-      <RecipeToCookBadge v-if="loggedIn" class="ml-1" color="info" button-style :recipe-id="recipe.id" show-always />
+
       <div v-if="loggedIn">
         <v-tooltip v-if="canEdit" bottom color="info">
           <template #activator="{ on, attrs }">

@@ -18,7 +18,7 @@ depends_on: str | tuple[str, ...] | None = None
 
 def upgrade():
     with op.batch_alter_table("users_to_recipes", schema=None) as batch_op:
-        batch_op.add_column(sa.Column("is_bookmarked", sa.Boolean(), nullable=False))
+        batch_op.add_column(sa.Column("is_bookmarked", sa.Boolean(), nullable=True))
         batch_op.create_index(batch_op.f("ix_users_to_recipes_is_bookmarked"), ["is_bookmarked"], unique=False)
 
 

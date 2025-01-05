@@ -133,3 +133,8 @@ class RepositoryUserRatings(GroupRepositoryGeneric[UserRatingOut, UserToRecipe])
         if len(results) >= 1:
             return True
         return False
+
+    def get_bookmarked_by_household(self, household_id: UUID4) -> list[UserRatingOut]:
+        stmt = select(UserToRecipe).filter(UserToRecipe.household_id == household_id, UserToRecipe.is_bookmarked)
+        results = self.session.execute(stmt).scalars().all()
+        return [self.schema.model_validate(x) for x in results]
