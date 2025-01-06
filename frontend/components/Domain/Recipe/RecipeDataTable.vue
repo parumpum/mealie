@@ -23,7 +23,7 @@
       <a :href="`/g/${groupSlug}/r/${item.slug}`" style="color: inherit; text-decoration: inherit; " @click="$emit('click')">{{ item.name }}</a>
     </template>
     <template #item.tags="{ item }">
-      <RecipeChip small :items="item.tags" :is-category="false" url-prefix="tags" />
+      <RecipeChip small :items="item.tags" :is-category="false" url-prefix="tags" @tag-selected="filterTags" />
     </template>
     <template #item.recipeCategory="{ item }">
       <RecipeChip small :items="item.recipeCategory" />
@@ -54,6 +54,7 @@ import RecipeChip from "./RecipeChips.vue";
 import { Recipe } from "~/lib/api/types/recipe";
 import { useUserApi } from "~/composables/api";
 import { UserSummary } from "~/lib/api/types/user";
+import { RecipeTag } from "~/lib/api/types/household";
 
 const INPUT_EVENT = "input";
 
@@ -167,6 +168,12 @@ export default defineComponent({
       }
     }
 
+    function filterTags(tag: RecipeTag) {
+
+     window.location.href = `/g/${groupSlug}?tags=${tag.id}`;
+
+    }
+
     onMounted(() => {
       refreshMembers();
     });
@@ -186,6 +193,7 @@ export default defineComponent({
       formatDate,
       members,
       getMember,
+      filterTags
     };
   },
 

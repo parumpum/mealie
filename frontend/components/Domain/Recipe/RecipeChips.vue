@@ -9,8 +9,8 @@
       color="accent"
       :small="small"
       dark
-      append :to ="{ query: { ...$route.query, [urlPrefix]: category.id } }"
-      @click="() => $emit('tag-selected', category)"
+
+      @click.prevent="() => $emit('tag-selected', category)"
     >
       {{ truncateText(category.name) }}
     </v-chip>

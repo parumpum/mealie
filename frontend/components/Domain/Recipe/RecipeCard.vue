@@ -7,7 +7,7 @@
         :elevation="hover ? 12 : 2"
         :to="recipeRoute"
         :min-height="imageHeight + 75"
-        @click="$emit('click')"
+        @click.self="$emit('click')"
       >
         <RecipeCardImage
           :icon-size="imageHeight"

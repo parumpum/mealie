@@ -83,7 +83,7 @@
                 :tags="recipe.tags"
                 :recipe-id="recipe.id"
 
-                @tag-selected="filterTags"
+                 v-on="$listeners"
               />
             </v-lazy>
           </v-col>
@@ -247,20 +247,6 @@ export default defineComponent({
       ready.value = true;
     });
 
-    async function filterTags(tag: RecipeCategory) {
-      // if (props.query.tags && tag.id && props.query.tags.includes(tag.id)) {
-      //   return;
-      // }
-
-      if (tag.id) {
-        props.query.tags = [tag.id];
-
-        ready.value = false;
-          await initRecipes();
-          ready.value = true;
-      }
-    }
-
     let lastQuery: string | undefined = JSON.stringify(props.query);
     watch(
       () => props.query,
@@ -417,7 +403,6 @@ export default defineComponent({
       sortRecipes,
       toggleMobileCards,
       useMobileCards,
-      filterTags,
     };
   },
 });

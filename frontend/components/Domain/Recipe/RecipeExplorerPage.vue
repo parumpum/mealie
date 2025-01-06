@@ -138,6 +138,7 @@
         :title="$tc('general.recipes')"
         :recipes="recipes"
         :query="passedQueryWithSeed"
+        @tag-selected="filterTags"
         @replaceRecipes="replaceRecipes"
         @appendRecipes="appendRecipes"
       />
@@ -387,6 +388,11 @@ export default defineComponent({
       }
     )
 
+    function filterTags(tag: RecipeCategory) {
+      const result = tags.store.value.filter((item) => (tag.id as string).includes(item.id as string));
+      selectedTags.value = result as NoUndefinedField<RecipeTag>[];
+    }
+
     async function hydrateSearch() {
       const query = router.currentRoute.query;
       if (query.auto?.length) {
@@ -592,6 +598,8 @@ export default defineComponent({
       removeRecipe,
       replaceRecipes,
       passedQueryWithSeed,
+
+      filterTags,
     };
   },
   head: {},
