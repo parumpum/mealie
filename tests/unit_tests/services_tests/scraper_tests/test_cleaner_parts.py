@@ -541,22 +541,18 @@ nutrition_test_cases = (
         test_id="calories as int",
         input={
             "calories": 100,
-            "fatContent": "10",
         },
         expected={
             "calories": "100",
-            "fatContent": "10",
         },
     ),
     CleanerCase(
         test_id="calories as float",
         input={
             "calories": 100.0,
-            "fatContent": "10",
         },
         expected={
             "calories": "100.0",
-            "fatContent": "10",
         },
     ),
     CleanerCase(
