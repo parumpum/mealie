@@ -585,7 +585,7 @@ def clean_nutrition(nutrition: dict | None) -> dict[str, str]:
 
     for key in ["calories"]:
         if val := nutrition.get(key, None):
-            if isinstance(val, int):
+            if isinstance(val, int | float):
                 with contextlib.suppress(AttributeError, TypeError):
                     output_nutrition[key] = str(val)
 
