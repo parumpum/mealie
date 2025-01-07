@@ -169,6 +169,9 @@ export default defineComponent({
     }
 
     function filterItems(item: RecipeTag | RecipeCategory | RecipeTool, itemType: string) {
+      if (!groupSlug || !item.id) {
+        return;
+      }
       router.push(`/g/${groupSlug}?${itemType}=${item.id}`);
     }
 

@@ -390,13 +390,13 @@ export default defineComponent({
 
     function filterItems(item: RecipeCategory | RecipeTag | RecipeTool, urlPrefix: string) {
       if (urlPrefix === "categories") {
-        const result = categories.store.value.filter((item) => (item.id as string).includes(item.id as string));
+        const result = categories.store.value.filter((category) => (category.id as string).includes(item.id as string));
         selectedCategories.value = result as NoUndefinedField<RecipeTag>[];
       } else if (urlPrefix === "tags") {
-        const result = tags.store.value.filter((item) => (item.id as string).includes(item.id as string));
+        const result = tags.store.value.filter((tag) => (tag.id as string).includes(item.id as string));
         selectedTags.value = result as NoUndefinedField<RecipeTag>[];
       } else if (urlPrefix === "tools") {
-        const result = tools.store.value.filter((item) => (item.id ).includes(item.id ));
+        const result = tools.store.value.filter((tool) => (tool.id ).includes(item.id || "" ));
         selectedTags.value = result as NoUndefinedField<RecipeTag>[];
       }
     }

@@ -334,6 +334,9 @@ export default defineComponent({
      */
 
     function chipClicked(item: RecipeTag | RecipeCategory | RecipeTool, itemType: string) {
+      if (!item.id) {
+        return;
+      }
       router.push(`/g/${groupSlug.value}?${itemType}=${item.id}`);
     }
 
