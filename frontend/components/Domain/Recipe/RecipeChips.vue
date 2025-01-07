@@ -10,7 +10,7 @@
       :small="small"
       dark
 
-      @click.prevent="() => $emit('tag-selected', category)"
+      @click.prevent="() => $emit('item-selected', category, urlPrefix)"
     >
       {{ truncateText(category.name) }}
     </v-chip>

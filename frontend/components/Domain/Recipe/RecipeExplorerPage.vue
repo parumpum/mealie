@@ -138,7 +138,7 @@
         :title="$tc('general.recipes')"
         :recipes="recipes"
         :query="passedQueryWithSeed"
-        @tag-selected="filterTags"
+        @item-selected="filterItems"
         @replaceRecipes="replaceRecipes"
         @appendRecipes="appendRecipes"
       />
@@ -388,9 +388,17 @@ export default defineComponent({
       }
     )
 
-    function filterTags(tag: RecipeCategory) {
-      const result = tags.store.value.filter((item) => (tag.id as string).includes(item.id as string));
-      selectedTags.value = result as NoUndefinedField<RecipeTag>[];
+    function filterItems(item: RecipeCategory | RecipeTag | RecipeTool, urlPrefix: string) {
+      if (urlPrefix === "categories") {
+        const result = categories.store.value.filter((item) => (item.id as string).includes(item.id as string));
+        selectedCategories.value = result as NoUndefinedField<RecipeTag>[];
+      } else if (urlPrefix === "tags") {
+        const result = tags.store.value.filter((item) => (item.id as string).includes(item.id as string));
+        selectedTags.value = result as NoUndefinedField<RecipeTag>[];
+      } else if (urlPrefix === "tools") {
+        const result = tools.store.value.filter((item) => (item.id ).includes(item.id ));
+        selectedTags.value = result as NoUndefinedField<RecipeTag>[];
+      }
     }
 
     async function hydrateSearch() {
@@ -599,7 +607,7 @@ export default defineComponent({
       replaceRecipes,
       passedQueryWithSeed,
 
-      filterTags,
+      filterItems,
     };
   },
   head: {},

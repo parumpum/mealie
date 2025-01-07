@@ -23,13 +23,13 @@
       <a :href="`/g/${groupSlug}/r/${item.slug}`" style="color: inherit; text-decoration: inherit; " @click="$emit('click')">{{ item.name }}</a>
     </template>
     <template #item.tags="{ item }">
-      <RecipeChip small :items="item.tags" :is-category="false" url-prefix="tags" @tag-selected="filterTags" />
+      <RecipeChip small :items="item.tags" :is-category="false" url-prefix="tags" @item-selected="filterItems" />
     </template>
     <template #item.recipeCategory="{ item }">
-      <RecipeChip small :items="item.recipeCategory" />
+      <RecipeChip small :items="item.recipeCategory" @item-selected="filterItems" />
     </template>
     <template #item.tools="{ item }">
-      <RecipeChip small :items="item.tools" url-prefix="tools" />
+      <RecipeChip small :items="item.tools" url-prefix="tools" @item-selected="filterItems" />
     </template>
     <template #item.userId="{ item }">
       <v-list-item class="justify-start">
@@ -48,10 +48,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, useContext } from "@nuxtjs/composition-api";
+import { computed, defineComponent, onMounted, ref, useContext, useRouter } from "@nuxtjs/composition-api";
 import UserAvatar from "../User/UserAvatar.vue";
 import RecipeChip from "./RecipeChips.vue";
-import { Recipe } from "~/lib/api/types/recipe";
+import { Recipe, RecipeCategory, RecipeTool } from "~/lib/api/types/recipe";
 import { useUserApi } from "~/composables/api";
 import { UserSummary } from "~/lib/api/types/user";
 import { RecipeTag } from "~/lib/api/types/household";
@@ -107,7 +107,7 @@ export default defineComponent({
   setup(props, context) {
     const { $auth, i18n } = useContext();
     const groupSlug = $auth.user?.groupSlug;
-
+    const router = useRouter();
     function setValue(value: Recipe[]) {
       context.emit(INPUT_EVENT, value);
     }
@@ -168,10 +168,8 @@ export default defineComponent({
       }
     }
 
-    function filterTags(tag: RecipeTag) {
-
-     window.location.href = `/g/${groupSlug}?tags=${tag.id}`;
-
+    function filterItems(item: RecipeTag | RecipeCategory | RecipeTool, itemType: string) {
+      router.push(`/g/${groupSlug}?${itemType}=${item.id}`);
     }
 
     onMounted(() => {
@@ -193,7 +191,7 @@ export default defineComponent({
       formatDate,
       members,
       getMember,
-      filterTags
+      filterItems,
     };
   },
 
