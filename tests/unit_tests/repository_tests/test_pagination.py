@@ -1,7 +1,7 @@
 import random
 import time
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from random import randint
 from urllib.parse import parse_qsl, urlsplit
 
@@ -166,7 +166,10 @@ def test_pagination_guides(unique_user: TestUser):
     next_params: dict = dict(parse_qsl(urlsplit(random_page_of_results.next).query))  # type: ignore
     assert int(next_params["page"]) == random_page + 1
 
-    prev_params: dict = dict(parse_qsl(urlsplit(random_page_of_results.previous).query))  # type: ignore
+    prev_params: dict = dict(
+        # type: ignore
+        parse_qsl(urlsplit(random_page_of_results.previous).query)
+    )
     assert int(prev_params["page"]) == random_page - 1
 
     source_params = camelize(query.model_dump())
@@ -238,7 +241,7 @@ def test_pagination_filter_null(unique_user: TestUser):
             user_id=unique_user.user_id,
             group_id=unique_user.group_id,
             name=random_string(),
-            last_made=datetime.now(timezone.utc),
+            last_made=datetime.now(UTC),
         )
     )
 
@@ -531,7 +534,7 @@ def test_pagination_filter_datetimes(
     # units are created in order with increasing createdAt values
     units_repo, unit_1, unit_2, unit_3 = query_units
 
-    ## GT
+    # GT
     past_dt: datetime = unit_1.created_at - timedelta(seconds=1)  # type: ignore
     dt = past_dt.isoformat()
     query = PaginationQuery(page=1, per_page=-1, query_filter=f'createdAt>"{dt}"')
@@ -573,7 +576,7 @@ def test_pagination_filter_datetimes(
     unit_ids = {unit.id for unit in unit_results}
     assert len(unit_ids) == 0
 
-    ## GTE
+    # GTE
     past_dt = unit_1.created_at - timedelta(seconds=1)  # type: ignore
     dt = past_dt.isoformat()
     query = PaginationQuery(page=1, per_page=-1, query_filter=f'createdAt>="{dt}"')
@@ -626,7 +629,7 @@ def test_pagination_filter_datetimes(
 )
 def test_pagination_order_by_multiple(unique_user: TestUser, order_direction: OrderDirection):
     database = unique_user.repos
-    current_time = datetime.now(timezone.utc)
+    current_time = datetime.now(UTC)
 
     alphabet = ["a", "b", "c", "d", "e"]
     abbreviations = alphabet.copy()
@@ -687,7 +690,7 @@ def test_pagination_order_by_multiple_directions(
     unique_user: TestUser, order_by_str: str, order_direction: OrderDirection
 ):
     database = unique_user.repos
-    current_time = datetime.now(timezone.utc)
+    current_time = datetime.now(UTC)
 
     alphabet = ["a", "b", "c", "d", "e"]
     abbreviations = alphabet.copy()
@@ -735,7 +738,7 @@ def test_pagination_order_by_multiple_directions(
 )
 def test_pagination_order_by_nested_model(unique_user: TestUser, order_direction: OrderDirection):
     database = unique_user.repos
-    current_time = datetime.now(timezone.utc)
+    current_time = datetime.now(UTC)
 
     alphabet = ["a", "b", "c", "d", "e"]
     labels = database.group_multi_purpose_labels.create_many(
@@ -766,7 +769,7 @@ def test_pagination_order_by_nested_model(unique_user: TestUser, order_direction
 
 def test_pagination_order_by_doesnt_filter(unique_user: TestUser):
     database = unique_user.repos
-    current_time = datetime.now(timezone.utc)
+    current_time = datetime.now(UTC)
 
     label = database.group_multi_purpose_labels.create(
         MultiPurposeLabelSave(name=random_string(), group_id=unique_user.group_id)
@@ -810,7 +813,7 @@ def test_pagination_order_by_nulls(
     unique_user: TestUser, null_position: OrderByNullPosition, order_direction: OrderDirection
 ):
     database = unique_user.repos
-    current_time = datetime.now(timezone.utc)
+    current_time = datetime.now(UTC)
 
     label = database.group_multi_purpose_labels.create(
         MultiPurposeLabelSave(name=random_string(), group_id=unique_user.group_id)
@@ -916,7 +919,7 @@ def test_pagination_shopping_list_items_with_labels(unique_user: TestUser):
 
 
 def test_pagination_filter_dates(api_client: TestClient, unique_user: TestUser):
-    today = datetime.now(timezone.utc).date()
+    today = datetime.now(UTC).date()
 
     yesterday = today - timedelta(days=1)
     tomorrow = today + timedelta(days=1)
@@ -936,7 +939,7 @@ def test_pagination_filter_dates(api_client: TestClient, unique_user: TestUser):
         response = api_client.post(api_routes.households_mealplans, json=data, headers=unique_user.token)
         assert response.status_code == 201
 
-    ## Yesterday
+    # Yesterday
     params = {
         "page": 1,
         "perPage": -1,
@@ -965,7 +968,7 @@ def test_pagination_filter_dates(api_client: TestClient, unique_user: TestUser):
     assert mealplan_today.title in fetched_mealplan_titles
     assert mealplan_tomorrow.title in fetched_mealplan_titles
 
-    ## Today
+    # Today
     params = {
         "page": 1,
         "perPage": -1,
@@ -994,7 +997,7 @@ def test_pagination_filter_dates(api_client: TestClient, unique_user: TestUser):
     assert mealplan_today.title not in fetched_mealplan_titles
     assert mealplan_tomorrow.title in fetched_mealplan_titles
 
-    ## Tomorrow
+    # Tomorrow
     params = {
         "page": 1,
         "perPage": -1,
@@ -1020,7 +1023,7 @@ def test_pagination_filter_dates(api_client: TestClient, unique_user: TestUser):
 
     assert len(response_json["items"]) == 0
 
-    ## Day After Tomorrow
+    # Day After Tomorrow
     params = {
         "page": 1,
         "perPage": -1,
@@ -1049,7 +1052,8 @@ def test_pagination_filter_booleans(query_units: tuple[RepositoryUnit, Ingredien
     query = PaginationQuery(
         page=1,
         per_page=-1,
-        query_filter=f"useAbbreviation=true AND id IN [{', '.join([str(unit.id) for unit in query_units[1:]])}]",
+        query_filter=f"useAbbreviation=true AND id IN [{
+            ', '.join([str(unit.id) for unit in query_units[1:]])}]",
     )
     unit_results = units_repo.page_all(query).items
     assert len(unit_results) == 1
@@ -1060,7 +1064,8 @@ def test_pagination_filter_advanced(query_units: tuple[RepositoryUnit, Ingredien
     units_repo, unit_1, unit_2, unit_3 = query_units
 
     dt = str(unit_3.created_at.isoformat())  # type: ignore
-    qf = f'name="test unit 1" OR (useAbbreviation=f AND (name="{unit_2.name}" OR createdAt > "{dt}"))'
+    qf = f'name="test unit 1" OR (useAbbreviation=f AND (name="{
+        unit_2.name}" OR createdAt > "{dt}"))'
     query = PaginationQuery(page=1, per_page=-1, query_filter=qf)
     unit_results = units_repo.page_all(query).items
 
@@ -1069,7 +1074,8 @@ def test_pagination_filter_advanced(query_units: tuple[RepositoryUnit, Ingredien
     assert unit_2.id in result_ids
     assert unit_3.id not in result_ids
 
-    qf = f'(name LIKE %_1 OR name IN ["{unit_2.name}"]) AND createdAt IS NOT NONE'
+    qf = f'(name LIKE %_1 OR name IN ["{
+        unit_2.name}"]) AND createdAt IS NOT NONE'
     query = PaginationQuery(page=1, per_page=-1, query_filter=qf)
     unit_results = units_repo.page_all(query).items
 
@@ -1184,7 +1190,8 @@ def test_pagination_filter_advanced_frontend_sort(unique_user: TestUser):
 
     repo = database.recipes
 
-    qf = f'recipeCategory.id IN ["{category_1.id}"] AND tools.id IN ["{tool_1.id}"]'
+    qf = f'recipeCategory.id IN ["{
+        category_1.id}"] AND tools.id IN ["{tool_1.id}"]'
     query = PaginationQuery(page=1, per_page=-1, query_filter=qf)
     recipe_results = repo.page_all(query).items
     assert len(recipe_results) == 1
@@ -1197,7 +1204,8 @@ def test_pagination_filter_advanced_frontend_sort(unique_user: TestUser):
     assert recipe_ct0_tg2_tl2.id not in recipe_ids
     assert recipe_ct12_tg12_tl2.id not in recipe_ids
 
-    qf = f'recipeCategory.id CONTAINS ALL ["{category_1.id}", "{category_2.id}"] AND tags.id IN ["{tag_1.id}"]'
+    qf = f'recipeCategory.id CONTAINS ALL ["{category_1.id}", "{
+        category_2.id}"] AND tags.id IN ["{tag_1.id}"]'
     query = PaginationQuery(page=1, per_page=-1, query_filter=qf)
     recipe_results = repo.page_all(query).items
     assert len(recipe_results) == 1
@@ -1210,7 +1218,8 @@ def test_pagination_filter_advanced_frontend_sort(unique_user: TestUser):
     assert recipe_ct0_tg2_tl2.id not in recipe_ids
     assert recipe_ct12_tg12_tl2.id in recipe_ids
 
-    qf = f'tags.id IN ["{tag_1.id}", "{tag_2.id}"] AND tools.id IN ["{tool_2.id}"]'
+    qf = f'tags.id IN ["{tag_1.id}", "{
+        tag_2.id}"] AND tools.id IN ["{tool_2.id}"]'
     query = PaginationQuery(page=1, per_page=-1, query_filter=qf)
     recipe_results = repo.page_all(query).items
     assert len(recipe_results) == 2
@@ -1224,8 +1233,10 @@ def test_pagination_filter_advanced_frontend_sort(unique_user: TestUser):
     assert recipe_ct12_tg12_tl2.id in recipe_ids
 
     qf = (
-        f'recipeCategory.id CONTAINS ALL ["{category_1.id}", "{category_2.id}"]'
-        f'AND tags.id IN ["{tag_1.id}", "{tag_2.id}"] AND tools.id IN ["{tool_1.id}", "{tool_2.id}"]'
+        f'recipeCategory.id CONTAINS ALL ["{
+            category_1.id}", "{category_2.id}"]'
+        f'AND tags.id IN ["{tag_1.id}", "{
+            tag_2.id}"] AND tools.id IN ["{tool_1.id}", "{tool_2.id}"]'
     )
     query = PaginationQuery(page=1, per_page=-1, query_filter=qf)
     recipe_results = repo.page_all(query).items
@@ -1265,6 +1276,7 @@ def test_pagination_filter_advanced_frontend_sort(unique_user: TestUser):
             'group.preferences.badAttribute="test value"',
             id="bad double nested attribute",
         ),
+        pytest.param('nutrition.calories="test"', id="comparing int to string"),
     ],
 )
 def test_malformed_query_filters(api_client: TestClient, unique_user: TestUser, qf: str):

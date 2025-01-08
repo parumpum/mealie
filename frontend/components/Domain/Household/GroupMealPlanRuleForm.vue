@@ -148,6 +148,27 @@ export default defineComponent({
         label: i18n.tc("general.date-updated"),
         type: "date",
       },
+      {
+        name: "nutrition.calories",
+        label: i18n.tc("recipe.calories"),
+        type: "number",
+      },
+      {
+        name: "nutrition.carbohydrateContent",
+        label: i18n.tc("recipe.carbohydrate-content"),
+        type: "number",
+      },
+    {
+        name: "nutrition.proteinContent",
+        label: i18n.tc("recipe.protein-content"),
+        type: "number",
+      },
+      {
+        name: "nutrition.fatContent",
+        label: i18n.tc("recipe.fat-content"),
+        type: "number",
+      },
+
     ];
 
     return {
