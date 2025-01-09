@@ -25,6 +25,7 @@ from .ingredient import RecipeIngredientModel
 from .instruction import RecipeInstruction
 from .note import Note
 from .nutrition import Nutrition
+from .recipe_history import RecipeHistoryModel
 from .recipe_timeline import RecipeTimelineEvent
 from .settings import RecipeSettings
 from .shared import RecipeShareTokenModel
@@ -75,6 +76,8 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
     meal_entries: Mapped[list["GroupMealPlan"]] = orm.relationship(
         "GroupMealPlan", back_populates="recipe", cascade="all, delete-orphan"
     )
+
+    revisions: Mapped[list["RecipeHistoryModel"]] = orm.relationship("RecipeHistory", back_populates="recipe")
 
     # General Recipe Properties
     name: Mapped[str] = mapped_column(sa.String, nullable=False)

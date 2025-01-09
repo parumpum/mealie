@@ -357,6 +357,7 @@ class RecipeController(BaseRecipeController):
         """Updates a recipe by existing slug and data."""
         try:
             recipe = self.service.update_one(slug, data)
+
         except Exception as e:
             self.handle_exceptions(e)
 
@@ -552,7 +553,8 @@ class RecipeController(BaseRecipeController):
         if dest.absolute().parent != recipe.asset_dir:
             raise HTTPException(
                 status_code=400,
-                detail=f"File name {file_name} or extension {extension} not valid",
+                detail=f"File name {file_name} or extension {
+                    extension} not valid",
             )
 
         with dest.open("wb") as buffer:

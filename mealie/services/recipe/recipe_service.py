@@ -94,7 +94,10 @@ class RecipeService(RecipeServiceBase):
 
             try:
                 copytree(current_dir, recipe.directory, dirs_exist_ok=True)
-                self.logger.debug(f"Renaming Recipe Directory: {original_slug} -> {recipe.slug}")
+                self.logger.debug(
+                    f"Renaming Recipe Directory: {
+                        original_slug} -> {recipe.slug}"
+                )
             except FileNotFoundError:
                 self.logger.error(f"Recipe Directory not Found: {original_slug}")
 
@@ -358,7 +361,10 @@ class RecipeService(RecipeServiceBase):
                 dirs_exist_ok=True,
             )
         except Exception as e:
-            self.logger.error(f"Failed to copy assets from {old_recipe.slug} to {new_recipe.slug}: {e}")
+            self.logger.error(
+                f"Failed to copy assets from {
+                    old_recipe.slug} to {new_recipe.slug}: {e}"
+            )
 
         return new_recipe
 
@@ -394,10 +400,90 @@ class RecipeService(RecipeServiceBase):
 
         return recipe
 
+    def get_modified_fields(self, original, modified):
+        changes = []
+
+        def compare_fields(orig, mod, path=""):
+            for key in orig:
+                orig_value = orig[key]
+                mod_value = mod.get(key)
+                current_path = f"{path}.{key}" if path else key
+
+                if isinstance(orig_value, dict) and isinstance(mod_value, dict):
+                    compare_fields(orig_value, mod_value, current_path)
+                elif isinstance(orig_value, list) and isinstance(mod_value, list):
+                    compare_arrays(orig_value, mod_value, current_path)
+                elif orig_value != mod_value:
+                    changes.append(
+                        {
+                            "type": "modified",
+                            "path": current_path,
+                            "original_value": orig_value,
+                            "modified_value": mod_value,
+                        }
+                    )
+
+            for key in mod:
+                if key not in orig:
+                    current_path = f"{path}.{key}" if path else key
+                    changes.append(
+                        {
+                            "type": "added",
+                            "path": current_path,
+                            "original_value": None,
+                            "modified_value": mod[key],
+                        }
+                    )
+
+            for key in orig:
+                if key not in mod:
+                    current_path = f"{path}.{key}" if path else key
+                    changes.append(
+                        {
+                            "type": "deleted",
+                            "path": current_path,
+                            "original_value": orig[key],
+                            "modified_value": None,
+                        }
+                    )
+
+        def compare_arrays(orig_array, mod_array, path):
+            if len(orig_array) != len(mod_array):
+                changes.append(
+                    {
+                        "type": "modified",
+                        "path": path,
+                        "original_value": orig_array,
+                        "modified_value": mod_array,
+                    }
+                )
+                return
+
+            for i, (orig_value, mod_value) in enumerate(zip(orig_array, mod_array, strict=False)):
+                current_path = f"{path}[{i}]"
+                if isinstance(orig_value, dict) and isinstance(mod_value, dict):
+                    compare_fields(orig_value, mod_value, current_path)
+                elif isinstance(orig_value, list) and isinstance(mod_value, list):
+                    compare_arrays(orig_value, mod_value, current_path)
+                elif orig_value != mod_value:
+                    changes.append(
+                        {
+                            "type": "modified",
+                            "path": current_path,
+                            "original_value": orig_value,
+                            "modified_value": mod_value,
+                        }
+                    )
+
+        compare_fields(original, modified)
+        return changes
+
     def update_one(self, slug_or_id: str | UUID, update_data: Recipe) -> Recipe:
         recipe = self._pre_update_check(slug_or_id, update_data)
-
         new_data = self.group_recipes.update(recipe.slug, update_data)
+        # TODO: Write out originaL_recipe to change tracking table
+        # changes = self.get_modified_fields(recipe, new_data)
+
         self.check_assets(new_data, recipe.slug)
         return new_data
 
@@ -482,7 +568,8 @@ class OpenAIRecipeService(RecipeServiceBase):
 
         openai_images = [OpenAILocalImage(filename=os.path.basename(image), path=image) for image in images]
         message = (
-            f"Please extract the recipe from the {'images' if len(openai_images) > 1 else 'image'} provided."
+            f"Please extract the recipe from the {
+                'images' if len(openai_images) > 1 else 'image'} provided."
             "There should be exactly one recipe."
         )
 
