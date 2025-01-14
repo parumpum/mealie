@@ -107,6 +107,8 @@
                 :image="recipe.image"
                 :tags="recipe.tags"
                 :recipe-id="recipe.id"
+
+                v-on="$listeners"
               />
             </v-lazy>
           </v-col>
