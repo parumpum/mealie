@@ -143,7 +143,6 @@ import { useLazyRecipes } from "~/composables/recipes";
 import { Recipe } from "~/lib/api/types/recipe";
 import { useUserSortPreferences } from "~/composables/use-users/preferences";
 import { RecipeSearchQuery } from "~/lib/api/user/recipes/recipe";
-import { RecipeCategory } from "~/lib/api/types/household";
 
 const REPLACE_RECIPES_EVENT = "replaceRecipes";
 const APPEND_RECIPES_EVENT = "appendRecipes";

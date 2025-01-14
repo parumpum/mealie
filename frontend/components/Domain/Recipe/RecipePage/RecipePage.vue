@@ -165,7 +165,7 @@ import {
   usePageState,
   usePageUser,
 } from "~/composables/recipe-page/shared-state";
-import { NoUndefinedField, RecipeOrganizer } from "~/lib/api/types/non-generated";
+import { NoUndefinedField } from "~/lib/api/types/non-generated";
 import { Recipe, RecipeCategory, RecipeTag, RecipeTool } from "~/lib/api/types/recipe";
 import { useRouteQuery } from "~/composables/use-router";
 import { useUserApi } from "~/composables/api";
