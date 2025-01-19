@@ -518,7 +518,7 @@
     "save-recipe-before-use": "Zapisz przepis przed użyciem",
     "section-title": "Tytuł rozdziału",
     "servings": "Porcje",
-    "serves-amount": "{amount} porcji",
+    "serves-amount": "Porcje {amount}",
     "share-recipe-message": "Chcę podzielić się z Tobą moim przepisem na {0}.",
     "show-nutrition-values": "Pokaż wartości odżywcze",
     "sodium-content": "Sód",
@@ -570,13 +570,6 @@
     "increase-scale-label": "Zwiększ Skalę o 1",
     "locked": "Zablokowany",
     "public-link": "Link publiczny",
-    "timer": {
-      "kitchen-timer": "Minutnik",
-      "start-timer": "Włącz minutnik",
-      "pause-timer": "Zatrzymaj minutnik",
-      "resume-timer": "Wznów minutnik",
-      "stop-timer": "Zatrzymaj minutnik"
-    },
     "edit-timeline-event": "Edytuj zdarzenie osi czasu",
     "timeline": "Oś czasu",
     "timeline-is-empty": "Nie ma jeszcze nic na osi czasu. Spróbuj przygotować ten przepis!",
