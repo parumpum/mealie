@@ -325,7 +325,7 @@
     "mealplan-updated": "Matarplan uppfært",
     "mealplan-households-description": "Ef ekkert heimili er valið er hægt að bæta við uppskriftum frá öllum heimilimum",
     "any-category": "Allir flokkar",
-    "any-tag": "Allir flokkar",
+    "any-tag": "Öll merki",
     "any-household": "Öll heimili",
     "no-meal-plan-defined-yet": "Ekkert matarplan hefur verið skilgreint",
     "no-meal-planned-for-today": "Ekkert matarplan skipulagt í dag",
@@ -448,7 +448,9 @@
     "split-by-numbered-line-description": "Reynir að skipta um málsgrein við að finna „1)“ eða „1.“ í textanum",
     "import-by-url": "Hlaða inn uppskrift frá slóð",
     "create-manually": "Skrifa nýja uppskrift",
-    "make-recipe-image": "Gera þessa að uppskriftar myndinni"
+    "make-recipe-image": "Gera þessa að uppskriftar myndinni",
+    "add-food": "Bæta við matvöru",
+    "add-recipe": "Bæta við uppskrift"
   },
   "page": {
     "404-page-not-found": "404 síðan fannst ekki",
@@ -515,6 +517,9 @@
     "recipe-deleted": "Uppskrift eytt",
     "recipe-image": "Mynd af uppskrift",
     "recipe-image-updated": "Mynd af uppskrift uppfærð",
+    "delete-image": "Eyða mynd af uppskrift",
+    "delete-image-confirmation": "Ertu viss um að þú viljir eyða myndinni úr uppskriftinni?",
+    "recipe-image-deleted": "Mynd af uppskrift eytt",
     "recipe-name": "Nafn uppskriftar",
     "recipe-settings": "Stillingar uppskriftar",
     "recipe-update-failed": "Mistókst að uppfæra uppskrift",
@@ -560,6 +565,7 @@
     "choose-unit": "Veldu mælieiningu",
     "press-enter-to-create": "Ýttu á Enter til að stofna",
     "choose-food": "Veldu matvöru",
+    "choose-recipe": "Choose Recipe",
     "notes": "Athugasemdir",
     "toggle-section": "Setja inn skiptingu",
     "see-original-text": "Sjá upprunalegan texta",
@@ -587,6 +593,7 @@
     "made-this": "Ég gerði þessa",
     "how-did-it-turn-out": "Hvernig varð hún?",
     "user-made-this": "{user} bjó þessa til",
+    "made-for-recipe": "Made for {recipe}",
     "added-to-timeline": "Bætt við tímalínu",
     "failed-to-add-to-timeline": "Mistókst að bæta við tímalínu",
     "failed-to-update-recipe": "Mistókst að uppfæra uppskrift",
@@ -688,7 +695,10 @@
     "upload-images": "Setja inn mynd",
     "upload-more-images": "Setja inn fleiri myndir",
     "set-as-cover-image": "Velja sem forsíðumynd fyrir uppskriftina",
-    "cover-image": "Forsíðumynd"
+    "cover-image": "Forsíðumynd",
+    "include-linked-recipes": "Include Linked Recipes",
+    "include-linked-recipe-ingredients": "Include Linked Recipe Ingredients",
+    "toggle-recipe": "Toggle Recipe"
   },
   "recipe-finder": {
     "recipe-finder": "Uppskriftaleit",
@@ -725,7 +735,8 @@
     "search-hint": "Ýttu á '/'",
     "advanced": "Ítarlegt",
     "auto-search": "Sjálfvirk leit",
-    "no-results": "Ekkert fannst"
+    "no-results": "Ekkert fannst",
+    "type-to-search": "Type to search..."
   },
   "settings": {
     "add-a-new-theme": "Bæta við nýju þema",
@@ -839,7 +850,7 @@
       "description": "Vefkrækjur (webhooks) sem skilgreindar eru hér að neðan verða keyrðar þegar máltíð er skilgreind fyrir daginn. Á fyrirfram ákveðnum tíma verða vefkrækjurnar sendar með gögnum úr þeirri uppskrift sem skipulögð er í dag. Athugaðu að keyrsla vefkrækja er ekki alveg nákvæm, þær eru keyrðar á 5 mínútna fresti, þannig að sendingin getur farið fram allt að 5 mínútum fyrir eða eftir áætlaðan tíma."
     },
     "bug-report": "Villu skýrsla",
-    "bug-report-information": "Use this information to report a bug. Providing details of your instance to developers is the best way to get your issues resolved quickly.",
+    "bug-report-information": "Notaður þessar upplýsingar til að tilkynna um villu. Með því að veita þróunaraðilum upplýsingar um þína uppsetningu hjálpar þú þeim að leysa vandamálið hraðar.",
     "tracker": "Tracker",
     "configuration": "Configuration",
     "docker-volume": "Docker Volume",
@@ -942,20 +953,20 @@
     "sign-up-links": "Sign Up Links",
     "sign-up-token-deleted": "Aðgangslykli fyrir skráningu eytt",
     "sign-up-token-deletion-failed": "Mistókst að eyða aðgangslykli fyrir skráningu",
-    "welcome-to-mealie": "Welcome to Mealie! To become a user of this instance you are required to have a valid invitation link. If you haven't recieved an invitation you are unable to sign-up. To recieve a link, contact the sites administrator."
+    "welcome-to-mealie": "Velkominn í Mealie! Til að verða notandi af þessari síðu þá þarftu að hafa boðstengil. Ef þú hefur ekki fengið boð þá getur þú ekki skráð þig. Til að fá tengil hafðu þá samband við kerfisstjóra."
   },
   "tag": {
-    "tag-created": "Tag created",
-    "tag-creation-failed": "Tag creation failed",
-    "tag-deleted": "Tag deleted",
-    "tag-deletion-failed": "Tag deletion failed",
-    "tag-update-failed": "Tag update failed",
-    "tag-updated": "Tag updated",
-    "tags": "Tags",
-    "untagged-count": "Untagged {count}",
-    "create-a-tag": "Create a Tag",
-    "tag-name": "Tag Name",
-    "tag": "Tag"
+    "tag-created": "Merki stofnað",
+    "tag-creation-failed": "Mistókst að stofna merki",
+    "tag-deleted": "Merki eytt",
+    "tag-deletion-failed": "Mistókst að eyða merki",
+    "tag-update-failed": "Mistókst að uppfæra merki",
+    "tag-updated": "Merki uppfært",
+    "tags": "Merki",
+    "untagged-count": "Ómerktir {count}",
+    "create-a-tag": "Búa til merki",
+    "tag-name": "Nafn á merki",
+    "tag": "Merki"
   },
   "tool": {
     "tools": "Tools",
@@ -979,12 +990,12 @@
     "create-link": "Create Link",
     "create-user": "Create User",
     "current-password": "Núverandi lykilorð",
-    "e-mail-must-be-valid": "E-mail must be valid",
+    "e-mail-must-be-valid": "Verður að nota gilt netfang",
     "edit-user": "Edit User",
-    "email": "Email",
+    "email": "Netfang",
     "error-cannot-delete-super-user": "Error! Cannot Delete Super User",
     "existing-password-does-not-match": "Núverandi lykilorð stemmir ekki",
-    "full-name": "Full Name",
+    "full-name": "Fullt nafn",
     "generate-password-reset-link": "Gera tengil til að endurstilla lykilorð",
     "invite-only": "Invite Only",
     "link-id": "Link ID",
@@ -1030,7 +1041,7 @@
     "you-are-not-allowed-to-create-a-user": "You are not allowed to create a user",
     "you-are-not-allowed-to-delete-this-user": "You are not allowed to delete this user",
     "enable-advanced-content": "Virkja ítarlegt efni",
-    "enable-advanced-content-description": "Virkja ítarlegt efni eins og að stækka uppskrift, API keys, vefkrækjur (Webhooks) og gagnastýring. Það er alltaf hægt að breyta þessu síðar",
+    "enable-advanced-content-description": "Virkjar ítarlegt efni eins og að stækka uppskrift, API keys, vefkrækjur (Webhooks) og gagnastýring. Það er alltaf hægt að breyta þessu síðar",
     "favorite-recipes": "Favorite Recipes",
     "email-or-username": "Tölvupóstur eða notandanafn",
     "remember-me": "Remember Me",
@@ -1069,8 +1080,8 @@
   },
   "language-dialog": {
     "translated": "translated",
-    "choose-language": "Choose Language",
-    "select-description": "Choose the language for the Mealie UI. The setting only applies to you, not other users.",
+    "choose-language": "Veldu tungumál",
+    "select-description": "Veldu tungumálið fyrir notendaviðmótið. Stillingin mun bara gilda fyrir þig, ekki aðra notendur.",
     "how-to-contribute-description": "Is something not translated yet, mistranslated, or your language missing from the list? {read-the-docs-link} on how to contribute!",
     "read-the-docs": "Read the docs"
   },
@@ -1133,10 +1144,10 @@
       "recipe-columns": "Recipe Columns",
       "data-exports-description": "This section provides links to available exports that are ready to download. These exports do expire, so be sure to grab them while they're still available.",
       "data-exports": "Data Exports",
-      "tag": "Tag",
+      "tag": "Merki",
       "categorize": "Flokka",
       "update-settings": "Uppfæra stillingar",
-      "tag-recipes": "Tag Recipes",
+      "tag-recipes": "Merkja uppskrift",
       "categorize-recipes": "Flokka uppskriftir",
       "export-recipes": "Export Recipes",
       "delete-recipes": "Delete Recipes",
@@ -1164,9 +1175,9 @@
       "category-data": "Category Data"
     },
     "tags": {
-      "new-tag": "New Tag",
-      "edit-tag": "Edit Tag",
-      "tag-data": "Tag Data"
+      "new-tag": "Nýtt merki",
+      "edit-tag": "Breyta merki",
+      "tag-data": "Merkja upplýsingar"
     },
     "tools": {
       "new-tool": "New Tool",
@@ -1306,8 +1317,8 @@
     "tasks": "Verkefni",
     "setup": {
       "first-time-setup": "First Time Setup",
-      "welcome-to-mealie-get-started": "Welcome to Mealie! Let's get started",
-      "already-set-up-bring-to-homepage": "I'm already set up, just bring me to the homepage",
+      "welcome-to-mealie-get-started": "Mealie býður þig velkominn, kílum á þetta",
+      "already-set-up-bring-to-homepage": "Allt er þegar klárt hjá mér, sendu mig á heimasíðuna",
       "common-settings-for-new-sites": "Here are some common settings for new sites",
       "setup-complete": "Setup Complete!",
       "here-are-a-few-things-to-help-you-get-started": "Here are a few things to help you get started with Mealie",
@@ -1333,16 +1344,16 @@
     "group-statistics-description": "Your Group Statistics provide some insight how you're using Mealie.",
     "household-statistics": "Household Statistics",
     "household-statistics-description": "Your Household Statistics provide some insight how you're using Mealie.",
-    "storage-capacity": "Storage Capacity",
-    "storage-capacity-description": "Your storage capacity is a calculation of the images and assets you have uploaded.",
+    "storage-capacity": "Geymslupláss",
+    "storage-capacity-description": "Geymsluplássið þitt er samlagning á myndum og öðru sem þú hefur hlaðið inn.",
     "personal": "Eigin stillingar",
     "personal-description": "Þetta eru stillingar sem eru bara fyrir þig, breytingar hér munu ekki hafa áhrif á aðra notendur.",
     "user-settings": "Notandastillingar",
     "user-settings-description": "Breyta þínum stillingum, breyta lykilorði og breyta tölvupósti.",
     "api-tokens-description": "Umsjá með API aðgangslyklum til að tengjast með öðrum forritum.",
-    "group-description": "These items are shared within your group. Editing one of them will change it for the whole group!",
+    "group-description": "Þessar einingar er deilt innan hópsins þíns, að breyta hér hefur áhrif á stillingar fyrir allan hópinn!",
     "group-settings": "Hóp stillingar",
-    "group-settings-description": "Manage your common group settings, like privacy settings.",
+    "group-settings-description": "Sýsla með hóp stillingar, eins og friðhelgisstillingar.",
     "household-description": "These items are shared within your household. Editing one of them will change it for the whole household!",
     "household-settings": "Household Settings",
     "household-settings-description": "Stjórnaðu stillingum heimilis, eins og matarplani og persónuverndarstillingum.",
