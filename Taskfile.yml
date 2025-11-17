@@ -210,6 +210,11 @@ tasks:
       - uv run alembic --config mealie/alembic/alembic.ini revision --autogenerate -m "{{ .CLI_ARGS }}"
       - task: py:format
 
+  py:downgrade:
+    desc: downgrades the database to a previous migration e.g. task py:downgrade -- -1
+    cmds:
+      - uv run alembic --config mealie/alembic/alembic.ini downgrade "{{ .CLI_ARGS }}"
+
   ui:build:
     desc: builds the frontend in frontend/dist
     dir: frontend

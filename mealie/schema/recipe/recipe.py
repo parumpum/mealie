@@ -58,6 +58,15 @@ def create_recipe_slug(name: str, max_length: int = 250) -> str:
     return generated_slug
 
 
+class RecipeSection(MealieModel):
+    id: UUID4 = Field(default_factory=uuid4)
+    name: str
+    recipe_ingredient: Annotated[list[RecipeIngredient], Field(validate_default=True)] = []
+    position: int | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class RecipeTag(MealieModel):
     id: UUID4 | None = None
     group_id: UUID4 | None = None
@@ -177,6 +186,7 @@ class RecipePagination(PaginationBase):
 
 class Recipe(RecipeSummary):
     recipe_ingredient: Annotated[list[RecipeIngredient], Field(validate_default=True)] = []
+    sections: list[RecipeSection] | None = []
     recipe_instructions: list[RecipeStep] | None = []
     nutrition: Nutrition | None = None
 

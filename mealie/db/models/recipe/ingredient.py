@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from ..group import Group
     from ..household import Household
     from .recipe import RecipeModel
+    from .section import RecipeIngredientSectionModel
 
 households_to_ingredient_foods = sa.Table(
     "households_to_ingredient_foods",
@@ -342,6 +343,11 @@ class RecipeIngredientModel(SqlAlchemyBase, BaseMixins):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     position: Mapped[int | None] = mapped_column(Integer, index=True)
     recipe_id: Mapped[GUID | None] = mapped_column(GUID, ForeignKey("recipes.id"))
+
+    section_id: Mapped[GUID | None] = mapped_column(GUID, ForeignKey("recipe_ingredient_section.id"), nullable=True)
+    section: Mapped["RecipeIngredientSectionModel | None"] = orm.relationship(
+        "RecipeIngredientSectionModel", back_populates="recipe_ingredient", foreign_keys=[section_id]
+    )
 
     title: Mapped[str | None] = mapped_column(String)  # Section Header - Shows if Present
     note: Mapped[str | None] = mapped_column(String)  # Force Show Text - Overrides Concat

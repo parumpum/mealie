@@ -15,6 +15,7 @@ from mealie.db.models._model_utils.auto_init import auto_init
 from mealie.db.models._model_utils.datetime import NaiveDateTime, get_utc_today
 from mealie.db.models._model_utils.guid import GUID
 from mealie.db.models.recipe.ingredient import RecipeIngredientModel
+from mealie.db.models.recipe.section import RecipeIngredientSectionModel
 
 from .._model_base import BaseMixins, SqlAlchemyBase
 from ..household.household_to_recipe import HouseholdToRecipe
@@ -106,6 +107,13 @@ class RecipeModel(SqlAlchemyBase, BaseMixins):
         order_by="RecipeIngredientModel.position",
         collection_class=ordering_list("position"),
         foreign_keys="RecipeIngredientModel.recipe_id",
+    )
+    sections: Mapped[list["RecipeIngredientSectionModel"]] = orm.relationship(
+        "RecipeIngredientSectionModel",
+        cascade="all, delete-orphan",
+        order_by="RecipeIngredientSectionModel.position",
+        collection_class=ordering_list("position"),
+        foreign_keys="RecipeIngredientSectionModel.recipe_id",
     )
     referenced_ingredients: Mapped[list["RecipeIngredientModel"]] = orm.relationship(
         "RecipeIngredientModel",

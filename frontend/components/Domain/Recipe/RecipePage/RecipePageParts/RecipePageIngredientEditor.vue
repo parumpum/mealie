@@ -8,6 +8,10 @@
         {{ $t("recipe.ingredients-not-parsed-description", { parse: $t('recipe.parse') }) }}
       </BannerWarning>
     </div>
+    <!-- TODO: Implement Recipe Section component here
+      Be able to Create or Delete section
+      Move ingredients into or out of section
+    -->
     <VueDraggable
       v-if="recipe.recipeIngredient.length > 0"
       v-model="recipe.recipeIngredient"
@@ -182,11 +186,14 @@ function ingredientIsRecipe(ingredient: RecipeIngredient): boolean {
 }
 
 function addIngredient(ingredients: Array<string> | null = null) {
+  // use last recipeIngredient title or empty string
+  const lastTitle = recipe.value.recipeIngredient[recipe.value.recipeIngredient.length - 1]?.title || "";
+
   if (ingredients?.length) {
     const newIngredients = ingredients.map((x) => {
       return {
         referenceId: uuid4(),
-        title: "",
+        title: lastTitle,
         note: x,
         unit: undefined,
         food: undefined,
@@ -202,7 +209,7 @@ function addIngredient(ingredients: Array<string> | null = null) {
   else {
     recipe.value.recipeIngredient.push({
       referenceId: uuid4(),
-      title: "",
+      title: lastTitle,
       note: "",
       // @ts-expect-error - prop can be null-type by NoUndefinedField type forces it to be set
       unit: undefined,

@@ -19,12 +19,12 @@
       >
         <template v-if="!isCookMode">
           <h3
-            v-if="showTitleEditor[index]"
+            v-if="showTitleEditor[index] && (index === 0 || ingredient.title !== value[index - 1].title)"
             class="mt-2"
           >
             {{ ingredient.title }}
           </h3>
-          <v-divider v-if="showTitleEditor[index]" />
+          <v-divider v-if="showTitleEditor[index] && (index === 0 || ingredient.title !== value[index - 1].title)" />
         </template>
         <v-list-item
           density="compact"

@@ -20,7 +20,7 @@ from mealie.repos.repository_factory import AllRepositories
 from mealie.repos.repository_generic import RepositoryGeneric
 from mealie.schema.household.household import HouseholdInDB, HouseholdRecipeUpdate
 from mealie.schema.openai.recipe import OpenAIRecipe
-from mealie.schema.recipe.recipe import CreateRecipe, Recipe, create_recipe_slug
+from mealie.schema.recipe.recipe import CreateRecipe, Recipe, RecipeSection, create_recipe_slug
 from mealie.schema.recipe.recipe_ingredient import RecipeIngredient
 from mealie.schema.recipe.recipe_notes import RecipeNote
 from mealie.schema.recipe.recipe_settings import RecipeSettings
@@ -425,8 +425,36 @@ class RecipeService(RecipeServiceBase):
 
         return recipe
 
+    # Create function to process Titles into RecipeSection objects
+    # A title on an ingredient indicates a section header for the ingredients list
+    # Subsequent ingredients with no title inherit the previous title and should be added under that section
+    def process_ingredient_sections(self, recipe: Recipe) -> Recipe:
+        processed_ingredients: list[RecipeIngredient] = []
+        current_section_title: str | None = None
+        if recipe.sections is None:
+            recipe.sections = []
+
+        for ingredient in recipe.recipe_ingredient or []:
+            if ingredient.title and ingredient.title.strip() != "":
+                current_section_title = ingredient.title.strip()
+
+                # Find or create the section
+                section = next((s for s in recipe.sections if s.name == current_section_title), None)
+                if section is None:
+                    section = RecipeSection(name=current_section_title)
+                    recipe.sections.append(section)
+
+                ingredient.section = section
+            else:
+                ingredient.section = next((s for s in recipe.sections if s.name == current_section_title), None)
+
+            processed_ingredients.append(ingredient)
+        return recipe
+
     def update_one(self, slug_or_id: str | UUID, update_data: Recipe) -> Recipe:
         recipe = self._pre_update_check(slug_or_id, update_data)
+
+        update_data = self.process_ingredient_sections(recipe=update_data)
 
         new_data = self.group_recipes.update(recipe.slug, update_data)
         self.check_assets(new_data, recipe.slug)
