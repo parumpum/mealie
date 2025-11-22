@@ -46,6 +46,9 @@
         <v-tab :to="`/household/mealplan/planner/view`">
           {{ $t('meal-plan.meal-planner') }}
         </v-tab>
+        <v-tab :to="`/household/mealplan/planner/weekly-view`">
+          {{ $t('meal-plan.weekly-view') }}
+        </v-tab>
         <v-tab :to="`/household/mealplan/planner/edit`">
           {{ $t('general.edit') }}
         </v-tab>
